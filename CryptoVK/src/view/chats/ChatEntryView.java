@@ -3,6 +3,7 @@ package view.chats;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import data.ImageOperator;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
@@ -82,7 +83,7 @@ public class ChatEntryView implements View {
 	}
 
 	private Image getIcon(ChatEntry model) {
-		return new Image(model.getChatIconURL());
+		return ImageOperator.getIconFrom(model.getChatIconURLs());
 	}
 
 	private ChatEntry quasiModel;

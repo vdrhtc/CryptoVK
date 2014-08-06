@@ -47,7 +47,7 @@ public class AuthorizeView implements SwitchableView {
 		if (email != null) {
 			if (oldEmail == "")
 				DataOperator.setOwnerEmail(email);
-			else if (!oldEmail.equals(email))
+			else if (!oldEmail.equals(email) && !email.equals(""))
 				DataOperator.setOwnerEmail(email);
 		}
 
@@ -74,7 +74,7 @@ public class AuthorizeView implements SwitchableView {
 	}
 
 	private void buildBrowser() {
-		browser.getEngine().load(authURL);
+		browser.getEngine().load(authURL+DataOperator.getOwnerEmail());
 		browser.getEngine()
 				.locationProperty()
 				.addListener(

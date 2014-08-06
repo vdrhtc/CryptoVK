@@ -18,7 +18,7 @@ public class DataOperator {
 	private static final String OWNER_EMAIL = "owner_email";
 	private static final String ACCESS_TOKEN = "access_token";
 	private static final String EXPIRATION_DATE = "expiration_date";
-	private static final String GENERAL_DATAFILE = "src/view/generalDataFile.txt";
+	private static final String GENERAL_DATAFILE = "src/view/generalDataFile.json";
 
 	public static String getLastAccessToken() {
 		JSONObject JO = readJSONfromFile(GENERAL_DATAFILE);

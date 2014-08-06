@@ -16,16 +16,30 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ConnectionOperator {
-	
-	
-	public static JSONArray getDialogs(int count, int offset) {
-		String realRequest = messages_getDialogsRequestTemplate.concat(
-				"&offset=" + offset).concat(
-				"&access_token=" + acess_token).concat(
-				"&count="+count);
 
+	public static JSONObject getLongPollServer() {
+		String realRequest = messages_getLongPollServer
+				.concat("&access_token=" + acess_token);
+		
 		return new JSONObject(sendRequest(realRequest))
-		.getJSONObject("response").getJSONArray("items");
+				.getJSONObject("response");
+	}
+
+	public static JSONObject getUpdates(String server, String key, long ts) {
+		String realRequest = "http://" + server + "?act=a_check&key=" + key
+				+ "&ts=" + ts + "&wait=25&mode=2";
+		
+		return new JSONObject(sendRequest(realRequest));
+	}
+
+	public static JSONArray getDialogs(int count, int offset) {
+		String realRequest = messages_getDialogsRequestTemplate
+				.concat("&offset=" + offset)
+				.concat("&access_token=" + acess_token)
+				.concat("&count=" + count);
+
+		return new JSONObject(sendRequest(realRequest)).getJSONObject(
+				"response").getJSONArray("items");
 	}
 
 	public static JSONObject getDialog(int positionInHistory) {
@@ -40,32 +54,33 @@ public class ConnectionOperator {
 	}
 
 	public static JSONObject getUser(int id) {
-		String realRequest = users_getTemplate.concat(
-				"&user_ids="+id).concat(
-				"&fields=photo_50").concat(
-				"&access_token=" + acess_token);;
-		
+		String realRequest = users_getTemplate.concat("&user_ids=" + id)
+				.concat("&fields=photo_50")
+				.concat("&access_token=" + acess_token);
+		;
+
 		return new JSONObject(sendRequest(realRequest))
-		.getJSONArray("response").getJSONObject(0);
-		
+				.getJSONArray("response").getJSONObject(0);
+
 	}
-	
+
 	public static JSONObject getChat(int id) {
-		String realRequest = messages_getChatTemplate.concat(
-				"&chat_id="+id).concat(
-				"&fields=photo_50").concat(
-				"&access_token=" + acess_token);
-		
-		return new JSONObject(sendRequest(realRequest)).optJSONObject("response");
+		String realRequest = messages_getChatTemplate.concat("&chat_id=" + id)
+				.concat("&fields=photo_50")
+				.concat("&access_token=" + acess_token);
+
+		return new JSONObject(sendRequest(realRequest))
+				.optJSONObject("response");
 	}
-	
+
 	public static JSONObject getOwner() {
-		String realRequest = users_getTemplate.concat(
-				"&fields=photo_50").concat(
-				"&access_token=" + acess_token);
-		
-		JSONArray response = new JSONObject(sendRequest(realRequest)).optJSONArray("response");
-		return response == null ? new JSONObject("{error:error}") : response.getJSONObject(0);
+		String realRequest = users_getTemplate.concat("&fields=photo_50")
+				.concat("&access_token=" + acess_token);
+
+		JSONArray response = new JSONObject(sendRequest(realRequest))
+				.optJSONArray("response");
+		return response == null ? new JSONObject("{error:error}") : response
+				.getJSONObject(0);
 	}
 
 	public static String sendRequest(String URL) {
@@ -91,16 +106,17 @@ public class ConnectionOperator {
 			};
 			String responseBody = (String) httpclient.execute(httpget,
 					responseHandler);
-			
+
 			JSONObject response = new JSONObject(responseBody);
-			if(response.optJSONObject("error") != null) {
-				if(response.getJSONObject("error").getInt("error_code") == 6) {
-					Thread.sleep(1000/2);
+			if (response.optJSONObject("error") != null) {
+				if (response.getJSONObject("error").getInt("error_code") == 6) {
+					Thread.sleep(1000 / 2);
 					responseBody = sendRequest(URL);
 				} else
 					log.warning(responseBody);
-					
+
 			}
+			System.out.println("-----"+response.toString());
 			return responseBody;
 
 		} catch (IOException | InterruptedException e) {
@@ -127,7 +143,8 @@ public class ConnectionOperator {
 
 	private static String messages_getDialogRequestTemplate = "https://api.vk.com/method/messages.getDialogs?count=1&v=5.23";
 	private static String messages_getDialogsRequestTemplate = "https://api.vk.com/method/messages.getDialogs?&v=5.23";
-	private static String users_getTemplate = "https://api.vk.com/method/users.get?&v=5.23";	
+	private static String users_getTemplate = "https://api.vk.com/method/users.get?&v=5.23";
+	private static String messages_getLongPollServer = "https://api.vk.com/method/messages.getLongPollServer?&v=5.23";
 	private static String messages_getChatTemplate = "https://api.vk.com/method/messages.getChat?&v=5.23";
 
 	private static Logger log = Logger.getAnonymousLogger();

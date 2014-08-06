@@ -7,6 +7,9 @@
 .chat-entry-hbox:hover {
 	-fx-background-color: #DAE1E8;
 }
+.chat-entry-hbox:pressed {
+	-fx-background-color: derive( #DAE1E8, 30%);
+}
 .chat-entry-title{
 	-fx-text-fill: #36638E;
 	-fx-wrap-text: true;
@@ -29,6 +32,7 @@
 }
 .chat-entry-message{
 	-fx-wrap-text: true;
+	-fx-min-width: 50;
 }
 
 

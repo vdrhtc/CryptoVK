@@ -19,10 +19,10 @@ public class ChatsController {
 				(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) -> {
 						Platform.runLater(() -> {
-							controlled.getModel().lock.lock(); 
+							controlled.getModel().getLock(); 
 							if (!newValue)
 								controlled.update();
-							controlled.getModel().lock.unlock(); 
+							controlled.getModel().releaseLock(); 
 							updater.isWorkingProperty().setValue(true);
 							});
 					}
@@ -78,9 +78,13 @@ public class ChatsController {
 			Task<Void> loadMoreChatEntries = new Task<Void>() {
 				@Override
 				protected Void call() {
-					controlled.getModel().lock.lock(); 
+					controlled.getModel().getLock(); 
+					try {
 					controlled.getModel().getNextChats(controlled.getChatEntriesCount(), ChatsView.LOAD_NEW_COUNT);
-					controlled.getModel().lock.unlock();; 
+					} catch (Exception e ){
+						e.printStackTrace();
+					}
+					controlled.getModel().releaseLock(); 
 					return null;
 				}
 			};
@@ -91,9 +95,9 @@ public class ChatsController {
 		private EventHandler<WorkerStateEvent> entryLoadResultHandler = new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent t) {
-				controlled.getModel().lock.lock(); 
+				controlled.getModel().getLock(); 
 				controlled.appendNewEntries(ChatsView.LOAD_NEW_COUNT);
-				controlled.getModel().lock.unlock(); 
+				controlled.getModel().releaseLock(); 
 				
 				controlled.getProgressBar().setProgress(1);
 				controlled.getStatusMessage().setText("Ready");

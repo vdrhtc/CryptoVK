@@ -1,62 +1,40 @@
 package model;
 
-import http.ConnectionOperator;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ChatEntry {
+	
 
-	public enum ChatType {
-		DIALOG, TALK
-	}
-	
-	private String deletedImageURL = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";
-	
 	public ChatEntry() {
 		
 	}
 	
 	public ChatEntry(int chatId, Boolean read, Date lastMessageDate) {
-		this.chatId = chatId;
+		this.setChatId(chatId);
 		this.read = read;
 		this.lastMessageDate = lastMessageDate;
 	}
 	
 	public static ChatEntry getChatEntry(JSONObject content) {
-		return content.optInt("chat_id") == 0 ? new DialogEntry() : new TalkEntry();
+		return  isDialog(content) ? new DialogEntry() : new TalkEntry();
 	}
 
 	public void loadContent(JSONObject content) {
-		log.info(content.toString());
-		extractChatType(content);
-		if (this.type == ChatType.DIALOG) {
-			extractDialogId(content);
-			extractDialogTitle(content);
-			extractDialogIcon();
-		} else {
-			extractTalkTitle(content);
-			extractTalkId(content);
-			JSONObject chatInfo = extractTalkInterlocutors(content);
-			extractTalkIcon(chatInfo);
-		}
+		getLog().info(content.toString());
 		extractDate(content);
+		extractLastMessageId(content);
 		extractLastMessageAndSenderAndReadState(content);
 	}
 	
-	private void extractTalkId(JSONObject content) {
-		this.chatId = content.getInt("chat_id");
-	}
 
-	private void extractDialogId(JSONObject content) {
-		this.chatId = content.getInt("user_id");
+	private void extractLastMessageId(JSONObject content) {
+		lastMessageId = content.getLong("id");
 	}
 
 	private void extractLastMessageAndSenderAndReadState(JSONObject content) {
@@ -67,92 +45,40 @@ public class ChatEntry {
 		else
 			lastMessageSender = VKPerson.getOwner();
 	}
-	
-	private void extractDialogTitle(JSONObject content) {
-		VKPerson interlocutor = VKPerson.getKnownPerson(content.getInt("user_id"));
-		this.interlocutors.add(interlocutor);
-		log.info(interlocutor.toString());
-		this.title = interlocutor.getFirstName() + " "
-				+ interlocutor.getLastName();
-	}
-	
-	private void extractTalkTitle(JSONObject content) {
-		this.title = content.getString("title");
-	}
-
-	private void extractChatType(JSONObject content) {
-		if (content.optInt("chat_id") == 0)
-			this.type = ChatType.DIALOG;
-		else
-			this.type = ChatType.TALK;
-	}
 
 	private void extractDate(JSONObject content) {
 		this.lastMessageDate = new Date(content.getLong("date") * 1000);
 	}
 	
-	private void extractDialogIcon() {
-		this.chatIconURL = interlocutors.get(0).getPhotoURL();
-	}
-
-	private void extractTalkIcon(JSONObject chatInfo) {
-		if (chatInfo.optString("photo_50").equals("")) {
-			this.chatIconURL = this.interlocutors.get(
-					new Random().nextInt(this.interlocutors.size()))
-					.getPhotoURL();
-		} 
-		else 
-			this.chatIconURL = chatInfo.getString("photo_50");
-	}
-
-	private JSONObject extractTalkInterlocutors(JSONObject content) {
-		JSONObject chatInfo = ConnectionOperator.getChat(content
-				.getInt("chat_id"));
-		if (chatInfo == null) {
-			chatInfo = new JSONObject();
-			chatInfo.put("photo_50", deletedImageURL);
-			this.title.concat(" [Потрачено]");
-			return chatInfo;
-		}
-		JSONArray interlocutors = chatInfo.getJSONArray("users");
-		for (int i = 0; i < interlocutors.length(); i++) {
-			this.interlocutors
-					.add(new VKPerson(interlocutors.getJSONObject(i)));
-		}
-		return chatInfo;
-	}
-	
 	public void update(JSONObject content) {
 		read = content.getInt("read_state") == 1 ? true : false;
-		if(!lastMessageDate.equals(new Date(content.getLong("date")*1000))) {
+		
+		if(lastMessageId != content.getLong("id")) {
 			System.out.println("Updating "+toString());
 			this.loadContent(content);
 		}
 	}
 	
 	public boolean isContentCorresponding(JSONObject content) {
-		ChatType type = content.optInt("chat_id") == 0 ? ChatType.DIALOG : ChatType.TALK;
-		if (type == this.type) {
-			int id = type == ChatType.DIALOG ? content.getInt("user_id") : content.getInt("chat_id");
-			if(id == this.chatId)
-				return true;
-		}
-		return false;
+		return true;
 	}
 	
+	public static boolean isDialog(JSONObject content) {
+		return content.optInt("chat_id") == 0 ? true : false;
+	}
 
 	@Override
 	public String toString() {
-		return "ChatEntry [title=" + title + ", read=" + read
+		return "ChatEntry [title=" + getTitle() + ", read=" + read
 				+ ", lastMessageDate=" + lastMessageDate + "]";
 	}
 
 
 	private int chatId;
-	private String title;
 	private Boolean read;
-	private ChatType type;
-	private String chatIconURL;
+	private String title;
+	private long lastMessageId = -1;
+	private String[] chatIconURL;
 	private String lastMessage;
 	private Date lastMessageDate;
 	private VKPerson lastMessageSender;
@@ -160,13 +86,12 @@ public class ChatEntry {
 
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
-		log.setLevel(Level.SEVERE);
+		getLog().setLevel(Level.SEVERE);
 	}
 	
 	public Boolean isRead() {
 		return read;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -177,7 +102,7 @@ public class ChatEntry {
 		if (!(obj instanceof ChatEntry))
 			return false;
 		ChatEntry other = (ChatEntry) obj;
-		if (chatId != other.chatId)
+		if (getChatId() != other.getChatId())
 			return false;
 		if (lastMessageDate == null) {
 			if (other.lastMessageDate != null)
@@ -194,7 +119,7 @@ public class ChatEntry {
 	
 	@Override
 	public ChatEntry clone() {
-		return new ChatEntry(chatId, read, lastMessageDate);
+		return new ChatEntry(getChatId(), read, lastMessageDate);
 	}
 	
 
@@ -206,7 +131,7 @@ public class ChatEntry {
 		return DateFormat.getInstance().format(lastMessageDate);
 	}
 
-	public String getChatIconURL() {
+	public String[] getChatIconURLs() {
 		return chatIconURL;
 	}
 	
@@ -216,6 +141,38 @@ public class ChatEntry {
 	
 	public VKPerson getLastMessageSender() {
 		return lastMessageSender;
+	}
+
+	public ArrayList<VKPerson> getInterlocutors() {
+		return interlocutors;
+	}
+
+	public void setInterlocutors(ArrayList<VKPerson> interlocutors) {
+		this.interlocutors = interlocutors;
+	}
+
+	public static Logger getLog() {
+		return log;
+	}
+
+	public static void setLog(Logger log) {
+		ChatEntry.log = log;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getChatId() {
+		return chatId;
+	}
+
+	public void setChatId(int chatId) {
+		this.chatId = chatId;
+	}
+
+	public void setChatIconURL(String... chatIconURL) {
+		this.chatIconURL = chatIconURL;
 	}
 
 }

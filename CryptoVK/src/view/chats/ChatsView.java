@@ -14,7 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import model.Chats;
+import model.chats.Chats;
 import view.SwitchableView;
 import controller.ChatsController;
 import controller.ViewSwitcher;
@@ -28,7 +28,6 @@ public class ChatsView implements SwitchableView {
 
 	public ChatsView() {
 		this.controller = new ChatsController(this);
-		this.chatsContainer.setOnScroll(controller.scrollHandler);
 		
 		this.root.getStyleClass().add("chats-root");
 		this.header.getStyleClass().add("chats-header");
@@ -79,30 +78,18 @@ public class ChatsView implements SwitchableView {
 		return hBorder;
 	}
 
-	public ScrollPane getChatsContainer() {
-		return chatsContainer;
+	public void update() {
+		for (int i = 0; i < entries.size(); i++) 
+			entries.get(i).update(model.getChats().get(i));
 	}
 	
-	public VBox getChatsLayout() {
-		return chatsLayout;
-	}
-	
-	public double getEntryHeight() {
-		return this.root.getHeight()/CHATS_PER_PAGE;
-	}
-
-	public ProgressBar getProgressBar() {
-		return progressBar;
-	}
-	
-	private Chats model = new Chats() ;
-	private HBox statusBar = new HBox(); 
-	private ViewSwitcher VS;
-	private VBox chatsLayout = new VBox();
-	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
+	private Chats model = new Chats();
 	private ChatsController controller;
+	private HBox statusBar = new HBox(); 
+	private VBox chatsLayout = new VBox();
 	private Integer chatEntriesCount = 0;
 	private ArrayList<ChatEntryView> entries = new ArrayList<>();
+	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 
 	private Label header = new Label("Чаты");
 	private BorderPane root = new BorderPane();
@@ -123,7 +110,7 @@ public class ChatsView implements SwitchableView {
 	
 	@Override
 	public void setViewSwitcher(ViewSwitcher VS) {
-		this.VS = VS;
+		controller.setVS(VS);
 	}
 
 	@Override
@@ -146,10 +133,21 @@ public class ChatsView implements SwitchableView {
 	public ViewName redirectTo() {
 		return getName();
 	}
+	
+	public ScrollPane getChatsContainer() {
+		return chatsContainer;
+	}
+	
+	public VBox getChatsLayout() {
+		return chatsLayout;
+	}
+	
+	public double getEntryHeight() {
+		return this.root.getHeight()/CHATS_PER_PAGE;
+	}
 
-	public void update() {
-		for (int i = 0; i < entries.size(); i++) 
-			entries.get(i).update(model.getChats().get(i));
+	public ProgressBar getProgressBar() {
+		return progressBar;
 	}
 
 }

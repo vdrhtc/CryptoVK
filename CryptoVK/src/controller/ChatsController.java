@@ -14,19 +14,10 @@ public class ChatsController {
 
 	public ChatsController(ChatsView CV) {
 		this.controlled = CV;
-		this.updater = new ChatsUpdater(controlled.getModel());
-		this.updater.isWorkingProperty().addListener(
-				(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) -> {
-						Platform.runLater(() -> {
-							controlled.getModel().getLock(); 
-							if (!newValue)
-								controlled.update();
-							controlled.getModel().releaseLock(); 
-							updater.isWorkingProperty().setValue(true);
-							});
-					}
-		);
+		this.controlled.getChatsContainer().setOnScroll(scrollHandler);
+		
+		this.updater = new ChatsUpdater(controlled);
+		
 		this.controlled.getReadyForUpdates().addListener((ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) -> {
 			if (newValue)
@@ -34,6 +25,18 @@ public class ChatsController {
 				updater.start();});
 	}
 	
+	
+
+	public ViewSwitcher getVS() {
+		return VS;
+	}
+
+
+	public void setVS(ViewSwitcher vS) {
+		VS = vS;
+	}
+
+
 
 	public EventHandler<ScrollEvent> scrollHandler = new EventHandler<ScrollEvent>() {
 		
@@ -67,6 +70,7 @@ public class ChatsController {
 
 	private ChatsView controlled;
 	private ChatsUpdater updater;
+	private ViewSwitcher VS;
 	private LoadService loader = new LoadService();
 	
 	

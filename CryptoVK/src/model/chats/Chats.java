@@ -1,4 +1,4 @@
-package model;
+package model.chats;
 
 import http.ConnectionOperator;
 

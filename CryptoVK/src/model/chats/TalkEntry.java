@@ -1,10 +1,12 @@
-package model;
+package model.chats;
 
 import http.ConnectionOperator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import model.VKPerson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

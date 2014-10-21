@@ -5,17 +5,20 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
+import view.chats.ChatsView;
 import http.ConnectionOperator;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import model.Chats;
+import model.chats.Chats;
 
 public class ChatsUpdater extends Service<Void> {
 
-	public ChatsUpdater(Chats updated) {
-		this.updated = updated;
+	public ChatsUpdater(ChatsView updated) {
+		this.updated = updated.getModel();
+		this.updated2 = updated;
 	}
 
 	@Override
@@ -44,6 +47,12 @@ public class ChatsUpdater extends Service<Void> {
 							updated.releaseLock();
 
 							isWorking.setValue(false);
+							Platform.runLater(() -> {
+								updated.getLock(); 
+								updated2.update();
+								updated.releaseLock(); 
+								isWorking.setValue(true);
+								});
 						}
 					}
 				}
@@ -64,6 +73,7 @@ public class ChatsUpdater extends Service<Void> {
 	private BooleanProperty isWorking = new SimpleBooleanProperty();
 
 	private Chats updated;
+	private ChatsView updated2;
 
 	private static Logger log = Logger.getAnonymousLogger();
 	static {

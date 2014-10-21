@@ -14,7 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import model.ChatEntry;
+import model.chats.ChatEntry;
 import view.View;
 
 public class ChatEntryView implements View {

@@ -1,4 +1,6 @@
-package model;
+package model.chats;
+
+import model.VKPerson;
 
 import org.json.JSONObject;
 

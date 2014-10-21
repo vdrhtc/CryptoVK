@@ -5,7 +5,7 @@ import controller.ViewSwitcher;
 public interface SwitchableView extends View {
 	
 	public enum ViewName {
-		AUTHORIZE_VIEW, CHATS_VIEW
+		AUTHORIZE_VIEW, CHATS_VIEW, CHAT_HOLDER
 	}
 
 	public ViewName getName();

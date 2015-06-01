@@ -14,13 +14,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import model.chats.ChatEntry;
+import model.chats.ChatPreviewModel;
 import view.View;
 
-public class ChatEntryView implements View {
+public class ChatPreview implements View {
 
 
-	public ChatEntryView(ChatEntry model, ReadOnlyDoubleProperty parentHeight) {
+	public ChatPreview(ChatPreviewModel model, ReadOnlyDoubleProperty parentHeight) {
 		
 		this.synchronizeWithModel(model);
 
@@ -34,8 +34,8 @@ public class ChatEntryView implements View {
 		this.initRoot(parentHeight);
 	}
 
-	private void synchronizeWithModel(ChatEntry model) {
-		this.quasiModel = model.clone();
+	private void synchronizeWithModel(ChatPreviewModel model) {
+		this.currentLoadedModel = model.clone();
 		date.setText(model.getLastMessageDate());
 		title.setText(model.getTitle());
 		icon.setImage(getIcon(model));
@@ -45,7 +45,7 @@ public class ChatEntryView implements View {
 		clipLastSenderPhoto();
 	}
 
-	private void setLastMessageReadState(ChatEntry model) {
+	private void setLastMessageReadState(ChatPreviewModel model) {
 		if(!model.isRead())
 			this.lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), true);
 		else
@@ -59,7 +59,7 @@ public class ChatEntryView implements View {
 		lastSenderPhoto.setClip(rR);
 	}
 
-	private Image getLastSenderPhoto(ChatEntry model) {
+	private Image getLastSenderPhoto(ChatPreviewModel model) {
 		Image im = new Image(model.getLastMessageSender().getPhotoURL(), icon
 				.getImage().getWidth() * 0.66, icon.getImage().getHeight()*0.66,
 				true, true);
@@ -69,7 +69,7 @@ public class ChatEntryView implements View {
 	private void initRoot(ReadOnlyDoubleProperty parentHeiht) {
 		root.getStyleClass().add("chat-entry-hbox");
 		root.prefHeightProperty().bind(
-				parentHeiht.divide(ChatsView.CHATS_PER_PAGE));
+				parentHeiht.divide(ChatsPreview.CHATS_PER_PAGE));
 	}
 
 	@Override
@@ -82,11 +82,11 @@ public class ChatEntryView implements View {
 		return root;
 	}
 
-	private Image getIcon(ChatEntry model) {
+	private Image getIcon(ChatPreviewModel model) {
 		return ImageOperator.getIconFrom(model.getChatIconURLs());
 	}
 
-	private ChatEntry quasiModel;
+	private ChatPreviewModel currentLoadedModel;
 	private HBox root = new HBox();
 	private Label date = new Label();
 	private Label title = new Label();
@@ -106,8 +106,8 @@ public class ChatEntryView implements View {
 		return root;
 	}
 
-	public void update(ChatEntry model) {
-		if (!this.quasiModel.equals(model))
+	public void update(ChatPreviewModel model) {
+		if (!this.currentLoadedModel.equals(model))
 			synchronizeWithModel(model);
 	}
 

@@ -1,13 +1,13 @@
 package controller;
 
-import view.messaging.ChatHolder;
+import view.messaging.ChatsHolder;
 
 public class ChatHolderController {
 
-	public ChatHolderController(ChatHolder CH) {
+	public ChatHolderController(ChatsHolder CH) {
 		this.controlled = CH;
 	}
 	
-	private ChatHolder controlled;
+	private ChatsHolder controlled;
 
 }

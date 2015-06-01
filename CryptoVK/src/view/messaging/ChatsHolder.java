@@ -7,13 +7,12 @@ import view.SwitchableView;
 import controller.ChatHolderController;
 import controller.ViewSwitcher;
 
-public class ChatHolder implements SwitchableView {
+public class ChatsHolder implements SwitchableView {
 	
-	public ChatHolder() {
+	public ChatsHolder() {
 		this.controller = new ChatHolderController(this);
 	}
 
-	
 	public void addChatView(ChatView newChatView) {
 		viewedChats.add(newChatView);
 	}
@@ -21,8 +20,6 @@ public class ChatHolder implements SwitchableView {
 	private Pane root;
 	private ChatHolderController controller;
 	private ArrayList<ChatView> viewedChats = new ArrayList<>();
-	
-	
 	
 	@Override
 	public Pane getRoot() {

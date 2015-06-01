@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Chats {
+public class ChatsPreviewModel {
 
 	public final int PRE_LOADED_ENTRIES = 20;
 	private Lock lock = new ReentrantLock();
@@ -22,7 +22,7 @@ public class Chats {
 		for (int i = 0; i < PRE_LOADED_ENTRIES; i++) {
 			JSONObject content = chatsJSONs.getJSONObject(i).getJSONObject(
 					"message");
-			ChatEntry entry = ChatEntry.getChatEntry(content);
+			ChatPreviewModel entry = ChatPreviewModel.getChatEntry(content);
 			entry.loadContent(content);
 			getChats().add(entry);
 		}
@@ -35,7 +35,7 @@ public class Chats {
 		for (int i = offset; i < offset + count; i++) {
 			JSONObject content = chatsJSONs.getJSONObject(i - offset)
 					.getJSONObject("message");
-			ChatEntry entry = ChatEntry.getChatEntry(content);
+			ChatPreviewModel entry = ChatPreviewModel.getChatEntry(content);
 			entry.loadContent(content);
 			getChats().add(entry);
 		}
@@ -46,7 +46,7 @@ public class Chats {
 				0);
 		int i = 0;
 		updateOrder(chatsJSONs);
-		for (ChatEntry e : chats) {
+		for (ChatPreviewModel e : chats) {
 			e.update(chatsJSONs.getJSONObject(i).getJSONObject("message"));
 			i++;
 		}
@@ -65,11 +65,11 @@ public class Chats {
 					}
 				}
 			if (!matchFound)
-				chats.add(0, new ChatEntry());
+				chats.add(0, new ChatPreviewModel());
 		}
 	}
 
-	public ArrayList<ChatEntry> getChats() {
+	public ArrayList<ChatPreviewModel> getChats() {
 		return chats;
 	}
 
@@ -87,10 +87,10 @@ public class Chats {
 	public void getLock() {
 		log.info("Getting lock: "+ Thread.currentThread().getName());
 		lock.lock();
-		log.info("Got lock"+Thread.currentThread().getName());
+		log.info("Got lock: "+Thread.currentThread().getName());
 	}
 
-	private ArrayList<ChatEntry> chats = new ArrayList<>();
+	private ArrayList<ChatPreviewModel> chats = new ArrayList<>();
 	
 	private static Logger log = Logger.getAnonymousLogger();
 	static {

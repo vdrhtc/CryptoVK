@@ -10,21 +10,21 @@ import model.VKPerson;
 
 import org.json.JSONObject;
 
-public class ChatEntry {
+public class ChatPreviewModel {
 	
 
-	public ChatEntry() {
+	public ChatPreviewModel() {
 		
 	}
 	
-	public ChatEntry(int chatId, Boolean read, Date lastMessageDate) {
+	public ChatPreviewModel(int chatId, Boolean read, Date lastMessageDate) {
 		this.setChatId(chatId);
 		this.read = read;
 		this.lastMessageDate = lastMessageDate;
 	}
 	
-	public static ChatEntry getChatEntry(JSONObject content) {
-		return  isDialog(content) ? new DialogEntry() : new TalkEntry();
+	public static ChatPreviewModel getChatEntry(JSONObject content) {
+		return  isDialog(content) ? new DialogPreviewModel() : new TalkPreviewModel();
 	}
 
 	public void loadContent(JSONObject content) {
@@ -68,6 +68,10 @@ public class ChatEntry {
 	public static boolean isDialog(JSONObject content) {
 		return content.optInt("chat_id") == 0 ? true : false;
 	}
+	
+	public void loadChat() {
+		
+	}
 
 	@Override
 	public String toString() {
@@ -101,9 +105,9 @@ public class ChatEntry {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof ChatEntry))
+		if (!(obj instanceof ChatPreviewModel))
 			return false;
-		ChatEntry other = (ChatEntry) obj;
+		ChatPreviewModel other = (ChatPreviewModel) obj;
 		if (getChatId() != other.getChatId())
 			return false;
 		if (lastMessageDate == null) {
@@ -120,8 +124,8 @@ public class ChatEntry {
 	}
 	
 	@Override
-	public ChatEntry clone() {
-		return new ChatEntry(getChatId(), read, lastMessageDate);
+	public ChatPreviewModel clone() {
+		return new ChatPreviewModel(getChatId(), read, lastMessageDate);
 	}
 	
 
@@ -158,7 +162,7 @@ public class ChatEntry {
 	}
 
 	public static void setLog(Logger log) {
-		ChatEntry.log = log;
+		ChatPreviewModel.log = log;
 	}
 
 	public void setTitle(String title) {

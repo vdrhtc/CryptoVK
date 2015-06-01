@@ -11,7 +11,7 @@ import model.VKPerson;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class TalkEntry extends ChatEntry {
+public class TalkPreviewModel extends ChatPreviewModel {
 	
 	private String deletedImageURL = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";
 

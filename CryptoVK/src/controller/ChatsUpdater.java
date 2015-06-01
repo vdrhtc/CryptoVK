@@ -5,20 +5,20 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
-import view.chats.ChatsView;
+import view.chats.ChatsPreview;
 import http.ConnectionOperator;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import model.chats.Chats;
+import model.chats.ChatsPreviewModel;
 
 public class ChatsUpdater extends Service<Void> {
 
-	public ChatsUpdater(ChatsView updated) {
-		this.updated = updated.getModel();
-		this.updated2 = updated;
+	public ChatsUpdater(ChatsPreview updated) {
+		this.updatedModel = updated.getModel();
+		this.updatedView = updated;
 	}
 
 	@Override
@@ -42,15 +42,15 @@ public class ChatsUpdater extends Service<Void> {
 						if (updates.getJSONArray("updates").length() != 0) {
 							longPollServerData.put("ts", updates.getLong("ts"));
 							
-							updated.getLock();
-							updated.updateEntries();
-							updated.releaseLock();
+							updatedModel.getLock();
+							updatedModel.updateEntries();
+							updatedModel.releaseLock();
 
 							isWorking.setValue(false);
 							Platform.runLater(() -> {
-								updated.getLock(); 
-								updated2.update();
-								updated.releaseLock(); 
+								updatedModel.getLock(); 
+								updatedView.update();
+								updatedModel.releaseLock(); 
 								isWorking.setValue(true);
 								});
 						}
@@ -72,8 +72,8 @@ public class ChatsUpdater extends Service<Void> {
 
 	private BooleanProperty isWorking = new SimpleBooleanProperty();
 
-	private Chats updated;
-	private ChatsView updated2;
+	private ChatsPreviewModel updatedModel;
+	private ChatsPreview updatedView;
 
 	private static Logger log = Logger.getAnonymousLogger();
 	static {

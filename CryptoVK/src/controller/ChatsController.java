@@ -8,17 +8,17 @@ import javafx.concurrent.Worker.State;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.ScrollEvent;
-import view.chats.ChatsView;
+import view.chats.ChatsPreview;
 
 public class ChatsController {
 
-	public ChatsController(ChatsView CV) {
+	public ChatsController(ChatsPreview CV) {
 		this.controlled = CV;
 		this.controlled.getChatsContainer().setOnScroll(scrollHandler);
 		
 		this.updater = new ChatsUpdater(controlled);
 		
-		this.controlled.getReadyForUpdates().addListener((ObservableValue<? extends Boolean> observable,
+		this.controlled.canBeUpdated().addListener((ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) -> {
 			if (newValue)
 				updater.isWorkingProperty().setValue(true);
@@ -68,7 +68,7 @@ public class ChatsController {
 		}
 	};
 
-	private ChatsView controlled;
+	private ChatsPreview controlled;
 	private ChatsUpdater updater;
 	private ViewSwitcher VS;
 	private LoadService loader = new LoadService();
@@ -84,7 +84,7 @@ public class ChatsController {
 				protected Void call() {
 					controlled.getModel().getLock(); 
 					try {
-					controlled.getModel().getNextChats(controlled.getChatEntriesCount(), ChatsView.LOAD_NEW_COUNT);
+					controlled.getModel().getNextChats(controlled.getChatEntriesCount(), ChatsPreview.LOAD_NEW_COUNT);
 					} catch (Exception e ){
 						e.printStackTrace();
 					}
@@ -100,7 +100,7 @@ public class ChatsController {
 			@Override
 			public void handle(WorkerStateEvent t) {
 				controlled.getModel().getLock(); 
-				controlled.appendNewEntries(ChatsView.LOAD_NEW_COUNT);
+				controlled.appendNewEntries(ChatsPreview.LOAD_NEW_COUNT);
 				controlled.getModel().releaseLock(); 
 				
 				controlled.getProgressBar().setProgress(1);

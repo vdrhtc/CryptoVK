@@ -14,19 +14,19 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import model.chats.Chats;
+import model.chats.ChatsPreviewModel;
 import view.SwitchableView;
 import controller.ChatsController;
 import controller.ViewSwitcher;
 import data.DataOperator;
 
-public class ChatsView implements SwitchableView {
+public class ChatsPreview implements SwitchableView {
 
 	public static final int LOAD_NEW_COUNT = 2;
 	public static final int CHATS_PER_PAGE = 10;
 	public static final ViewName NAME = ViewName.CHATS_VIEW;
 
-	public ChatsView() {
+	public ChatsPreview() {
 		this.controller = new ChatsController(this);
 		
 		this.root.getStyleClass().add("chats-root");
@@ -37,7 +37,7 @@ public class ChatsView implements SwitchableView {
 		
 	}
 	
-	public Chats getModel() {
+	public ChatsPreviewModel getModel() {
 		return model;
 	}
 
@@ -60,7 +60,7 @@ public class ChatsView implements SwitchableView {
 		for (int i = oldChatEntriesCount; i < oldChatEntriesCount+count; i++) {
 			chatEntriesCount++;
 			toAppend.add(buildHBorder());
-			ChatEntryView newEntry = new ChatEntryView(model.getChats().get(i), chatsContainer.heightProperty());
+			ChatPreview newEntry = new ChatPreview(model.getChats().get(i), chatsContainer.heightProperty());
 			entries.add(newEntry);
 			toAppend.add(newEntry.buildRoot());
 			progressBar.setProgress(progressBar.getProgress() + 0.5*(oldChatEntriesCount+count-1));
@@ -83,22 +83,22 @@ public class ChatsView implements SwitchableView {
 			entries.get(i).update(model.getChats().get(i));
 	}
 	
-	private Chats model = new Chats();
+	private ChatsPreviewModel model = new ChatsPreviewModel();
 	private ChatsController controller;
 	private HBox statusBar = new HBox(); 
 	private VBox chatsLayout = new VBox();
 	private Integer chatEntriesCount = 0;
-	private ArrayList<ChatEntryView> entries = new ArrayList<>();
+	private ArrayList<ChatPreview> entries = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 
 	private Label header = new Label("Чаты");
 	private BorderPane root = new BorderPane();
 	private Label statusMessage = new Label("Ready");
 	private ProgressBar progressBar = new ProgressBar();
-	private BooleanProperty updaterCanBeLaunched = new SimpleBooleanProperty(false);
+	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
 
-	public BooleanProperty getReadyForUpdates() {
-		return updaterCanBeLaunched;
+	public BooleanProperty canBeUpdated() {
+		return canBeUpdated;
 	}
 
 	public Label getStatusMessage() {
@@ -120,13 +120,13 @@ public class ChatsView implements SwitchableView {
 	
 	@Override
 	public ViewName getName() {
-		return ChatsView.NAME;
+		return ChatsPreview.NAME;
 	}
 
 	@Override
 	public void prepareModel() {
 		model.initializeEntries();
-		updaterCanBeLaunched.setValue(true);
+		canBeUpdated.setValue(true);
 	}
 
 	@Override

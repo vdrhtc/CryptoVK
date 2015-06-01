@@ -8,7 +8,11 @@ import view.SwitchableView.ViewName;
 
 public class ViewSwitcher {
 
-	public ViewSwitcher(Scene scene, SwitchableView... views) {
+	private ViewSwitcher() {
+		
+	}
+	
+	public void setViews(Scene scene, SwitchableView... views) {
 		this.scene = scene;
 		for (SwitchableView v : views) {
 			v.setViewSwitcher(this);
@@ -17,18 +21,28 @@ public class ViewSwitcher {
 	}
 	
 	public void switchToView(ViewName name) {
-		ViewName realName = views.get(name).redirectTo();
+		ViewName redirectName = views.get(name).redirectTo();
 		if(activeView != null)
 			views.get(activeView).getRoot().getChildren().clear();
-		views.get(realName).prepareModel();
-		scene.setRoot(views.get(realName).buildRoot());
-		this.activeView = realName;
+		views.get(redirectName).prepareModel();
+		scene.setRoot(views.get(redirectName).buildRoot());
+		this.activeView = redirectName;
 	}
 	
 	public SwitchableView getView(ViewName name) {
 		return views.get(name);
 	}
 	
+	
+	public static ViewSwitcher getInstance() {
+		if (INSTANCE == null) {
+			ViewSwitcher.INSTANCE = new ViewSwitcher();
+			return INSTANCE;
+		} else
+			return INSTANCE;
+	}
+	
+	private static ViewSwitcher INSTANCE;
 	private ViewName activeView;
 	private Scene scene;
 	private HashMap<ViewName, SwitchableView> views = new HashMap<>();

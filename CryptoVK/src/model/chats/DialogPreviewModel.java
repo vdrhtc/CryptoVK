@@ -4,7 +4,7 @@ import model.VKPerson;
 
 import org.json.JSONObject;
 
-public class DialogEntry extends ChatEntry {
+public class DialogPreviewModel extends ChatPreviewModel {
 
 	
 	@Override

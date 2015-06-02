@@ -16,20 +16,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import model.chats.ChatsPreviewModel;
 import view.SwitchableView;
-import controller.ChatsController;
-import controller.ViewSwitcher;
+import controller.ChatsPreviewController;
 import data.DataOperator;
 
 public class ChatsPreview implements SwitchableView {
 
 	public static final int LOAD_NEW_COUNT = 2;
 	public static final int CHATS_PER_PAGE = 10;
-	public static final ViewName NAME = ViewName.CHATS_VIEW;
+	public static final ViewName NAME = ViewName.CHATS_PREVIEW;
 
 	public ChatsPreview() {
-		this.controller = new ChatsController(this);
-		
-		this.root.getStyleClass().add("chats-root");
+				
 		this.header.getStyleClass().add("chats-header");
 		this.statusMessage.setId("chats-status-message");
 		this.statusBar.getStyleClass().add("chats-status-bar");
@@ -40,17 +37,26 @@ public class ChatsPreview implements SwitchableView {
 	public ChatsPreviewModel getModel() {
 		return model;
 	}
+	
+	private void initRoot() {
+		
+		this.root = new BorderPane();
+		
+		this.root.getStyleClass().add("chats-root");
+				
+		this.accessExpirationInfo.setText("Доступ без пароля до "+DataOperator.getLastTokenExpirationDate());
+		this.statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
+		
+		this.root.setCenter(chatsContainer);
+		this.root.setTop(header);
+		this.root.setBottom(statusBar);
+		
+		this.controller = new ChatsPreviewController(this);
+
+	}
 
 	@Override
-	public Pane buildRoot() {
-		appendNewEntries(CHATS_PER_PAGE);
-		
-		accessExpirationInfo.setText("Доступ без пароля до "+DataOperator.getLastTokenExpirationDate());
-		statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
-		
-		root.setCenter(chatsContainer);
-		root.setTop(header);
-		root.setBottom(statusBar);
+	public Pane getRoot() {
 		return root;
 	}
 
@@ -62,7 +68,7 @@ public class ChatsPreview implements SwitchableView {
 			toAppend.add(buildHBorder());
 			ChatPreview newEntry = new ChatPreview(model.getChats().get(i), chatsContainer.heightProperty());
 			entries.add(newEntry);
-			toAppend.add(newEntry.buildRoot());
+			toAppend.add(newEntry.getRoot());
 			progressBar.setProgress(progressBar.getProgress() + 0.5*(oldChatEntriesCount+count-1));
 		}
 		chatsLayout.getChildren().addAll(toAppend);
@@ -84,7 +90,7 @@ public class ChatsPreview implements SwitchableView {
 	}
 	
 	private ChatsPreviewModel model = new ChatsPreviewModel();
-	private ChatsController controller;
+	private ChatsPreviewController controller;
 	private HBox statusBar = new HBox(); 
 	private VBox chatsLayout = new VBox();
 	private Integer chatEntriesCount = 0;
@@ -92,7 +98,7 @@ public class ChatsPreview implements SwitchableView {
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 
 	private Label header = new Label("Чаты");
-	private BorderPane root = new BorderPane();
+	private BorderPane root;
 	private Label statusMessage = new Label("Ready");
 	private ProgressBar progressBar = new ProgressBar();
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
@@ -109,24 +115,20 @@ public class ChatsPreview implements SwitchableView {
 	
 	
 	@Override
-	public void setViewSwitcher(ViewSwitcher VS) {
-		controller.setVS(VS);
-	}
-
-	@Override
-	public Pane getRoot() {
-		return root;
-	}
-	
-	@Override
 	public ViewName getName() {
 		return ChatsPreview.NAME;
 	}
 
 	@Override
-	public void prepareModel() {
-		model.initializeEntries();
-		canBeUpdated.setValue(true);
+	public void getReadyForSwitch() {
+		
+		if(this.root == null) {             // First time switch
+			initRoot();
+			model.initializeEntries();
+			appendNewEntries(CHATS_PER_PAGE);
+			canBeUpdated.setValue(true);
+		}
+			
 	}
 
 	@Override
@@ -149,5 +151,6 @@ public class ChatsPreview implements SwitchableView {
 	public ProgressBar getProgressBar() {
 		return progressBar;
 	}
+
 
 }

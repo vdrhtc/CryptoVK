@@ -23,6 +23,9 @@ public class AuthorizeView implements SwitchableView {
 
 	public AuthorizeView() {
 		buildBrowser();
+
+		root.getChildren().addAll(browser, adressBar);
+		VBox.setVgrow(browser, Priority.ALWAYS);
 	}
 
 	public boolean tokenAvailableAndValid() {
@@ -69,7 +72,7 @@ public class AuthorizeView implements SwitchableView {
 
 	private void proceedToNextView(String token) {
 		ConnectionOperator.setAccessToken(token);
-		VS.switchToView(ViewName.CHATS_VIEW);
+		VS.switchToView(ViewName.CHATS_PREVIEW);
 
 	}
 
@@ -84,20 +87,13 @@ public class AuthorizeView implements SwitchableView {
 							processNewURL(newValue);
 						});
 	}
-
+	
 	@Override
-	public Pane buildRoot() {
-		root.getChildren().addAll(browser, adressBar);
-		VBox.setVgrow(browser, Priority.ALWAYS);
-		return root;
-	}
-
-	@Override
-	public void prepareModel() {
+	public void getReadyForSwitch() {
 		return;
 	}
 
-	private ViewSwitcher VS;
+	private ViewSwitcher VS = ViewSwitcher.getInstance();
 	private VBox root = new VBox();
 	private WebView browser = new WebView();;
 	private TextField adressBar = new TextField();
@@ -116,18 +112,15 @@ public class AuthorizeView implements SwitchableView {
 		return this.name;
 	}
 
+
 	@Override
-	public void setViewSwitcher(ViewSwitcher VS) {
-		this.VS = VS;
+	public ViewName redirectTo() {
+		return tokenAvailableAndValid() ? ViewName.CHATS_PREVIEW : this.name;
 	}
+
 
 	@Override
 	public Pane getRoot() {
 		return root;
-	}
-
-	@Override
-	public ViewName redirectTo() {
-		return tokenAvailableAndValid() ? ViewName.CHATS_VIEW : this.name;
 	}
 }

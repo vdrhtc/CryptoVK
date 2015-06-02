@@ -87,7 +87,7 @@ public class ConnectionOperator {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			HttpGet httpget = new HttpGet(URL);
-			System.out.println("Executing request " + httpget.getRequestLine());
+			//System.out.println("Executing request " + httpget.getRequestLine());
 
 			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
@@ -116,7 +116,7 @@ public class ConnectionOperator {
 					log.warning(responseBody);
 
 			}
-			System.out.println("-----"+response.toString());
+			//System.out.println("-----"+response.toString());
 			return responseBody;
 
 		} catch (IOException | InterruptedException e) {

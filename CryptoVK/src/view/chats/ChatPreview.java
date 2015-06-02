@@ -3,6 +3,7 @@ package view.chats;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import controller.ChatPreviewController;
 import data.ImageOperator;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.css.PseudoClass;
@@ -32,6 +33,8 @@ public class ChatPreview implements View {
 		this.lastMessage.getStyleClass().add("chat-entry-message");
 		this.icon.getStyleClass().add("chat-entry-icon");
 		this.initRoot(parentHeight);
+
+		this.controller = new ChatPreviewController(this);
 	}
 
 	private void synchronizeWithModel(ChatPreviewModel model) {
@@ -53,7 +56,7 @@ public class ChatPreview implements View {
 	}
 
 	private void clipLastSenderPhoto() {
-		Rectangle rR = new Rectangle(0, 0, lastSenderPhoto.getImage().getWidth(),lastSenderPhoto.getImage().getHeight());
+		Rectangle rR = new Rectangle(0, 0, lastSenderPhoto.getImage().getWidth(), lastSenderPhoto.getImage().getHeight());
 		rR.setArcHeight(10);
 		rR.setArcWidth(10);
 		lastSenderPhoto.setClip(rR);
@@ -67,19 +70,18 @@ public class ChatPreview implements View {
 	}
 
 	private void initRoot(ReadOnlyDoubleProperty parentHeiht) {
+		
+		root = new HBox();
+		
 		root.getStyleClass().add("chat-entry-hbox");
 		root.prefHeightProperty().bind(
 				parentHeiht.divide(ChatsPreview.CHATS_PER_PAGE));
-	}
-
-	@Override
-	public Pane buildRoot() {
 		metaInfoContainer.getChildren().addAll(title, date);
 		lastMessageContainer.getChildren().addAll(lastSenderPhoto, lastMessage);
 		root.getChildren()
 				.addAll(icon, metaInfoContainer, lastMessageContainer);
 		HBox.setHgrow(lastMessageContainer, Priority.ALWAYS);
-		return root;
+		
 	}
 
 	private Image getIcon(ChatPreviewModel model) {
@@ -87,7 +89,7 @@ public class ChatPreview implements View {
 	}
 
 	private ChatPreviewModel currentLoadedModel;
-	private HBox root = new HBox();
+	private HBox root;
 	private Label date = new Label();
 	private Label title = new Label();
 	private Label lastMessage = new Label();
@@ -95,20 +97,22 @@ public class ChatPreview implements View {
 	private ImageView lastSenderPhoto = new ImageView();
 	private VBox metaInfoContainer = new VBox();
 	private HBox lastMessageContainer = new HBox();
+	
+	private ChatPreviewController controller;
 
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
 		log.setLevel(Level.OFF);
 	}
 
-	@Override
-	public Pane getRoot() {
-		return root;
-	}
-
 	public void update(ChatPreviewModel model) {
 		if (!this.currentLoadedModel.equals(model))
 			synchronizeWithModel(model);
+	}
+
+	@Override
+	public HBox getRoot() {
+		return this.root;
 	}
 
 }

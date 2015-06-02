@@ -1,12 +1,10 @@
 package view;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import view.SwitchableView.ViewName;
 import view.chats.ChatsPreview;
-import view.messaging.ChatsHolder;
+import view.messaging.ChatsView;
 import controller.ViewSwitcher;
 
 public class Launcher extends Application {
@@ -16,19 +14,13 @@ public class Launcher extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		Scene scene = new Scene(new StackPane());
-
 		AuthorizeView AV = new AuthorizeView();
 		ChatsPreview CPV = new ChatsPreview();
-		ChatsHolder CH = new ChatsHolder();
+		ChatsView CV = new ChatsView();
 		VS = ViewSwitcher.getInstance();
-		VS.setViews(scene, AV, CPV);
+		VS.setViews(primaryStage, AV, CPV, CV);
 		VS.switchToView(ViewName.AUTHORIZE_VIEW);
 		
-
-		scene.getStylesheets().addAll("view/chats/chatPreviewStyle.css", "view/chats/chatsPreviewStyle.css");
-		
-		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 

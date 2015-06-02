@@ -1,12 +1,10 @@
 package controller;
 
+import http.ConnectionOperator;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONObject;
-
-import view.chats.ChatsPreview;
-import http.ConnectionOperator;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,9 +12,13 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import model.chats.ChatsPreviewModel;
 
-public class ChatsUpdater extends Service<Void> {
+import org.json.JSONObject;
 
-	public ChatsUpdater(ChatsPreview updated) {
+import view.chats.ChatsPreview;
+
+public class ChatsPreviewUpdater extends Service<Void> {
+
+	public ChatsPreviewUpdater(ChatsPreview updated) {
 		this.updatedModel = updated.getModel();
 		this.updatedView = updated;
 	}

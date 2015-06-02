@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -10,13 +9,13 @@ import javafx.event.EventHandler;
 import javafx.scene.input.ScrollEvent;
 import view.chats.ChatsPreview;
 
-public class ChatsController {
+public class ChatsPreviewController {
 
-	public ChatsController(ChatsPreview CV) {
-		this.controlled = CV;
-		this.controlled.getChatsContainer().setOnScroll(scrollHandler);
+	public ChatsPreviewController(ChatsPreview CPV) {
+		this.controlled = CPV;
+		//this.controlled.getChatsContainer().setOnScroll(scrollHandler);
 		
-		this.updater = new ChatsUpdater(controlled);
+		this.updater = new ChatsPreviewUpdater(controlled);
 		
 		this.controlled.canBeUpdated().addListener((ObservableValue<? extends Boolean> observable,
 				Boolean oldValue, Boolean newValue) -> {
@@ -25,17 +24,6 @@ public class ChatsController {
 				updater.start();});
 	}
 	
-	
-
-	public ViewSwitcher getVS() {
-		return VS;
-	}
-
-
-	public void setVS(ViewSwitcher vS) {
-		VS = vS;
-	}
-
 
 
 	public EventHandler<ScrollEvent> scrollHandler = new EventHandler<ScrollEvent>() {
@@ -69,12 +57,11 @@ public class ChatsController {
 	};
 
 	private ChatsPreview controlled;
-	private ChatsUpdater updater;
-	private ViewSwitcher VS;
-	private LoadService loader = new LoadService();
+	private ChatsPreviewUpdater updater;
+	private LoaderService loader = new LoaderService();
 	
 	
-	private class LoadService extends Service<Void> {
+	private class LoaderService extends Service<Void> {
 
 		@Override
 		protected Task<Void> createTask() {

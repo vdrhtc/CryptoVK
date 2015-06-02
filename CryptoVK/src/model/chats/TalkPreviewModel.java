@@ -26,6 +26,7 @@ public class TalkPreviewModel extends ChatPreviewModel {
 	}
 	
 	private JSONObject extractTalkInterlocutors(JSONObject content) {
+		this.setInterlocutors(new ArrayList<VKPerson>());
 		JSONObject chatInfo = ConnectionOperator.getChat(content
 				.getInt("chat_id"));
 		if (chatInfo.optInt("left")==1) {

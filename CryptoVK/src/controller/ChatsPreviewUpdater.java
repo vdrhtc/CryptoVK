@@ -10,11 +10,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import model.chats.ChatsPreviewModel;
+import model.preview.ChatsPreviewModel;
 
 import org.json.JSONObject;
 
-import view.chats.ChatsPreview;
+import view.preview.ChatsPreview;
 
 public class ChatsPreviewUpdater extends Service<Void> {
 

@@ -1,4 +1,4 @@
-package model.chats;
+package model.preview;
 
 import http.ConnectionOperator;
 

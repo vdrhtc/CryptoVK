@@ -1,5 +1,5 @@
 package model.messaging;
 
-public class Chat {
+public class MessageModel {
 
 }

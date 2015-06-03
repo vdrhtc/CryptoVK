@@ -1,4 +1,4 @@
-package model.chats;
+package model.preview;
 
 import model.VKPerson;
 
@@ -39,5 +39,7 @@ public class DialogPreviewModel extends ChatPreviewModel {
 			return true;
 		return false;
 	}
+	
+
 	
 }

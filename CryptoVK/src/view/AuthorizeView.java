@@ -72,7 +72,7 @@ public class AuthorizeView implements SwitchableView {
 
 	private void proceedToNextView(String token) {
 		ConnectionOperator.setAccessToken(token);
-		VS.switchToView(ViewName.CHATS_PREVIEW);
+		VS.switchToView(ViewName.CHATS_PREVIEW, null);
 
 	}
 
@@ -89,7 +89,7 @@ public class AuthorizeView implements SwitchableView {
 	}
 	
 	@Override
-	public void getReadyForSwitch() {
+	public void getReadyForSwitch(Object param) {
 		return;
 	}
 

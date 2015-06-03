@@ -1,44 +1,65 @@
 package view.messaging;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import model.preview.ChatPreviewModel;
 import view.SwitchableView;
-import controller.ChatsViewController;
+import controller.ChatViewController;
 
 public class ChatsView implements SwitchableView {
 	
 	public ChatsView() {
-		this.controller = new ChatsViewController(this);
+
+		this.controller = new ChatViewController(this);
 		this.controller.addBackButtonListener(back);
 		
 		this.back.setCancelButton(true);
 		
 		this.header.getChildren().addAll(back, title);
-		this.root.getChildren().addAll(header, chatNamesContainer, inputTray);
+		
+		VBox chatHolderDummy = new VBox();
+		this.root.getChildren().addAll(header, chatNamesContainer, chatHolderDummy);
 		
 	}
 	
 	
-	public void addChatView(ChatView newChatView) {
-		viewedChats.add(newChatView);
+	@Override
+	public void getReadyForSwitch(Object param) {
+
+		ChatPreviewModel previewModel = (ChatPreviewModel) param;
+		
+		if(!viewedChats.containsKey(previewModel)) {
+			
+			ChatView newChat = new ChatView(previewModel);
+			
+			chatNamesContainer.getChildren().add(new Label(previewModel.getTitle()));
+			viewedChats.put(previewModel, newChat);
+			setCurrentViewedChat(newChat);
+		}
+		
+		else {
+			setCurrentViewedChat(viewedChats.get(previewModel));
+		}
+		
 	}
 	
 	
+	private void setCurrentViewedChat(ChatView CV) {
+		this.root.getChildren().set(2, CV.getRoot());
+	}
+	
 	private VBox root = new VBox();
 	private HBox header = new HBox();
+	private ChatViewController controller;
 	private Label title = new Label("Чаты");
 	private Button back = new Button("Назад");
 	private HBox chatNamesContainer = new HBox();
-	private TextField inputTray = new TextField();
-	private ChatsViewController controller;
-	private ArrayList<ChatView> viewedChats = new ArrayList<>();
+	private HashMap<ChatPreviewModel, ChatView> viewedChats = new HashMap<>();
 	
 
 	@Override
@@ -48,17 +69,13 @@ public class ChatsView implements SwitchableView {
 
 	@Override
 	public ViewName getName() {
-		return ViewName.CHATS_HOLDER;
+		return ViewName.CHATS_VIEW;
 	}
 
-	@Override
-	public void getReadyForSwitch() {
-		// TODO Auto-generated method stub
-	}
 
 	@Override
 	public ViewName redirectTo() {
-		return ViewName.CHATS_HOLDER;
+		return ViewName.CHATS_VIEW;
 	}
 
 

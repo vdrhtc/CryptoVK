@@ -29,7 +29,6 @@ public class ImageOperator {
 			}
 		}
 		
-		System.out.print(urls.length);
 		
 		BufferedImage icon = new BufferedImage(110, 110, BufferedImage.TYPE_INT_ARGB);
 		Iterator<BufferedImage> iter = BIs.iterator();

@@ -1,22 +1,21 @@
-package view.chats;
+package view.preview;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import controller.ChatPreviewController;
-import data.ImageOperator;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import model.chats.ChatPreviewModel;
+import model.preview.ChatPreviewModel;
 import view.View;
+import controller.ChatPreviewController;
+import data.ImageOperator;
 
 public class ChatPreview implements View {
 
@@ -24,14 +23,6 @@ public class ChatPreview implements View {
 	public ChatPreview(ChatPreviewModel model, ReadOnlyDoubleProperty parentHeight) {
 		
 		this.synchronizeWithModel(model);
-
-		this.metaInfoContainer.getStyleClass().add(
-				"chat-entry-meta-info-container");
-		this.lastMessageContainer.getStyleClass().add(
-				"chat-entry-last-message-container");
-		this.title.getStyleClass().add("chat-entry-title");
-		this.lastMessage.getStyleClass().add("chat-entry-message");
-		this.icon.getStyleClass().add("chat-entry-icon");
 		this.initRoot(parentHeight);
 
 		this.controller = new ChatPreviewController(this);
@@ -71,6 +62,15 @@ public class ChatPreview implements View {
 
 	private void initRoot(ReadOnlyDoubleProperty parentHeiht) {
 		
+
+		this.metaInfoContainer.getStyleClass().add(
+				"chat-entry-meta-info-container");
+		this.lastMessageContainer.getStyleClass().add(
+				"chat-entry-last-message-container");
+		this.title.getStyleClass().add("chat-entry-title");
+		this.lastMessage.getStyleClass().add("chat-entry-message");
+		this.icon.getStyleClass().add("chat-entry-icon");
+		
 		root = new HBox();
 		
 		root.getStyleClass().add("chat-entry-hbox");
@@ -85,7 +85,7 @@ public class ChatPreview implements View {
 	}
 
 	private Image getIcon(ChatPreviewModel model) {
-		return ImageOperator.getIconFrom(model.getChatIconURLs());
+		return ImageOperator.getIconFrom(model.getChatIconURL());
 	}
 
 	private ChatPreviewModel currentLoadedModel;
@@ -114,5 +114,10 @@ public class ChatPreview implements View {
 	public HBox getRoot() {
 		return this.root;
 	}
+
+	public ChatPreviewModel getCurrentLoadedModel() {
+		return currentLoadedModel;
+	}
+
 
 }

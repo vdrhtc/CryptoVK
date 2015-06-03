@@ -6,16 +6,16 @@ import view.SwitchableView.ViewName;
 import view.messaging.ChatsView;
 
 
-public class ChatsViewController {
+public class ChatViewController {
 
-	public ChatsViewController(ChatsView CV) {
+	public ChatViewController(ChatsView CV) {
 		this.controlled = CV;
 	}
 	
 
 	public void addBackButtonListener(Button back) {
-		back.setOnAction((ActionEvent e)->{
-			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW);
+		back.setOnAction((ActionEvent e) -> {
+			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, null);
 		});
 	}
 	

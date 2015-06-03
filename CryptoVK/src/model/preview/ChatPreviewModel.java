@@ -1,4 +1,4 @@
-package model.chats;
+package model.preview;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -12,16 +12,27 @@ import org.json.JSONObject;
 
 public class ChatPreviewModel {
 	
-
 	public ChatPreviewModel() {
 		
 	}
-	
-	public ChatPreviewModel(int chatId, Boolean read, Date lastMessageDate) {
-		this.setChatId(chatId);
+
+	public ChatPreviewModel(int chatId, Boolean read, String title,
+			long lastMessageId, String[] chatIconURL, String lastMessage,
+			Date lastMessageDate, VKPerson lastMessageSender,
+			ArrayList<VKPerson> interlocutors) {
+		super();
+		this.chatId = chatId;
 		this.read = read;
+		this.title = title;
+		this.lastMessageId = lastMessageId;
+		this.chatIconURL = chatIconURL;
+		this.lastMessage = lastMessage;
 		this.lastMessageDate = lastMessageDate;
+		this.lastMessageSender = lastMessageSender;
+		this.interlocutors = interlocutors;
 	}
+	
+
 	
 	public static ChatPreviewModel getChatEntry(JSONObject content) {
 		return  isDialog(content) ? new DialogPreviewModel() : new TalkPreviewModel();
@@ -69,9 +80,6 @@ public class ChatPreviewModel {
 		return content.optInt("chat_id") == 0 ? true : false;
 	}
 	
-	public void loadChat() {
-		
-	}
 
 	@Override
 	public String toString() {
@@ -125,9 +133,9 @@ public class ChatPreviewModel {
 	
 	@Override
 	public ChatPreviewModel clone() {
-		return new ChatPreviewModel(getChatId(), read, lastMessageDate);
+		return new ChatPreviewModel(chatId,read, title, lastMessageId, chatIconURL,
+				lastMessage, lastMessageDate, lastMessageSender, interlocutors);
 	}
-	
 
 	public String getTitle() { 
 		return title; 
@@ -137,7 +145,7 @@ public class ChatPreviewModel {
 		return DateFormat.getInstance().format(lastMessageDate);
 	}
 
-	public String[] getChatIconURLs() {
+	public String[] getChatIconURL() {
 		return chatIconURL;
 	}
 	

@@ -1,4 +1,4 @@
-package view.chats;
+package view.preview;
 
 import java.util.ArrayList;
 
@@ -14,31 +14,30 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import model.chats.ChatsPreviewModel;
+import model.preview.ChatsPreviewModel;
 import view.SwitchableView;
 import controller.ChatsPreviewController;
 import data.DataOperator;
 
 public class ChatsPreview implements SwitchableView {
 
-	public static final int LOAD_NEW_COUNT = 2;
+	public static final int LOAD_NEW_COUNT = 10;
 	public static final int CHATS_PER_PAGE = 10;
 	public static final ViewName NAME = ViewName.CHATS_PREVIEW;
 
 	public ChatsPreview() {
-				
+		
+		initRoot();
+		
+	}
+	
+	private void initRoot() {
+		
+
 		this.header.getStyleClass().add("chats-header");
 		this.statusMessage.setId("chats-status-message");
 		this.statusBar.getStyleClass().add("chats-status-bar");
 		this.chatsContainer.getStyleClass().add("chats-container");
-		
-	}
-	
-	public ChatsPreviewModel getModel() {
-		return model;
-	}
-	
-	private void initRoot() {
 		
 		this.root = new BorderPane();
 		
@@ -60,7 +59,7 @@ public class ChatsPreview implements SwitchableView {
 		return root;
 	}
 
-	public void appendNewEntries(int count) {
+	public void loadNewEntries(int count) {
 		ArrayList<Node> toAppend = new ArrayList<>();
 		int oldChatEntriesCount = chatEntriesCount;
 		for (int i = oldChatEntriesCount; i < oldChatEntriesCount+count; i++) {
@@ -69,7 +68,9 @@ public class ChatsPreview implements SwitchableView {
 			ChatPreview newEntry = new ChatPreview(model.getChats().get(i), chatsContainer.heightProperty());
 			entries.add(newEntry);
 			toAppend.add(newEntry.getRoot());
-			progressBar.setProgress(progressBar.getProgress() + 0.5*(oldChatEntriesCount+count-1));
+
+			progressBar.setProgress(1.0/LOAD_NEW_COUNT*(i-oldChatEntriesCount));
+			System.out.println(progressBar.getProgress());
 		}
 		chatsLayout.getChildren().addAll(toAppend);
 	}
@@ -89,19 +90,19 @@ public class ChatsPreview implements SwitchableView {
 			entries.get(i).update(model.getChats().get(i));
 	}
 	
-	private ChatsPreviewModel model = new ChatsPreviewModel();
-	private ChatsPreviewController controller;
+	private BorderPane root;
 	private HBox statusBar = new HBox(); 
-	private VBox chatsLayout = new VBox();
 	private Integer chatEntriesCount = 0;
+	private VBox chatsLayout = new VBox();
+	private Label header = new Label("Чаты");
+	private ChatsPreviewController controller;
+	private Label statusMessage = new Label("Ready");
+	private ProgressBar progressBar = new ProgressBar(0);
+	private ChatsPreviewModel model = new ChatsPreviewModel();
 	private ArrayList<ChatPreview> entries = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
-
-	private Label header = new Label("Чаты");
-	private BorderPane root;
-	private Label statusMessage = new Label("Ready");
-	private ProgressBar progressBar = new ProgressBar();
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
+
 
 	public BooleanProperty canBeUpdated() {
 		return canBeUpdated;
@@ -120,15 +121,14 @@ public class ChatsPreview implements SwitchableView {
 	}
 
 	@Override
-	public void getReadyForSwitch() {
+	public void getReadyForSwitch(Object param) {
 		
-		if(this.root == null) {             // First time switch
-			initRoot();
-			model.initializeEntries();
-			appendNewEntries(CHATS_PER_PAGE);
-			canBeUpdated.setValue(true);
-		}
+		if(chatEntriesCount > 0)
+			return;
 			
+		model.initializeEntries();
+		loadNewEntries(CHATS_PER_PAGE);
+		canBeUpdated.setValue(true);
 	}
 
 	@Override
@@ -150,6 +150,10 @@ public class ChatsPreview implements SwitchableView {
 
 	public ProgressBar getProgressBar() {
 		return progressBar;
+	}
+	
+	public ChatsPreviewModel getModel() {
+		return model;
 	}
 
 

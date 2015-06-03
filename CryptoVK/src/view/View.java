@@ -1,8 +1,8 @@
 package view;
 
-import javafx.scene.layout.Pane;
+import javafx.scene.Parent;
 
 public interface View {
 	
-	public Pane getRoot();
+	public Parent getRoot();
 }

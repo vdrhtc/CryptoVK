@@ -21,20 +21,25 @@ public class ViewSwitcher {
 		
 		for (SwitchableView v : views) {
 			this.views.put(v.getName(), v);
-			this.scenes.put(v.getName(), new Scene(new StackPane()));
+			
+			Scene scene = new Scene(new StackPane());
+			//TODO: Сделать для каждого свои стайлшиты
+			
+			scene.getStylesheets().addAll("view/preview/chatPreviewStyle.css", "view/preview/chatsPreviewStyle.css");
+
+			this.scenes.put(v.getName(), scene);
+			
 		}
 	}
 	
-	public void switchToView(ViewName name) {
+	public void switchToView(ViewName name, Object param) {
 		ViewName redirectName = views.get(name).redirectTo();
 		
-		views.get(redirectName).getReadyForSwitch();
+		views.get(redirectName).getReadyForSwitch(param);
 		Scene scene = scenes.get(redirectName);
 		scene.setRoot(views.get(redirectName).getRoot());
 		this.activeView = redirectName;
-		
-		scene.getStylesheets().addAll("view/chats/chatPreviewStyle.css", "view/chats/chatsPreviewStyle.css");
-		
+				
 		stage.setScene(scene);
 		stage.show();
 	}

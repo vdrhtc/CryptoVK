@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import view.SwitchableView.ViewName;
-import view.chats.ChatPreview;
+import view.preview.ChatPreview;
 
 public class ChatPreviewController {
 	
@@ -20,7 +20,7 @@ public class ChatPreviewController {
 
 		@Override
 		public void handle(MouseEvent event) {
-			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_HOLDER);
+			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_VIEW, controlled.getCurrentLoadedModel());
 		}
 		
 	};

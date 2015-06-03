@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -7,13 +8,13 @@ import javafx.concurrent.Worker.State;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.ScrollEvent;
-import view.chats.ChatsPreview;
+import view.preview.ChatsPreview;
 
 public class ChatsPreviewController {
 
 	public ChatsPreviewController(ChatsPreview CPV) {
 		this.controlled = CPV;
-		//this.controlled.getChatsContainer().setOnScroll(scrollHandler);
+		this.controlled.getChatsContainer().setOnScroll(scrollHandler);
 		
 		this.updater = new ChatsPreviewUpdater(controlled);
 		
@@ -86,12 +87,16 @@ public class ChatsPreviewController {
 		private EventHandler<WorkerStateEvent> entryLoadResultHandler = new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent t) {
-				controlled.getModel().getLock(); 
-				controlled.appendNewEntries(ChatsPreview.LOAD_NEW_COUNT);
-				controlled.getModel().releaseLock(); 
 				
-				controlled.getProgressBar().setProgress(1);
-				controlled.getStatusMessage().setText("Ready");
+				Platform.runLater(() -> {
+					controlled.getProgressBar().setProgress(0);
+					controlled.getModel().getLock(); 
+					controlled.loadNewEntries(ChatsPreview.LOAD_NEW_COUNT);
+					controlled.getModel().releaseLock(); 
+					
+					controlled.getProgressBar().setProgress(1);
+					controlled.getStatusMessage().setText("Ready");
+					});
 			}
 		};
 	}

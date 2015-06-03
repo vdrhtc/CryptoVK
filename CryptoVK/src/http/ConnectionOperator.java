@@ -16,6 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ConnectionOperator {
+	
+	public static int REQUEST_COUNT = 0;
+	
 
 	public static JSONObject getLongPollServer() {
 		String realRequest = messages_getLongPollServer
@@ -72,6 +75,17 @@ public class ConnectionOperator {
 		return new JSONObject(sendRequest(realRequest))
 				.optJSONObject("response");
 	}
+	
+	public static JSONObject getChatHistory(int interlocutorId, int chatId, int count, int startMessageId) {
+		
+		String realRequest = messages_getHistoryTemplate.concat("&chat_id=" + chatId)
+				.concat("&count="+count).concat("&user_id="+interlocutorId)
+				.concat("&start_message_id="+startMessageId)
+				.concat("&access_token=" + acess_token);
+		
+		return new JSONObject(sendRequest(realRequest))
+				.optJSONObject("response");
+	}
 
 	public static JSONObject getOwner() {
 		String realRequest = users_getTemplate.concat("&fields=photo_50")
@@ -84,10 +98,13 @@ public class ConnectionOperator {
 	}
 
 	public static String sendRequest(String URL) {
+		
+		REQUEST_COUNT++;
+		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			HttpGet httpget = new HttpGet(URL);
-			//System.out.println("Executing request " + httpget.getRequestLine());
+			System.out.println("Executing request " + httpget.getRequestLine());
 
 			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
@@ -116,7 +133,7 @@ public class ConnectionOperator {
 					log.warning(responseBody);
 
 			}
-			//System.out.println("-----"+response.toString());
+			System.out.println("-----"+response.toString());
 			return responseBody;
 
 		} catch (IOException | InterruptedException e) {
@@ -146,7 +163,9 @@ public class ConnectionOperator {
 	private static String users_getTemplate = "https://api.vk.com/method/users.get?&v=5.23";
 	private static String messages_getLongPollServer = "https://api.vk.com/method/messages.getLongPollServer?&v=5.23";
 	private static String messages_getChatTemplate = "https://api.vk.com/method/messages.getChat?&v=5.23";
+	private static String messages_getHistoryTemplate = "https://api.vk.com/method/messages.getHistory?&v=5.23";
 
+	
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
 		log.setLevel(Level.ALL);

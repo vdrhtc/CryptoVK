@@ -3,8 +3,8 @@ package view;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.SwitchableView.ViewName;
-import view.chats.ChatsPreview;
 import view.messaging.ChatsView;
+import view.preview.ChatsPreview;
 import controller.ViewSwitcher;
 
 public class Launcher extends Application {
@@ -19,7 +19,7 @@ public class Launcher extends Application {
 		ChatsView CV = new ChatsView();
 		VS = ViewSwitcher.getInstance();
 		VS.setViews(primaryStage, AV, CPV, CV);
-		VS.switchToView(ViewName.AUTHORIZE_VIEW);
+		VS.switchToView(ViewName.AUTHORIZE_VIEW, null);
 		
 		primaryStage.show();
 	}

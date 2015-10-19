@@ -20,7 +20,7 @@ public class ChatPreviewController {
 
 		@Override
 		public void handle(MouseEvent event) {
-			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_VIEW, controlled.getCurrentLoadedModel());
+			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_VIEW, controlled.getCurrentLoadedModel().buildFullModel());
 		}
 		
 	};

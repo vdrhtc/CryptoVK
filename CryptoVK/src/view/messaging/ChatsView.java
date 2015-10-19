@@ -1,5 +1,6 @@
 package view.messaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.scene.control.Button;
@@ -7,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import model.messaging.ChatModel;
 import model.preview.ChatPreviewModel;
 import view.SwitchableView;
 import controller.ChatViewController;
@@ -29,21 +31,21 @@ public class ChatsView implements SwitchableView {
 	
 	
 	@Override
-	public void getReadyForSwitch(Object param) {
+	public void getReadyForSwitch(Object... params) {
 
-		ChatPreviewModel previewModel = (ChatPreviewModel) param;
+		ChatModel model = (ChatModel) params[0];
 		
-		if(!viewedChats.containsKey(previewModel)) {
+		if(!viewedChats.containsKey(model)) {
 			
-			ChatView newChat = new ChatView(previewModel);
+			ChatView newChat = new ChatView(model);
 			
-			chatNamesContainer.getChildren().add(new Label(previewModel.getTitle()));
-			viewedChats.put(previewModel, newChat);
+			chatNamesContainer.getChildren().add(new Label(model.getTitle()));
+			viewedChats.put(model, newChat);
 			setCurrentViewedChat(newChat);
 		}
 		
 		else {
-			setCurrentViewedChat(viewedChats.get(previewModel));
+			setCurrentViewedChat(viewedChats.get(model));
 		}
 		
 	}
@@ -59,7 +61,7 @@ public class ChatsView implements SwitchableView {
 	private Label title = new Label("Чаты");
 	private Button back = new Button("Назад");
 	private HBox chatNamesContainer = new HBox();
-	private HashMap<ChatPreviewModel, ChatView> viewedChats = new HashMap<>();
+	private HashMap<ChatModel, ChatView> viewedChats = new HashMap<>();
 	
 
 	@Override

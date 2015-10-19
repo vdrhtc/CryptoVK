@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.scene.Scene;
@@ -32,10 +33,10 @@ public class ViewSwitcher {
 		}
 	}
 	
-	public void switchToView(ViewName name, Object param) {
+	public void switchToView(ViewName name, Object... params) {
 		ViewName redirectName = views.get(name).redirectTo();
 		
-		views.get(redirectName).getReadyForSwitch(param);
+		views.get(redirectName).getReadyForSwitch(params);
 		Scene scene = scenes.get(redirectName);
 		scene.setRoot(views.get(redirectName).getRoot());
 		this.activeView = redirectName;

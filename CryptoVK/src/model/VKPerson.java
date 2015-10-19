@@ -8,11 +8,11 @@ import org.json.JSONObject;
 
 public class VKPerson {
 
-	public VKPerson(JSONObject interlocutorContent) {
-		this.firstName = interlocutorContent.getString("first_name");
-		this.lastName = interlocutorContent.getString("last_name");
-		this.id = interlocutorContent.getInt("id");
-		this.photoURL = interlocutorContent.getString("photo_50");
+	public VKPerson(JSONObject content) {
+		this.firstName = content.getString("first_name");
+		this.lastName = content.getString("last_name");
+		this.id = content.getInt("id");
+		this.photoURL = content.getString("photo_50");
 		VKPerson.knownPersons.put(this.id, this);
 	}
 	

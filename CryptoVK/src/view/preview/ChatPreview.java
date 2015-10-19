@@ -30,7 +30,7 @@ public class ChatPreview implements View {
 
 	private void synchronizeWithModel(ChatPreviewModel model) {
 		this.currentLoadedModel = model.clone();
-		date.setText(model.getLastMessageDate());
+		date.setText(model.getLastMessageDateString());
 		title.setText(model.getTitle());
 		icon.setImage(getIcon(model));
 		setLastMessageReadState(model);

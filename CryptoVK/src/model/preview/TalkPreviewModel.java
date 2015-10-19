@@ -1,18 +1,28 @@
 package model.preview;
 
-import http.ConnectionOperator;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
-import model.VKPerson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import http.ConnectionOperator;
+import model.VKPerson;
+import model.messaging.ChatModel;
+import model.messaging.TalkModel;
+
 public class TalkPreviewModel extends ChatPreviewModel {
 	
+	public TalkPreviewModel() {	}
+
+	public TalkPreviewModel(int chatId, Boolean read, String title, long lastMessageId, String[] chatIconURL,
+			String lastMessage, Date lastMessageDate, VKPerson lastMessageSender, ArrayList<VKPerson> interlocutors) {
+		super(chatId, read, title, lastMessageId, chatIconURL, lastMessage, lastMessageDate, lastMessageSender, interlocutors);
+	}
+
+
 	private String deletedImageURL = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";
 
 	
@@ -24,6 +34,11 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		extractTalkIcon(chatInfo);
 		super.loadContent(content);
 	}
+	
+	public ChatModel buildFullModel() {
+		return new TalkModel(this);
+	}
+	
 	
 	private JSONObject extractTalkInterlocutors(JSONObject content) {
 		this.setInterlocutors(new ArrayList<VKPerson>());
@@ -69,6 +84,13 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		this.setTitle(content.getString("title"));
 	}
 	
+	@Override
+	public TalkPreviewModel clone() {
+		
+		return new TalkPreviewModel(getChatId(),getRead(), getTitle(), getLastMessageId(), getChatIconURL(),
+				getLastMessage(), getLastMessageDate(), getLastMessageSender(), getInterlocutors());
+		
+	}
 
 	@Override
 	public boolean isContentCorresponding(JSONObject content) {

@@ -76,7 +76,7 @@ public class ConnectionOperator {
 				.optJSONObject("response");
 	}
 	
-	public static JSONObject getChatHistory(int interlocutorId, int chatId, int count, int startMessageId) {
+	public static JSONArray getChatHistory(int interlocutorId, int chatId, int count, int startMessageId) {
 		
 		String realRequest = messages_getHistoryTemplate.concat("&chat_id=" + chatId)
 				.concat("&count="+count).concat("&user_id="+interlocutorId)
@@ -84,7 +84,7 @@ public class ConnectionOperator {
 				.concat("&access_token=" + acess_token);
 		
 		return new JSONObject(sendRequest(realRequest))
-				.optJSONObject("response");
+				.optJSONObject("response").getJSONArray("items");
 	}
 
 	public static JSONObject getOwner() {

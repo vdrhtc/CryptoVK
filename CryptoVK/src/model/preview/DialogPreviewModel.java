@@ -1,12 +1,22 @@
 package model.preview;
 
 import model.VKPerson;
+import model.messaging.DialogModel;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import org.json.JSONObject;
 
 public class DialogPreviewModel extends ChatPreviewModel {
 
+	public DialogPreviewModel() {}
 	
+	public DialogPreviewModel(int chatId, Boolean read, String title, long lastMessageId, String[] chatIconURL,
+			String lastMessage, Date lastMessageDate, VKPerson lastMessageSender, ArrayList<VKPerson> interlocutors) {
+		super(chatId, read, title, lastMessageId, chatIconURL, lastMessage, lastMessageDate, lastMessageSender, interlocutors);
+	}
+
 	@Override
 	public void loadContent(JSONObject content) {
 		extractDialogTitle(content);
@@ -14,6 +24,10 @@ public class DialogPreviewModel extends ChatPreviewModel {
 		extractDialogIcon();
 		super.loadContent(content);
 
+	}
+	
+	public DialogModel buildFullModel() {
+		return new DialogModel(this);
 	}
 	
 	private void extractDialogTitle(JSONObject content) {
@@ -40,6 +54,13 @@ public class DialogPreviewModel extends ChatPreviewModel {
 		return false;
 	}
 	
+	@Override
+	public DialogPreviewModel clone() {
+		
+		return new DialogPreviewModel(getChatId(),getRead(), getTitle(), getLastMessageId(), getChatIconURL(),
+				getLastMessage(), getLastMessageDate(), getLastMessageSender(), getInterlocutors());
+		
+	}
 
 	
 }

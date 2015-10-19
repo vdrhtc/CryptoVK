@@ -1,5 +1,6 @@
 package view;
 
+import java.util.ArrayList;
 
 public interface SwitchableView extends View {
 	
@@ -8,6 +9,6 @@ public interface SwitchableView extends View {
 	}
 
 	public ViewName getName();
-	public void getReadyForSwitch(Object param);
+	public void getReadyForSwitch(Object... params);
 	public ViewName redirectTo();
 }

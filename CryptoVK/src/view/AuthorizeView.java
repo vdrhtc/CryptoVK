@@ -4,6 +4,7 @@ import http.ConnectionOperator;
 import http.ResponseParser;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,7 +90,7 @@ public class AuthorizeView implements SwitchableView {
 	}
 	
 	@Override
-	public void getReadyForSwitch(Object param) {
+	public void getReadyForSwitch(Object... params) {
 		return;
 	}
 

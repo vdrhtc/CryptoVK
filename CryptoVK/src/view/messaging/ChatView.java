@@ -14,9 +14,12 @@ import view.View;
 
 public class ChatView implements View {
 
-	public ChatView(ChatPreviewModel sourcePreviewModel) {
+	public static final int LOAD_NEW_COUNT = 10;
+
+	
+	public ChatView(ChatModel model) {
 		initRoot();
-		this.model = new ChatModel(sourcePreviewModel);
+		this.model = model;
 		loadMessages();
 	}
 	
@@ -27,7 +30,7 @@ public class ChatView implements View {
 	}
 	
 	private void loadMessages() {
-		
+		model.loadNewMessages(LOAD_NEW_COUNT);
 	}
 
 	private VBox root;

@@ -69,8 +69,8 @@ public class ChatsPreview implements SwitchableView {
 			entries.add(newEntry);
 			toAppend.add(newEntry.getRoot());
 
-			progressBar.setProgress(1.0/LOAD_NEW_COUNT*(i-oldChatEntriesCount));
-			System.out.println(progressBar.getProgress());
+//			progressBar.setProgress(1.0/LOAD_NEW_COUNT*(i-oldChatEntriesCount));
+//			System.out.println(progressBar.getProgress());
 		}
 		chatsLayout.getChildren().addAll(toAppend);
 	}
@@ -121,7 +121,7 @@ public class ChatsPreview implements SwitchableView {
 	}
 
 	@Override
-	public void getReadyForSwitch(Object param) {
+	public void getReadyForSwitch(Object... params) {
 		
 		if(chatEntriesCount > 0)
 			return;

@@ -22,21 +22,8 @@ public class ChatPreview implements View {
 
 	public ChatPreview(ChatPreviewModel model, ReadOnlyDoubleProperty parentHeight) {
 		
-		this.synchronizeWithModel(model);
-		this.initRoot(parentHeight);
-
+		this.updateModel(model);
 		this.controller = new ChatPreviewController(this);
-	}
-
-	private void synchronizeWithModel(ChatPreviewModel model) {
-		this.currentLoadedModel = model.clone();
-		date.setText(model.getLastMessageDateString());
-		title.setText(model.getTitle());
-		icon.setImage(getIcon(model));
-		setLastMessageReadState(model);
-		lastMessage.setText(model.getLastMessage());
-		lastSenderPhoto.setImage(getLastSenderPhoto(model));
-		clipLastSenderPhoto();
 	}
 
 	private void setLastMessageReadState(ChatPreviewModel model) {
@@ -71,8 +58,6 @@ public class ChatPreview implements View {
 		this.lastMessage.getStyleClass().add("chat-entry-message");
 		this.icon.getStyleClass().add("chat-entry-icon");
 		
-		root = new HBox();
-		
 		root.getStyleClass().add("chat-entry-hbox");
 		root.prefHeightProperty().bind(
 				parentHeiht.divide(ChatsPreview.CHATS_PER_PAGE));
@@ -88,15 +73,15 @@ public class ChatPreview implements View {
 		return ImageOperator.getIconFrom(model.getChatIconURL());
 	}
 
-	private ChatPreviewModel currentLoadedModel;
-	private HBox root;
+	private HBox root = new HBox();
 	private Label date = new Label();
 	private Label title = new Label();
 	private Label lastMessage = new Label();
 	private ImageView icon = new ImageView();
-	private ImageView lastSenderPhoto = new ImageView();
 	private VBox metaInfoContainer = new VBox();
+	private ChatPreviewModel currentLoadedModel;
 	private HBox lastMessageContainer = new HBox();
+	private ImageView lastSenderPhoto = new ImageView();
 	
 	private ChatPreviewController controller;
 
@@ -105,9 +90,18 @@ public class ChatPreview implements View {
 		log.setLevel(Level.OFF);
 	}
 
-	public void update(ChatPreviewModel model) {
-		if (!this.currentLoadedModel.equals(model))
-			synchronizeWithModel(model);
+	public void updateModel(ChatPreviewModel model) {
+		if (!this.currentLoadedModel.equals(model)) {
+			
+			this.currentLoadedModel = model.clone();
+			date.setText(model.getLastMessageDateString());
+			title.setText(model.getTitle());
+			icon.setImage(getIcon(model));
+			setLastMessageReadState(model);
+			lastMessage.setText(model.getLastMessage());
+			lastSenderPhoto.setImage(getLastSenderPhoto(model));
+			clipLastSenderPhoto();
+		}
 	}
 
 	@Override

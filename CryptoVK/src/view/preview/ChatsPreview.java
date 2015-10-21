@@ -50,7 +50,7 @@ public class ChatsPreview implements SwitchableView {
 		this.root.setTop(header);
 		this.root.setBottom(statusBar);
 		
-		this.controller = new ChatsPreviewController(this);
+		new ChatsPreviewController(this);
 
 	}
 
@@ -87,7 +87,7 @@ public class ChatsPreview implements SwitchableView {
 
 	public void update() {
 		for (int i = 0; i < entries.size(); i++) 
-			entries.get(i).update(model.getChats().get(i));
+			entries.get(i).updateModel(model.getChats().get(i));
 	}
 	
 	private BorderPane root;
@@ -95,7 +95,6 @@ public class ChatsPreview implements SwitchableView {
 	private Integer chatEntriesCount = 0;
 	private VBox chatsLayout = new VBox();
 	private Label header = new Label("Чаты");
-	private ChatsPreviewController controller;
 	private Label statusMessage = new Label("Ready");
 	private ProgressBar progressBar = new ProgressBar(0);
 	private ChatsPreviewModel model = new ChatsPreviewModel();

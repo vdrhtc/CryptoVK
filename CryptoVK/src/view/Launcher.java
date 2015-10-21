@@ -19,7 +19,7 @@ public class Launcher extends Application {
 		ChatsView CV = new ChatsView();
 		VS = ViewSwitcher.getInstance();
 		VS.setViews(primaryStage, AV, CPV, CV);
-		VS.switchToView(ViewName.AUTHORIZE_VIEW, null);
+		VS.switchToView(ViewName.AUTHORIZE_VIEW, (Object[]) null);
 		
 		primaryStage.show();
 	}

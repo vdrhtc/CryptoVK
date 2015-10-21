@@ -22,9 +22,8 @@ public class ChatModel {
 
 	private int chatId;
 	private String chatTitle;
-	private String[] chatIconURL;
 	private int lastMessageId;
-
+	private String[] chatIconURL;
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
 
 	

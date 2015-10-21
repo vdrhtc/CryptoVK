@@ -47,7 +47,6 @@ public class ChatsView implements SwitchableView {
 		else {
 			setCurrentViewedChat(viewedChats.get(model));
 		}
-		
 	}
 	
 	

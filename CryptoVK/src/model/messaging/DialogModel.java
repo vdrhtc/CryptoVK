@@ -5,6 +5,7 @@ import model.VKPerson;
 import model.preview.ChatPreviewModel;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class DialogModel extends ChatModel {
 
@@ -16,10 +17,11 @@ public class DialogModel extends ChatModel {
 	
 	@Override
 	public void loadNewMessages(int count) {
-		
-		JSONArray messages = ConnectionOperator.getChatHistory(interlocutor.getId(), interlocutor.getId(), count, 0);
-		System.out.println(messages.toString());
-		MessageModel startMessage = new MessageModel(messages.getJSONObject(0));
+				
+		JSONArray messageContents = ConnectionOperator.getChatHistory(interlocutor.getId(), interlocutor.getId(), count, 0);
+		for (int i=0; i<messageContents.length();i++) {
+			this.getLoadedMessages().add(new MessageModel(messageContents.getJSONObject(i)));
+		}
 	}
 
 	

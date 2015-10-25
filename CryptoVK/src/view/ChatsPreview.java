@@ -1,4 +1,4 @@
-package view.preview;
+package view;
 
 import java.util.ArrayList;
 
@@ -14,9 +14,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import model.ChatsPreviewModel;
 import model.Updated;
-import model.preview.ChatsPreviewModel;
-import view.View;
 
 public class ChatsPreview implements Updated, View {
 
@@ -25,13 +24,12 @@ public class ChatsPreview implements Updated, View {
 	public static final ViewName NAME = ViewName.CHATS_PREVIEW;
 
 	public ChatsPreview() {
-		
+		this.model = new ChatsPreviewModel();
 		initRoot();
-		
 	}
 	
+	
 	private void initRoot() {
-		
 
 		this.header.getStyleClass().add("chats-header");
 		this.statusMessage.setId("chats-status-message");
@@ -81,15 +79,15 @@ public class ChatsPreview implements Updated, View {
 	private Label header = new Label("Чаты");
 	private Label statusMessage = new Label("Ready");
 	private ProgressBar progressBar = new ProgressBar(0);
-	private ChatsPreviewModel model = new ChatsPreviewModel();
+	private ChatsPreviewModel model;
 	private ArrayList<ChatPreview> previews = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
 
+	
 	public ArrayList<ChatPreview> getPreviews(){
 		return previews;
 	}
-	
 	
 	public BooleanProperty canBeUpdated() {
 		return canBeUpdated;

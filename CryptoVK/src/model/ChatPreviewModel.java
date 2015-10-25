@@ -1,4 +1,4 @@
-package model.preview;
+package model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,8 +8,6 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 
 import data.DataOperator;
-import model.VKPerson;
-import model.messaging.ChatModel;
 
 public class ChatPreviewModel {
 	
@@ -19,7 +17,6 @@ public class ChatPreviewModel {
 			long lastMessageId, String[] chatIconURL, String lastMessage,
 			Date lastMessageDate, VKPerson lastMessageSender,
 			ArrayList<VKPerson> interlocutors) {
-		super();
 		this.setChatId(chatId);
 		this.setRead(read);
 		this.setTitle(title);
@@ -31,10 +28,6 @@ public class ChatPreviewModel {
 		this.setInterlocutors(interlocutors);
 	}
 	
-	public static ChatPreviewModel getChatEntry(JSONObject content) {
-		return  isDialog(content) ? new DialogPreviewModel() : new TalkPreviewModel();
-	}
-
 	public void loadContent(JSONObject content) {
 		getLog().info(content.toString());
 		extractDate(content);
@@ -76,9 +69,6 @@ public class ChatPreviewModel {
 		return content.optInt("chat_id") == 0 ? true : false;
 	}
 	
-	public ChatModel buildFullModel() {
-		return new ChatModel(this);
-	}
 	
 	@Override
 	public String toString() {

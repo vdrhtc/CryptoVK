@@ -11,8 +11,9 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
+import model.ChatsPreviewModel;
+import view.ChatsPreview;
 import view.View.ViewName;
-import view.preview.ChatsPreview;
 
 public class ChatsPreviewController implements Controller {
 
@@ -36,7 +37,7 @@ public class ChatsPreviewController implements Controller {
 		if (controlled.getPreviewsCount() > 0) // TODO: WTF??
 			return;
 
-		controlled.getModel().initializeEntries();
+		controlled.getModel().loadPreviews(ChatsPreviewModel.PRE_LOADED_ENTRIES);;
 		loadNewEntries(ChatsPreview.CHATS_PER_PAGE);
 		controlled.canBeUpdated().setValue(true);
 

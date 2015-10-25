@@ -1,12 +1,10 @@
-package model.messaging;
+package model;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import model.Updated;
 
 public class ChatsModel implements Updated {
 	

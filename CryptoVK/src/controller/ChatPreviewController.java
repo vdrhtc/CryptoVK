@@ -5,9 +5,9 @@ import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import model.preview.ChatPreviewModel;
+import model.ChatPreviewModel;
+import view.ChatPreview;
 import view.View.ViewName;
-import view.preview.ChatPreview;
 
 public class ChatPreviewController implements Controller {
 	

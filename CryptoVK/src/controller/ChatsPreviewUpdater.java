@@ -1,6 +1,6 @@
 package controller;
 
-import view.preview.ChatsPreview;
+import view.ChatsPreview;
 
 public class ChatsPreviewUpdater extends LongPollUpdater {
 

@@ -1,4 +1,4 @@
-package model.preview;
+package model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import http.ConnectionOperator;
-import model.VKPerson;
-import model.messaging.TalkModel;
 
 public class TalkPreviewModel extends ChatPreviewModel {
 	
@@ -32,11 +30,6 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		JSONObject chatInfo = extractTalkInterlocutors(content);
 		extractTalkIcon(chatInfo);
 		super.loadContent(content);
-	}
-	
-	@Override
-	public TalkModel buildFullModel() {
-		return new TalkModel(this);
 	}
 	
 	

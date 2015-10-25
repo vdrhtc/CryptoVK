@@ -18,7 +18,7 @@ public class Launcher extends Application {
 		
 		AuthorizeViewController AVC = new AuthorizeViewController();
 		ChatsPreviewController CPVC = new ChatsPreviewController();
-		ChatsController CVC = new ChatsController();
+		ChatsViewController CVC = new ChatsViewController();
 		VS = ViewSwitcher.getInstance();
 		VS.setViews(primaryStage, AVC, CPVC, CVC);
 		VS.switchToView(ViewName.AUTHORIZE_VIEW, (Object[]) null);

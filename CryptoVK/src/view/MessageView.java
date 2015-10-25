@@ -1,4 +1,4 @@
-package view.messaging;
+package view;
 
 import data.ImageOperator;
 import javafx.css.PseudoClass;
@@ -11,8 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import model.messaging.MessageModel;
-import view.View;
+import model.MessageModel;
 
 public class MessageView implements View {
 

@@ -1,7 +1,4 @@
-package model.preview;
-
-import model.VKPerson;
-import model.messaging.DialogModel;
+package model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,10 +23,6 @@ public class DialogPreviewModel extends ChatPreviewModel {
 
 	}
 	
-	@Override
-	public DialogModel buildFullModel() {
-		return new DialogModel(this);
-	}
 	
 	private void extractDialogTitle(JSONObject content) {
 		VKPerson interlocutor = VKPerson.getKnownPerson(content.getInt("user_id"));

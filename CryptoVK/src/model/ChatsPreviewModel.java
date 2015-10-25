@@ -1,7 +1,4 @@
-package model.preview;
-
-import http.ConnectionOperator;
-import model.Updated;
+package model;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
@@ -12,27 +9,29 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import http.ConnectionOperator;
+
 public class ChatsPreviewModel implements Updated {
 
-	public final int PRE_LOADED_ENTRIES = 20;
+	public static final int PRE_LOADED_ENTRIES = 20;
 	private Lock lock = new ReentrantLock();
 
-	public void initializeEntries() {
-		JSONArray chatsJSONs = ConnectionOperator.getDialogs(PRE_LOADED_ENTRIES, 0);
-		for (int i = 0; i < PRE_LOADED_ENTRIES; i++) {
-			JSONObject content = chatsJSONs.getJSONObject(i).getJSONObject("message");
-			ChatPreviewModel entry = ChatPreviewModel.getChatEntry(content);
-			entry.loadContent(content);
-			getChats().add(entry);
-		}
+	public ChatsPreviewModel() {
+		loadPreviews(PRE_LOADED_ENTRIES);
 	}
-
-	public void loadNewEntries(int count) {
+	
+	
+	public void loadPreviews(int count) {
 		JSONArray chatsJSONs = ConnectionOperator.getDialogs(count, getChats().size());
 		int offset = getChats().size();
 		for (int i = offset; i < offset + count; i++) {
 			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
-			ChatPreviewModel entry = ChatPreviewModel.getChatEntry(content);
+			ChatPreviewModel entry;
+			if (ChatPreviewModel.isDialog(content))
+				entry = new DialogPreviewModel();
+			else
+				entry = new TalkPreviewModel();
+			
 			entry.loadContent(content);
 			getChats().add(entry);
 		}
@@ -70,7 +69,7 @@ public class ChatsPreviewModel implements Updated {
 
 	public void getNextChats(int offset, int count) {
 		if (offset + count >= getChats().size())
-			loadNewEntries(count);
+			loadPreviews(count);
 	}
 
 	public void releaseLock() {

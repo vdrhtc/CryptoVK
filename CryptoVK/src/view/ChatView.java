@@ -1,4 +1,4 @@
-package view.messaging;
+package view;
 
 import java.util.ArrayList;
 
@@ -12,16 +12,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import model.ChatModel;
+import model.MessageModel;
 import model.Updated;
 import model.VKPerson;
-import model.messaging.ChatModel;
-import model.messaging.MessageModel;
-import view.View;
 
 public class ChatView implements View, Updated {
 
-	public static final int LOAD_NEW_COUNT = 4;
-	public static final int INIT_LOAD_COUNT = 10;
+
 
 	public ChatView(ChatModel model) {
 		this.model = model;

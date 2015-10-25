@@ -18,13 +18,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.messaging.ChatModel;
+import model.ChatModel;
+import view.ChatView;
 import view.View.ViewName;
-import view.messaging.ChatView;
 
-public class ChatController implements Controller{
+public class ChatViewController implements Controller{
 
-	public ChatController(ChatModel CM)  {
+	public ChatViewController(ChatModel CM)  {
+		
+		CM.loadMessages(ChatModel.INIT_LOAD_COUNT, 0);
 		this.controlled = new ChatView(CM);
 		addScrollPaneListener();
 		addTextChangeListener();
@@ -126,7 +128,7 @@ public class ChatController implements Controller{
 				protected Void call() {
 					controlled.getModel().getLock();
 					try {
-						controlled.getModel().loadMessages(ChatView.LOAD_NEW_COUNT,
+						controlled.getModel().loadMessages(ChatModel.LOAD_NEW_COUNT,
 								controlled.getModel().getLoadedMessages().size());
 					} catch (Exception e) {
 						e.printStackTrace();

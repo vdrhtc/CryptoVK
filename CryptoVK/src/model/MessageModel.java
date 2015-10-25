@@ -1,11 +1,10 @@
-package model.messaging;
+package model;
 
 import java.util.Date;
 
 import org.json.JSONObject;
 
 import data.DataOperator;
-import model.VKPerson;
 
 public class MessageModel {
 

@@ -1,4 +1,4 @@
-package model.messaging;
+package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,23 +8,22 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import model.Updated;
-import model.preview.ChatPreviewModel;
-
 public class ChatModel implements Updated {
+	
+	public static final int LOAD_NEW_COUNT = 4;
+	public static final int INIT_LOAD_COUNT = 10;
 	
 	private Lock lock = new ReentrantLock();
 
 	
-	public ChatModel(ChatPreviewModel sourcePreviewModel) {
-		this.chatId = sourcePreviewModel.getChatId();
-		this.chatIconURL = sourcePreviewModel.getChatIconURL();
-		this.chatTitle = sourcePreviewModel.getTitle();
+	public ChatModel(int chatId, String[] chatIconUrl, String chatTitle) {
+		this.chatId = chatId;
+		this.chatIconURL = chatIconUrl;
+		this.chatTitle = chatTitle;
 	}
 	
 	public ChatModel(int chatId, String chatTitle, String[] chatIconURL,
 			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount) {
-		super();
 		this.chatId = chatId;
 		this.chatTitle = chatTitle;
 		this.chatIconURL = chatIconURL;

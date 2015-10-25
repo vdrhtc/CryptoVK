@@ -1,4 +1,4 @@
-package view.messaging;
+package view;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -13,9 +13,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import model.ChatsModel;
 import model.Updated;
-import model.messaging.ChatsModel;
-import view.View;
 
 public class ChatsView implements View, Updated {
 

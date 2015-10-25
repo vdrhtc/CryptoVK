@@ -1,4 +1,4 @@
-package view.preview;
+package view;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,8 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import model.preview.ChatPreviewModel;
-import view.View;
+import model.ChatPreviewModel;
 
 public class ChatPreview implements View {
 

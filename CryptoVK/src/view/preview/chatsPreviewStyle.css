@@ -22,7 +22,6 @@
 	-fx-background-color: white;
 	-fx-border-color: white;
 	-fx-fit-to-width: true;
-	-fx-hbar-policy:never;
 }
 .chats-container .viewport{
 	-fx-background-color: white;

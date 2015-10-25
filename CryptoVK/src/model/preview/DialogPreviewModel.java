@@ -26,6 +26,7 @@ public class DialogPreviewModel extends ChatPreviewModel {
 
 	}
 	
+	@Override
 	public DialogModel buildFullModel() {
 		return new DialogModel(this);
 	}

@@ -1,67 +1,74 @@
 package view.messaging;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import model.messaging.ChatModel;
-import model.preview.ChatPreviewModel;
-import view.SwitchableView;
-import controller.ChatViewController;
+import model.Updated;
+import model.messaging.ChatsModel;
+import view.View;
 
-public class ChatsView implements SwitchableView {
-	
+public class ChatsView implements View, Updated {
+
 	public ChatsView() {
+		initRoot();
+	}
 
-		this.controller = new ChatViewController(this);
-		this.controller.addBackButtonListener(back);
+	private void initRoot() {
 		
-		this.back.setCancelButton(true);
-		
-		this.header.getChildren().addAll(back, title);
-		
-		VBox chatHolderDummy = new VBox();
-		this.root.getChildren().addAll(header, chatNamesContainer, chatHolderDummy);
-		
+		root.getStyleClass().add("chats-root");
+		header.getStyleClass().add("chats-header");
+		chatNamesContainer.getStyleClass().add("chats-names-container");
+
+		back.setCancelButton(true);
+		header.getChildren().addAll(back, title);
+		root.setTop(new VBox(header, chatNamesContainer));
+	
+	}
+
+
+	public void setCurrentViewedChat(ChatView CV) {
+		this.root.setCenter(CV.getRoot());
 	}
 	
-	
+	public HashMap<Integer, ChatView> getViewedChats() {
+		return viewedChats;
+	}
+
 	@Override
-	public void getReadyForSwitch(Object... params) {
+	public void update() {
+		for(ChatView CV : viewedChats.values()) {
+			CV.update();
+		}
+	}
 
-		ChatModel model = (ChatModel) params[0];
-		
-		if(!viewedChats.containsKey(model)) {
-			
-			ChatView newChat = new ChatView(model);
-			
-			chatNamesContainer.getChildren().add(new Label(model.getTitle()));
-			viewedChats.put(model, newChat);
-			setCurrentViewedChat(newChat);
-		}
-		
-		else {
-			setCurrentViewedChat(viewedChats.get(model));
-		}
-	}
-	
-	
-	private void setCurrentViewedChat(ChatView CV) {
-		this.root.getChildren().set(2, CV.getRoot());
-	}
-	
-	private VBox root = new VBox();
 	private HBox header = new HBox();
-	private ChatViewController controller;
 	private Label title = new Label("Чаты");
 	private Button back = new Button("Назад");
-	private HBox chatNamesContainer = new HBox();
-	private HashMap<ChatModel, ChatView> viewedChats = new HashMap<>();
+	private BorderPane root = new BorderPane();
+	private ChatsModel model = new ChatsModel();
+	private FlowPane chatNamesContainer = new FlowPane();
+	private HashMap<Integer, ChatView> viewedChats = new HashMap<>();
+	private BooleanProperty canBeUpdated = new SimpleBooleanProperty();
+
+	private static Logger log = Logger.getAnonymousLogger();
+
+	static {
+		log.setLevel(Level.ALL);
+	}
 	
+	public Button getBackButton() {
+		return back;
+	}
 
 	@Override
 	public Pane getRoot() {
@@ -73,11 +80,26 @@ public class ChatsView implements SwitchableView {
 		return ViewName.CHATS_VIEW;
 	}
 
-
-	@Override
-	public ViewName redirectTo() {
-		return ViewName.CHATS_VIEW;
+	public ChatsModel getModel() {
+		return model;
 	}
 
+	@Override
+	public void getLock() {
+		model.getLock();
+	}
+
+	@Override
+	public void releaseLock() {
+		model.releaseLock();
+	}
+
+	public BooleanProperty canBeUpdated() {
+		return canBeUpdated;
+	}
+
+	public FlowPane getChatNamesContainer() {
+		return chatNamesContainer;
+	}
 
 }

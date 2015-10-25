@@ -2,30 +2,84 @@ package model.messaging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-import model.VKPerson;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import model.Updated;
 import model.preview.ChatPreviewModel;
 
-public class ChatModel {
+public class ChatModel implements Updated {
 	
+	private Lock lock = new ReentrantLock();
 
-
+	
 	public ChatModel(ChatPreviewModel sourcePreviewModel) {
 		this.chatId = sourcePreviewModel.getChatId();
 		this.chatIconURL = sourcePreviewModel.getChatIconURL();
 		this.chatTitle = sourcePreviewModel.getTitle();
 	}
 	
-	public void loadNewMessages(int count) {
+	public ChatModel(int chatId, String chatTitle, String[] chatIconURL,
+			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount) {
+		super();
+		this.chatId = chatId;
+		this.chatTitle = chatTitle;
+		this.chatIconURL = chatIconURL;
+		this.loadedMessages = loadedMessages;
+		this.serverMessageCount = serverMessageCount;
+	}
+	
+	public void loadMessages(int count, int offset) {
 		
+		JSONObject chatHistory = formAndSendRequest(count, offset);
+		serverMessageCount = chatHistory.getInt("count");
+
+		JSONArray messageContents = chatHistory.getJSONArray("items");
+
+		for (int i = 0; i < messageContents.length(); i++)
+			this.getLoadedMessages().add(new MessageModel(messageContents.getJSONObject(i)));
+	}
+	
+	public JSONObject formAndSendRequest(int count, int offset) {
+		return null;
+	}
+	
+	@Override
+	public void update() {
+		int currentLoadedMessagesCount = loadedMessages.size();
+		JSONObject newChatHistory = formAndSendRequest(currentLoadedMessagesCount, 0);
+		serverMessageCount = newChatHistory.getInt("count");
+		for (int i = 0; i< currentLoadedMessagesCount; i++) 
+			loadedMessages.set(i, new MessageModel(newChatHistory.getJSONArray("items").getJSONObject(i)));
+	}
+	
+	
+	public void getLock() {
+		lock.lock();
+	}
+	
+	public void releaseLock() {
+		lock.unlock();
 	}
 
 	private int chatId;
 	private String chatTitle;
-	private int lastMessageId;
 	private String[] chatIconURL;
+	private Integer serverMessageCount;
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
 
+
+	
+	public Integer getServerMessageCount () {
+		return serverMessageCount;
+	}
+	
+	public void setServerMessageCount (int serverMessageCount) {
+		this.serverMessageCount = serverMessageCount;
+	}
 	
 	public int getChatId() {
 		return chatId;
@@ -51,15 +105,8 @@ public class ChatModel {
 		this.loadedMessages = loadedMessages;
 	}
 
-	public int getLastMessageId() {
-		return lastMessageId;
-	}
 
-	public void setLastMessageId(int lastMessageId) {
-		this.lastMessageId = lastMessageId;
-	}
-
-	public String getTitle() {
+	public String getChatTitle() {
 		return chatTitle;
 	}
 
@@ -70,7 +117,6 @@ public class ChatModel {
 		result = prime * result + Arrays.hashCode(chatIconURL);
 		result = prime * result + chatId;
 		result = prime * result + ((chatTitle == null) ? 0 : chatTitle.hashCode());
-		result = prime * result + lastMessageId;
 		result = prime * result + ((loadedMessages == null) ? 0 : loadedMessages.hashCode());
 		return result;
 	}
@@ -100,9 +146,6 @@ public class ChatModel {
 		} else if (!chatTitle.equals(other.chatTitle)) {
 			return false;
 		}
-		if (lastMessageId != other.lastMessageId) {
-			return false;
-		}
 		if (loadedMessages == null) {
 			if (other.loadedMessages != null) {
 				return false;
@@ -112,6 +155,18 @@ public class ChatModel {
 		}
 		return true;
 	}
+
+	@Override
+	public ChatModel clone() {
+		return new ChatModel(chatId, chatTitle, chatIconURL, loadedMessages, serverMessageCount);
+	}
+
+	public int getInterlocutorId() {
+		return 0;
+	}
+
+
+
 
 
 }

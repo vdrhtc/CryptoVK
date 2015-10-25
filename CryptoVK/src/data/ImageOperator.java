@@ -8,13 +8,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-
 import javax.imageio.ImageIO;
 
-public class ImageOperator {
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 
+public class ImageOperator {
+	
+	public static void clipImage(ImageView image) {
+		Rectangle rR = new Rectangle(0, 0, image.getImage().getWidth(),
+				image.getImage().getHeight());
+		rR.setArcHeight(10);
+		rR.setArcWidth(10);
+		image.setClip(rR);
+	}
 	
 	public static Image getIconFrom(String... urls) {
 		if (urls.length == 1) 

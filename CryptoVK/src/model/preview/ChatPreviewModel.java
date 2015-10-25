@@ -1,15 +1,15 @@
 package model.preview;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONObject;
+
+import data.DataOperator;
 import model.VKPerson;
 import model.messaging.ChatModel;
-
-import org.json.JSONObject;
 
 public class ChatPreviewModel {
 	
@@ -105,6 +105,7 @@ public class ChatPreviewModel {
 		return getRead();
 	}
 
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -140,7 +141,7 @@ public class ChatPreviewModel {
 	}
 
 	public String getLastMessageDateString() {
-		return DateFormat.getInstance().format(getLastMessageDate());
+		return DataOperator.formatDate(lastMessageDate);
 	}
 
 	public String[] getChatIconURL() {

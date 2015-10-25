@@ -6,6 +6,9 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
@@ -20,6 +23,13 @@ public class DataOperator {
 	private static final String EXPIRATION_DATE = "expiration_date";
 	private static final String GENERAL_DATAFILE = "src/view/generalDataFile.json";
 
+	public static String formatDate(Date date) {
+		DateFormat df = DateFormat.getInstance();
+		df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+		return df.format(date);
+	}
+	
+	
 	public static String getLastAccessToken() {
 		JSONObject JO = readJSONfromFile(GENERAL_DATAFILE);
 		return JO.optJSONObject(ACCESS_TOKEN).getString(TOKEN);

@@ -10,7 +10,6 @@ import org.json.JSONObject;
 
 import http.ConnectionOperator;
 import model.VKPerson;
-import model.messaging.ChatModel;
 import model.messaging.TalkModel;
 
 public class TalkPreviewModel extends ChatPreviewModel {
@@ -35,7 +34,8 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		super.loadContent(content);
 	}
 	
-	public ChatModel buildFullModel() {
+	@Override
+	public TalkModel buildFullModel() {
 		return new TalkModel(this);
 	}
 	

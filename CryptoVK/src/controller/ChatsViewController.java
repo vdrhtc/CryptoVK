@@ -17,7 +17,7 @@ public class ChatsViewController implements Controller {
 		this.controlled = new ChatsView();
 
 		addBackButtonListener(controlled.getBackButton());
-		this.updater = new ChatsViewUpdater(controlled);
+		this.updater = new ChatsViewLPU(controlled);
 		this.controlled.canBeUpdated()
 				.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
 					if (newValue)
@@ -28,21 +28,24 @@ public class ChatsViewController implements Controller {
 
 	@Override
 	public void prepareViewForSwitch(Object... params) {
-		ChatPreviewModel chatPreviewModel = (ChatPreviewModel) params[0];
-		Integer chatId = chatPreviewModel.getChatId();
+		ChatPreviewModel previewModel = (ChatPreviewModel) params[0];
+		Integer chatId = previewModel.getChatId();
 
 		if (!controlled.getViewedChats().containsKey(chatId)) {
 
-			ChatModel fullModel = new ChatModel(chatPreviewModel.getChatId(), chatPreviewModel.getChatIconURL(),
-					chatPreviewModel.getTitle());
-			if (chatPreviewModel.getInterlocutors().size() == 1)
-				fullModel = new DialogModel(fullModel, chatPreviewModel.getInterlocutors().get(0));
+			ChatModel fullModel = new ChatModel(previewModel.getChatId(), previewModel.getChatIconURL(),
+					previewModel.getTitle());
+			if (previewModel.getInterlocutors().size() == 1)
+				fullModel = new DialogModel(fullModel, previewModel.getInterlocutors().get(0));
 			else
 				fullModel = new TalkModel(fullModel);
 
-			ChatViewController newChatController = new ChatViewController(fullModel);
+			ChatViewController newChatController = new ChatViewController(fullModel, previewModel);
 
+			controlled.getModel().getLock();
 			controlled.getModel().getChatModels().add(fullModel);
+			controlled.releaseLock();
+			
 			controlled.getChatNamesContainer().getChildren().add(new Label(fullModel.getChatTitle()));
 			controlled.getViewedChats().put(chatId, newChatController.getControlled());
 			controlled.setCurrentViewedChat(newChatController.getControlled());
@@ -66,7 +69,7 @@ public class ChatsViewController implements Controller {
 	}
 
 	private ChatsView controlled;
-	private ChatsViewUpdater updater;
+	private ChatsViewLPU updater;
 
 	public ChatsView getControlled() {
 		return controlled;

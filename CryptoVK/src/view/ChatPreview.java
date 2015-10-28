@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import model.ChatPreviewModel;
+import model.MessageModel.ReadState;
 
 public class ChatPreview implements View {
 
@@ -52,7 +53,7 @@ public class ChatPreview implements View {
 	}
 
 	private void setLastMessageReadState(ChatPreviewModel model) {
-		if (!model.isRead())
+		if (model.getReadState()==ReadState.UNREAD)
 			this.lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), true);
 		else
 			this.lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), false);
@@ -66,7 +67,7 @@ public class ChatPreview implements View {
 	}
 
 	private Image getIcon(ChatPreviewModel model) {
-		return ImageOperator.getIconFrom(model.getChatIconURL());
+		return ImageOperator.getIconFrom(model.getChatIconURL().toArray(new String[0]));
 	}
 
 	private HBox root = new HBox();

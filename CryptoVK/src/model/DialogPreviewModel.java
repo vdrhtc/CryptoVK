@@ -5,20 +5,21 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
+import model.MessageModel.ReadState;
+
 public class DialogPreviewModel extends ChatPreviewModel {
 
 	public DialogPreviewModel() {}
 	
-	public DialogPreviewModel(int chatId, Boolean read, String title, long lastMessageId, String[] chatIconURL,
+	public DialogPreviewModel(int chatId, ReadState readState, String title, long lastMessageId, ArrayList<String> chatIconURL,
 			String lastMessage, Date lastMessageDate, VKPerson lastMessageSender, ArrayList<VKPerson> interlocutors) {
-		super(chatId, read, title, lastMessageId, chatIconURL, lastMessage, lastMessageDate, lastMessageSender, interlocutors);
+		super(chatId, readState, title, lastMessageId, chatIconURL, lastMessage, lastMessageDate, lastMessageSender, interlocutors);
 	}
 
 	@Override
 	public void loadContent(JSONObject content) {
 		extractDialogTitle(content);
 		extractDialogId(content);
-		extractDialogIcon();
 		super.loadContent(content);
 
 	}
@@ -36,9 +37,6 @@ public class DialogPreviewModel extends ChatPreviewModel {
 		setChatId(content.getInt("user_id"));
 	}
 	
-	private void extractDialogIcon() {
-		setChatIconURL(getInterlocutors().get(0).getPhotoURL());
-	}
 	
 	
 	@Override
@@ -51,7 +49,7 @@ public class DialogPreviewModel extends ChatPreviewModel {
 	@Override
 	public DialogPreviewModel clone() {
 		
-		return new DialogPreviewModel(getChatId(),getRead(), getTitle(), getLastMessageId(), getChatIconURL(),
+		return new DialogPreviewModel(getChatId(),getReadState(), getTitle(), getLastMessageId(), getChatIconURL(),
 				getLastMessage(), getLastMessageDate(), getLastMessageSender(), getInterlocutors());
 		
 	}

@@ -2,6 +2,10 @@ package controller;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import http.ConnectionOperator;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
@@ -11,7 +15,10 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
+import model.ChatPreviewModel;
 import model.ChatsPreviewModel;
+import model.DialogPreviewModel;
+import model.TalkPreviewModel;
 import view.ChatsPreview;
 import view.View.ViewName;
 
@@ -22,7 +29,7 @@ public class ChatsPreviewController implements Controller {
 		this.controlled = new ChatsPreview();
 		this.controlled.getChatsContainer().setOnScroll(scrollHandler);
 
-		this.updater = new ChatsPreviewUpdater(controlled);
+		this.updater = new ChatsPreviewLPU(controlled);
 
 		this.controlled.canBeUpdated()
 				.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
@@ -37,13 +44,14 @@ public class ChatsPreviewController implements Controller {
 		if (controlled.getPreviewsCount() > 0) // TODO: WTF??
 			return;
 
-		controlled.getModel().loadPreviews(ChatsPreviewModel.PRE_LOADED_ENTRIES);;
-		loadNewEntries(ChatsPreview.CHATS_PER_PAGE);
+		loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
+		;
+		loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
 		controlled.canBeUpdated().setValue(true);
 
 	}
 
-	public void loadNewEntries(int count) {
+	public void loadNextPreviews(int count) {
 		ArrayList<Node> toAppend = new ArrayList<>();
 		int oldChatEntriesCount = controlled.getPreviewsCount();
 		for (int i = oldChatEntriesCount; i < oldChatEntriesCount + count; i++) {
@@ -60,6 +68,22 @@ public class ChatsPreviewController implements Controller {
 		controlled.getChatsLayout().getChildren().addAll(toAppend);
 	}
 
+	public void loadNextModels(int count) {
+		JSONArray chatsJSONs = ConnectionOperator.getDialogs(count, controlled.getModel().getChats().size());
+		int offset = controlled.getModel().getChats().size();
+		for (int i = offset; i < offset + count; i++) {
+			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
+			ChatPreviewModel entry;
+			if (ChatPreviewModel.isDialog(content))
+				entry = new DialogPreviewModel();
+			else
+				entry = new TalkPreviewModel();
+
+			entry.loadContent(content);
+			controlled.getModel().getChats().add(entry);
+		}
+	}
+
 	@Override
 	public ViewName redirectTo() {
 		return controlled.getName();
@@ -71,7 +95,7 @@ public class ChatsPreviewController implements Controller {
 		public void handle(ScrollEvent event) {
 			double max = controlled.getChatsContainer().getVmax();
 			double min = controlled.getChatsContainer().getVmin();
-			double delta = 1.0/ChatsPreview.CHATS_PER_PAGE;
+			double delta = 1.0 / ChatsPreview.CHATS_PER_PAGE;
 			double newVvalue = controlled.getChatsContainer().getVvalue() - Math.signum(event.getDeltaY()) * delta;
 
 			if (newVvalue >= max && event.getDeltaY() < 0
@@ -91,7 +115,7 @@ public class ChatsPreviewController implements Controller {
 	};
 
 	private ChatsPreview controlled;
-	private ChatsPreviewUpdater updater;
+	private ChatsPreviewLPU updater;
 	private LoaderService loader = new LoaderService();
 
 	public ChatsPreview getControlled() {
@@ -103,30 +127,28 @@ public class ChatsPreviewController implements Controller {
 		@Override
 		protected Task<Void> createTask() {
 
-			Task<Void> loadMoreChatEntries = new Task<Void>() {
+			Task<Void> loadNextModels = new Task<Void>() {
 				@Override
 				protected Void call() {
 					controlled.getModel().getLock();
-					try {
-						controlled.getModel().getNextChats(controlled.getPreviewsCount(), ChatsPreview.LOAD_NEW_COUNT);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					if (controlled.getPreviewsCount() + ChatsPreview.LOAD_NEW_COUNT >= controlled.getModel()
+							.getChats().size())
+						loadNextModels(ChatsPreview.LOAD_NEW_COUNT);
 					controlled.getModel().releaseLock();
 					return null;
 				}
 			};
-			loadMoreChatEntries.setOnSucceeded(entryLoadResultHandler);
-			return loadMoreChatEntries;
+			loadNextModels.setOnSucceeded(chatPreviewsLoader);
+			return loadNextModels;
 		}
 
-		private EventHandler<WorkerStateEvent> entryLoadResultHandler = new EventHandler<WorkerStateEvent>() {
+		private EventHandler<WorkerStateEvent> chatPreviewsLoader = new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent t) {
 
 				Platform.runLater(() -> {
 					controlled.getModel().getLock();
-					loadNewEntries(ChatsPreview.LOAD_NEW_COUNT);
+					loadNextPreviews(ChatsPreview.LOAD_NEW_COUNT);
 					controlled.getModel().releaseLock();
 
 					controlled.getProgressBar().setProgress(1);

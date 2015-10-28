@@ -7,14 +7,19 @@ import org.json.JSONObject;
 import data.DataOperator;
 
 public class MessageModel {
+	
+	public enum ReadState {
+		READ, UNREAD, POSTPONED, VIEWED;
+	}
 
-	public MessageModel(int id, Date date, String text, Boolean read, VKPerson sender) {
+	public MessageModel(int id, Date date, String text, Boolean read, VKPerson sender, ReadState RS) {
 		super();
 		this.id = id;
 		this.date = date;
 		this.text = text;
 		this.read = read;
 		this.sender = sender;
+		this.RS = RS;
 	}
 
 	public MessageModel(JSONObject content) {
@@ -38,9 +43,15 @@ public class MessageModel {
 	private String text;
 	private Boolean read;
 	private VKPerson sender;	
+	private ReadState RS;
+	private Boolean viewed;
+	
+	public Boolean isViewed() {
+		return viewed;
+	}
 	
 	public MessageModel clone() {
-		return new MessageModel(id, date, text, read, sender);
+		return new MessageModel(id, date, text, read, sender, RS);
 	}
 
 	public int getId() {

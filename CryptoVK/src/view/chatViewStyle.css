@@ -1,0 +1,11 @@
+
+.chat-footer {
+	-fx-spacing: 10;
+	-fx-padding: 5 5 5 5;
+}
+
+.chat-input-tray {
+	-fx-wrap-text: true;
+	-fx-pref-height: 50;
+	-fx-vbar-policy: never;
+}

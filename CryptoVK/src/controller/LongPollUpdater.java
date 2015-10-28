@@ -63,9 +63,9 @@ public class LongPollUpdater extends Service<Void>{
 
 							isWorking.setValue(false);
 							Platform.runLater(() -> {
-								updatedModel.getLock(); 
+								updatedView.getLock(); 
 								updatedView.update();
-								updatedModel.releaseLock(); 
+								updatedView.releaseLock(); 
 								isWorking.setValue(true);
 								});
 						}

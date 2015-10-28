@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import model.MessageModel;
 
 public class MessageView implements View {
+	
 
 	public MessageView() {
 

@@ -2,10 +2,10 @@ package controller;
 
 import view.ChatsPreview;
 
-public class ChatsPreviewUpdater extends LongPollUpdater {
+public class ChatsPreviewLPU extends LongPollUpdater {
 
 	
-	public ChatsPreviewUpdater(ChatsPreview updated) {
+	public ChatsPreviewLPU(ChatsPreview updated) {
 		super(updated.getModel(), updated);
 	}
 	

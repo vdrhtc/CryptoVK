@@ -23,9 +23,9 @@ public class ViewSwitcher {
 			Scene scene = new Scene(new StackPane());
 			// TODO: Сделать для каждого свои стайлшиты
 
-			scene.getStylesheets().addAll("view/preview/chatPreviewStyle.css", "view/preview/chatsPreviewStyle.css",
-					"view/messaging/messageViewStyle.css", "view/messaging/chatViewStyle.css",
-					"view/messaging/chatsViewStyle.css");
+			scene.getStylesheets().addAll("view/chatPreviewStyle.css", "view/chatsPreviewStyle.css",
+					"view/messageViewStyle.css", "view/chatViewStyle.css",
+					"view/chatsViewStyle.css");
 
 			this.scenes.put(v.getControlled().getName(), scene);
 

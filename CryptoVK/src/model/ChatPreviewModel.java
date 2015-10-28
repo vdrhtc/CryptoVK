@@ -2,23 +2,27 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
 import data.DataOperator;
+import data.ReadStatesDatabase;
+import model.MessageModel.ReadState;
 
 public class ChatPreviewModel {
 	
 	public ChatPreviewModel() {	}
 
-	public ChatPreviewModel(int chatId, Boolean read, String title,
-			long lastMessageId, String[] chatIconURL, String lastMessage,
+	public ChatPreviewModel(int chatId, ReadState readState, String title,
+			long lastMessageId, ArrayList<String> chatIconURL, String lastMessage,
 			Date lastMessageDate, VKPerson lastMessageSender,
 			ArrayList<VKPerson> interlocutors) {
 		this.setChatId(chatId);
-		this.setRead(read);
+		this.setReadState(readState);
 		this.setTitle(title);
 		this.setLastMessageId(lastMessageId);
 		this.setChatIconURL(chatIconURL);
@@ -33,6 +37,7 @@ public class ChatPreviewModel {
 		extractDate(content);
 		extractLastMessageId(content);
 		extractLastMessageAndSenderAndReadState(content);
+		extractChatIcon();
 	}
 
 	private void extractLastMessageId(JSONObject content) {
@@ -40,7 +45,7 @@ public class ChatPreviewModel {
 	}
 
 	private void extractLastMessageAndSenderAndReadState(JSONObject content) {
-		setRead(content.getInt("read_state") == 1 ? true : false);
+		setReadState(content.getInt("read_state") == 1 ? true : false);
 		setLastMessage(content.getString("body"));
 		if (content.getInt("out") !=1 )
 			setLastMessageSender(VKPerson.getKnownPerson(content.getInt("user_id")));
@@ -52,8 +57,12 @@ public class ChatPreviewModel {
 		this.setLastMessageDate(new Date(content.getLong("date") * 1000));
 	}
 	
+	public void addInterlocutor(JSONObject user) {
+		interlocutors.add(new VKPerson(user));
+	}
+	
 	public void update(JSONObject content) {
-		setRead(content.getInt("read_state") == 1 ? true : false);
+		setReadState(content.getInt("read_state") == 1 ? true : false);
 		
 		if(getLastMessageId() != content.getLong("id")) {
 			System.out.println("Updating "+toString());
@@ -69,32 +78,42 @@ public class ChatPreviewModel {
 		return content.optInt("chat_id") == 0 ? true : false;
 	}
 	
+	private void extractChatIcon() {
+		if(chatIconURL.size() > 0)
+			return;
+		
+		int min = Math.min(4, getInterlocutors().size());
+		ArrayList<String> urls = new ArrayList<>(min);
+		List<Integer> indices = new ArrayList<>();
+		for (int i = 0; i < getInterlocutors().size(); i++)
+			indices.add(i);
+		java.util.Collections.shuffle(indices, new Random(System.currentTimeMillis()));
+		for (int i = 0; i < min; i++)
+			urls.add(getInterlocutors().get(indices.get(i)).getPhotoURL());
+		setChatIconURL(urls);
+	}
+	
 	
 	@Override
 	public String toString() {
-		return "ChatEntry [title=" + getTitle() + ", read=" + getRead()
+		return "ChatEntry [title=" + getTitle() + ", read=" + getReadState()
 				+ ", lastMessageDate=" + getLastMessageDate() + "]";
 	}
 
 	private int chatId;
-	private Boolean read;
+	private ReadState RS;
 	private String title;
 	private String lastMessage;
 	private Date lastMessageDate;
-	private String[] chatIconURL;
 	private long lastMessageId = -1;
 	private VKPerson lastMessageSender;
+	private ArrayList<String> chatIconURL = new ArrayList<>();
 	private ArrayList<VKPerson> interlocutors = new ArrayList<>();
 
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
 		getLog().setLevel(Level.SEVERE);
 	}
-	
-	public Boolean isRead() {
-		return getRead();
-	}
-
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -112,17 +131,17 @@ public class ChatPreviewModel {
 				return false;
 		} else if (!getLastMessageDate().equals(other.getLastMessageDate()))
 			return false;
-		if (getRead() == null) {
-			if (other.getRead() != null)
+		if (getReadState() == null) {
+			if (other.getReadState() != null)
 				return false;
-		} else if (!getRead().equals(other.getRead()))
+		} else if (!getReadState().equals(other.getReadState()))
 			return false;
 		return true;
 	}
 	
 	@Override
 	public ChatPreviewModel clone() {
-		return new ChatPreviewModel(getChatId(),getRead(), getTitle(), getLastMessageId(), getChatIconURL(),
+		return new ChatPreviewModel(getChatId(),getReadState(), getTitle(), getLastMessageId(), getChatIconURL(),
 				getLastMessage(), getLastMessageDate(), getLastMessageSender(), getInterlocutors());
 	}
 
@@ -134,7 +153,7 @@ public class ChatPreviewModel {
 		return DataOperator.formatDate(lastMessageDate);
 	}
 
-	public String[] getChatIconURL() {
+	public ArrayList<String> getChatIconURL() {
 		return chatIconURL;
 	}
 	
@@ -174,16 +193,27 @@ public class ChatPreviewModel {
 		this.chatId = chatId;
 	}
 
-	public void setChatIconURL(String... chatIconURL) {
+	public void setChatIconURL(ArrayList<String> chatIconURL) {
 		this.chatIconURL = chatIconURL;
 	}
 
-	protected Boolean getRead() {
-		return read;
+	public ReadState getReadState() {
+		return RS;
 	}
 
-	private void setRead(Boolean read) {
-		this.read = read;
+	public void setReadState(ReadState RS) {
+		this.RS = RS;
+	}
+	
+	public void setReadState(Boolean read) {
+		if (read==false) {
+			JSONObject state = ReadStatesDatabase.get(chatId);
+			if (state!=null)
+				if (state.getInt("lastMessageId") == lastMessageId)
+					setReadState(ReadState.valueOf(state.getString("readState")));
+				else
+					setReadState(ReadState.UNREAD);
+		}
 	}
 
 	protected long getLastMessageId() {

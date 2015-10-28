@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import http.ConnectionOperator;
 
@@ -17,26 +16,10 @@ public class ChatsPreviewModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	public ChatsPreviewModel() {
-		loadPreviews(PRE_LOADED_ENTRIES);
+		
 	}
 	
 	
-	public void loadPreviews(int count) {
-		JSONArray chatsJSONs = ConnectionOperator.getDialogs(count, getChats().size());
-		int offset = getChats().size();
-		for (int i = offset; i < offset + count; i++) {
-			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
-			ChatPreviewModel entry;
-			if (ChatPreviewModel.isDialog(content))
-				entry = new DialogPreviewModel();
-			else
-				entry = new TalkPreviewModel();
-			
-			entry.loadContent(content);
-			getChats().add(entry);
-		}
-	}
-
 	public void update() {
 		JSONArray chatsJSONs = ConnectionOperator.getDialogs(getChats().size(), 0);
 		int i = 0;
@@ -67,10 +50,6 @@ public class ChatsPreviewModel implements Updated {
 		return chats;
 	}
 
-	public void getNextChats(int offset, int count) {
-		if (offset + count >= getChats().size())
-			loadPreviews(count);
-	}
 
 	public void releaseLock() {
 		log.info("Releasing lock: " + Thread.currentThread().getName());

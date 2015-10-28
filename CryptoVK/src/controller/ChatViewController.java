@@ -19,47 +19,103 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.ChatModel;
+import model.ChatPreviewModel;
 import view.ChatView;
 import view.View.ViewName;
 
-public class ChatViewController implements Controller{
+public class ChatViewController implements Controller {
 
-	public ChatViewController(ChatModel CM)  {
-		
+
+	public ChatViewController(ChatModel CM, ChatPreviewModel PM) {
+
 		CM.loadMessages(ChatModel.INIT_LOAD_COUNT, 0);
 		this.controlled = new ChatView(CM);
+		this.preview = PM;
 		addScrollPaneListener();
 		addTextChangeListener();
 		addEnterListener();
+		addSchorcutLocalizer();
 		controlled.getMessagesContainer().setOnScroll(scrollHandler);
 	}
-	
+
 	@Override
 	public void prepareViewForSwitch(Object... params) {
-		
+
 	}
-	
+
 	@Override
 	public ViewName redirectTo() {
 		return controlled.getName();
 	}
 
-	public void addEnterListener() {
-		controlled.getInputTray().setOnKeyReleased(new EventHandler<KeyEvent>() {
-
+	public void addSchorcutLocalizer() {
+		controlled.getInputTray().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+//				System.out.println(event.getText());
+				if (event.isControlDown() && !event.getText().equals("")) {
+					if (event.getText().equals("с")) {
+						controlled.getInputTray()
+						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter() , "c",
+								KeyCode.C, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+								event.isMetaDown()));
+						event.consume();
+					} else if (event.getText().equals("м")) {
+						controlled.getInputTray()
+						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "v",
+								KeyCode.V, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+								event.isMetaDown()));
+						event.consume();
+					} else if (event.getText().equals("ф")) {
+						controlled.getInputTray()
+						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "a",
+								KeyCode.A, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+								event.isMetaDown()));
+						event.consume();
+					} else if (event.getText().equals("ч")) {
+						controlled.getInputTray()
+						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "x",
+								KeyCode.X, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+								event.isMetaDown()));
+						event.consume();
+					}
+
+				}
+			}
+		});
+	}
+
+	public void addEnterListener() {
+
+		controlled.getInputTray().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (eventJustFiltered) {
+					eventJustFiltered = false;
+					return;
+				}
+
 				if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
 					try {
 						ConnectionOperator.sendMessage(controlled.getModel().getChatId(),
 								controlled.getModel().getInterlocutorId(), controlled.getInputTray().getText());
 						controlled.getInputTray().clear();
+						event.consume();
 					} catch (UnsupportedEncodingException e) {
 						controlled.getInputTray().setText("Failed to encode URL! Unsupported characters!");
 					}
+				} else if (event.getCode().equals(KeyCode.ENTER) && event.isShiftDown()) {
+					eventJustFiltered = true;
+					controlled.getInputTray()
+							.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), event.getText(),
+									event.getCode(), false, event.isControlDown(), event.isAltDown(),
+									event.isMetaDown()));
+					event.consume();
 				}
 			}
+
 		});
+
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -83,7 +139,7 @@ public class ChatViewController implements Controller{
 		contents.heightProperty().addListener(new ChangeListener() {
 			@Override
 			public void changed(ObservableValue ov, Object t, Object t1) {
-				if(controlled.getКостыльДляПрокрутки()){
+				if (controlled.getКостыльДляПрокрутки()) {
 					SP.setVvalue(SP.getVmax());
 					controlled.setКостыльДляПрокрутки(false);
 				}
@@ -115,7 +171,9 @@ public class ChatViewController implements Controller{
 	};
 
 	private ChatView controlled;
+	private ChatPreviewModel preview;
 
+	private boolean eventJustFiltered = false;
 	private LoaderService loader = new LoaderService();
 
 	private class LoaderService extends Service<Void> {

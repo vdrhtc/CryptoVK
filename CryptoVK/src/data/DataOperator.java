@@ -25,7 +25,7 @@ public class DataOperator {
 
 	public static String formatDate(Date date) {
 		DateFormat df = DateFormat.getInstance();
-		df.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+		df.setTimeZone(TimeZone.getDefault());
 		return df.format(date);
 	}
 	
@@ -63,7 +63,7 @@ public class DataOperator {
 		writeJSONtoFile(GENERAL_DATAFILE, JO);
 	}
 
-	private static void writeJSONtoFile(String path, JSONObject JO) {
+	public static void writeJSONtoFile(String path, JSONObject JO) {
 		try {
 			Files.write(Paths.get(path), JO.toString().getBytes(),
 					StandardOpenOption.TRUNCATE_EXISTING);
@@ -72,7 +72,7 @@ public class DataOperator {
 		}
 	}
 
-	private static JSONObject readJSONfromFile(String path) {
+	public static JSONObject readJSONfromFile(String path) {
 		String jsonString = "";
 		try {
 			jsonString = Files.lines(Paths.get(path)).collect(
@@ -91,7 +91,7 @@ public class DataOperator {
 		return new JSONObject(jsonString);
 	}
 
-	private static void initializeGeneralInfoFile(Path path) {
+	public static void initializeGeneralInfoFile(Path path) {
 		try {
 			Files.createFile(path);
 			JSONObject JO = new JSONObject();

@@ -2,9 +2,9 @@ package controller;
 
 import view.ChatsView;
 
-public class ChatsViewUpdater extends LongPollUpdater {
+public class ChatsViewLPU extends LongPollUpdater {
 	
-	public ChatsViewUpdater(ChatsView updated) {
+	public ChatsViewLPU(ChatsView updated) {
 		super(updated.getModel(), updated);
 	}
 

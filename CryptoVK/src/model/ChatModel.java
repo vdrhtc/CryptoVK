@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,13 +15,13 @@ public class ChatModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	
-	public ChatModel(int chatId, String[] chatIconUrl, String chatTitle) {
+	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle) {
 		this.chatId = chatId;
 		this.chatIconURL = chatIconUrl;
 		this.chatTitle = chatTitle;
 	}
 	
-	public ChatModel(int chatId, String chatTitle, String[] chatIconURL,
+	public ChatModel(int chatId, String chatTitle, ArrayList<String> chatIconURL,
 			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount) {
 		this.chatId = chatId;
 		this.chatTitle = chatTitle;
@@ -66,11 +65,18 @@ public class ChatModel implements Updated {
 
 	private int chatId;
 	private String chatTitle;
-	private String[] chatIconURL;
+	private ArrayList<String> chatIconURL;
 	private Integer serverMessageCount;
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
 
 
+	public ArrayList<String> getChatIconURL() {
+		return chatIconURL;
+	}
+
+	public void setChatIconURL(ArrayList<String> chatIconURL) {
+		this.chatIconURL = chatIconURL;
+	}
 	
 	public Integer getServerMessageCount () {
 		return serverMessageCount;
@@ -88,13 +94,6 @@ public class ChatModel implements Updated {
 		this.chatId = chatId;
 	}
 
-	public String[] getChatIconURL() {
-		return chatIconURL;
-	}
-
-	public void setChatIconURL(String[] chatIconURL) {
-		this.chatIconURL = chatIconURL;
-	}
 
 	public ArrayList<MessageModel> getLoadedMessages() {
 		return loadedMessages;
@@ -113,7 +112,7 @@ public class ChatModel implements Updated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(chatIconURL);
+		result = prime * result + chatIconURL.hashCode();
 		result = prime * result + chatId;
 		result = prime * result + ((chatTitle == null) ? 0 : chatTitle.hashCode());
 		result = prime * result + ((loadedMessages == null) ? 0 : loadedMessages.hashCode());
@@ -132,7 +131,7 @@ public class ChatModel implements Updated {
 			return false;
 		}
 		ChatModel other = (ChatModel) obj;
-		if (!Arrays.equals(chatIconURL, other.chatIconURL)) {
+		if (!chatIconURL.equals(other.chatIconURL)) {
 			return false;
 		}
 		if (chatId != other.chatId) {

@@ -19,8 +19,6 @@ import model.VKPerson;
 
 public class ChatView implements View, Updated {
 
-
-
 	public ChatView(ChatModel model) {
 		this.model = model;
 		loadModel();
@@ -33,7 +31,7 @@ public class ChatView implements View, Updated {
 		footer.getStyleClass().add("chat-footer");
 		inputTray.getStyleClass().add("chat-input-tray");
 
-		icon.setImage(ImageOperator.getIconFrom(model.getChatIconURL()));
+		icon.setImage(ImageOperator.getIconFrom(model.getChatIconURL().toArray(new String[0])));
 		ImageOperator.clipImage(icon);
 		ownerIcon.setImage(ImageOperator.getIconFrom(VKPerson.getOwner().getPhotoURL()));
 		ImageOperator.clipImage(ownerIcon);

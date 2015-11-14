@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import http.ConnectionOperator;
-
 public class TalkPreviewModel extends ChatPreviewModel {
 
 	public TalkPreviewModel() {
@@ -31,17 +29,24 @@ public class TalkPreviewModel extends ChatPreviewModel {
 
 	private void extractTalkInterlocutorsAndIcon(JSONObject content) {
 		this.setInterlocutors(new ArrayList<VKPerson>());
-		JSONObject chatInfo = ConnectionOperator.getChat(content.getInt("chat_id"));
+		JSONObject chatInfo = ChatsPreviewModel.getConnectionOperator().getChat(content.getInt("chat_id"));
 		if (chatInfo.optInt("left") == 1) {
 			getChatIconURL().add(deletedImageURL);
 			getTitle().concat(" [Потрачено] ");
-		} else if (!(chatInfo.optString("photo_50").equals("")))
-			getChatIconURL().add(chatInfo.getString("photo_50"));
-		
+		} else if (!(chatInfo.optString("photo_50").equals(""))) {
+			if (getChatIconURL().size() > 0)
+				getChatIconURL().set(0, chatInfo.getString("photo_50"));
+			else
+				getChatIconURL().add(chatInfo.getString("photo_50"));
+		}
 		JSONArray interlocutors = chatInfo.getJSONArray("users");
 		for (int i = 0; i < interlocutors.length(); i++) {
 			addInterlocutor(interlocutors.getJSONObject(i));
 		}
+	}
+	
+	public void addInterlocutor(JSONObject user) {
+		getInterlocutors().add(new VKPerson(user));
 	}
 
 

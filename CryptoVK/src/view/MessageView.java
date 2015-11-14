@@ -1,20 +1,33 @@
 package view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.IIOException;
+
 import data.ImageOperator;
+import data.ReadStatesDatabase.ReadState;
 import javafx.css.PseudoClass;
+import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import model.MessageModel;
+import view.nodes.AttachmentsContainer;
 
 public class MessageView implements View {
-	
 
 	public MessageView() {
 
@@ -29,11 +42,22 @@ public class MessageView implements View {
 
 		message.getStyleClass().add("message-message");
 		date.getStyleClass().add("message-date");
+		senderName.getStyleClass().add("message-sender-name");
 		plug.setMinWidth(50);
 		ImageOperator.clipImage(senderPhoto);
 
-		messageContainer.getChildren().addAll(message, date);
+		messageContainer.getChildren().addAll(senderName, message, date);
+		MenuItem copy = new MenuItem("Copy text");
+		copy.setOnAction((ActionEvent e) -> {
+			ClipboardContent content = new ClipboardContent();
+			content.put(DataFormat.PLAIN_TEXT, message.getText());
+			Clipboard.getSystemClipboard().setContent(content);
+		});
+		message.setContextMenu(new ContextMenu(copy));
+		
 		HBox.setHgrow(message, Priority.ALWAYS);
+		if (attachementsContainer != null)
+			messageContainer.getChildren().add(2, attachementsContainer);
 
 		if (model.isIncoming()) {
 			root.getStyleClass().add("message-hbox-incoming");
@@ -49,26 +73,66 @@ public class MessageView implements View {
 	}
 
 	public boolean loadModel(MessageModel model) {
-		if (!model.equals(this.model)) {
 
+		if (!model.equals(this.model)) {
 			this.model = model.clone();
 			date.setText(model.getDate());
 			message.setText(model.getText());
-			senderName.setText(model.getSender().getFullName());
-			senderPhoto.setImage(ImageOperator.getIconFrom(model.getSender().getPhotoURL()));
-			if (!model.isRead())
-				messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), true);
-			else
-				messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), false);
+			senderName.setText(model.getSender().getFirstName());
+			senderPhoto.setImage(getIcon(model));
+			setReadState(model.getReadState());
+
+			if (model.getAttachments().size() > 0)
+				attachementsContainer = new AttachmentsContainer(model.getAttachments());
 			return true;
 		}
 		return false;
+	}
+
+	private Image getIcon(MessageModel model) {
+		Image im;
+		try {
+			im = ImageOperator.getIconFrom(model.getSender().getPhotoURL());
+		} catch (IIOException e) {
+			log.warning("Couldn't load the icon for " + this.model.getId() + "! Retrying in .5 seconds...");
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+
+			im = getIcon(model);
+		}
+		return im;
 	}
 
 	private Separator buildVBorder() {
 		Separator vBorder = new Separator(Orientation.VERTICAL);
 		vBorder.getStyleClass().add("message-border");
 		return vBorder;
+	}
+
+	public void setReadState(ReadState RS) {
+		switch (RS) {
+		case READ:
+			setMessageContainerPseudoClass(false, false, false);
+			break;
+		case UNREAD:
+			setMessageContainerPseudoClass(true, false, false);
+			break;
+		case VIEWED:
+			setMessageContainerPseudoClass(false, true, false);
+			break;
+		case POSTPONED:
+			setMessageContainerPseudoClass(false, false, true);
+			break;
+		}
+	}
+
+	private void setMessageContainerPseudoClass(boolean unread, boolean viewed, boolean postponed) {
+		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), unread);
+		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("viewed"), viewed);
+		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), postponed);
 	}
 
 	private MessageModel model;
@@ -79,6 +143,13 @@ public class MessageView implements View {
 	private Pane plug = new Pane();
 	private Label senderName = new Label();
 	private ImageView senderPhoto = new ImageView();
+	private AttachmentsContainer attachementsContainer;
+
+	private static Logger log = Logger.getAnonymousLogger();
+
+	static {
+		log.setLevel(Level.WARNING);
+	}
 
 	@Override
 	public Parent getRoot() {

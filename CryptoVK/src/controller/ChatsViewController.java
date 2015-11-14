@@ -1,15 +1,22 @@
 package controller;
 
+import java.util.HashMap;
+
+import controller.ChatViewController.ReadStateWithId;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import model.ChatModel;
 import model.ChatPreviewModel;
 import model.DialogModel;
 import model.TalkModel;
+import view.ChatPreview;
 import view.ChatsView;
 import view.View.ViewName;
+import view.nodes.ChatNameLabel;
 
 public class ChatsViewController implements Controller {
 
@@ -28,31 +35,48 @@ public class ChatsViewController implements Controller {
 
 	@Override
 	public void prepareViewForSwitch(Object... params) {
-		ChatPreviewModel previewModel = (ChatPreviewModel) params[0];
+		ChatPreview preview = (ChatPreview) params[0];
+		ChatPreviewModel previewModel = preview.getCurrentLoadedModel();
 		Integer chatId = previewModel.getChatId();
 
 		if (!controlled.getViewedChats().containsKey(chatId)) {
 
 			ChatModel fullModel = new ChatModel(previewModel.getChatId(), previewModel.getChatIconURL(),
-					previewModel.getTitle());
+					previewModel.getTitle(), previewModel.getReadState());
 			if (previewModel.getInterlocutors().size() == 1)
 				fullModel = new DialogModel(fullModel, previewModel.getInterlocutors().get(0));
-			else
+			else {
+				if (chatId > 1000) 
+					System.out.println("ERROR ERROR ERROR in ChatsVC "+previewModel.getInterlocutors());
 				fullModel = new TalkModel(fullModel);
-
-			ChatViewController newChatController = new ChatViewController(fullModel, previewModel);
+			}
+			ChatViewController newChatController = new ChatViewController(fullModel);
+			addReadStateChangeListener(newChatController);
 
 			controlled.getModel().getLock();
 			controlled.getModel().getChatModels().add(fullModel);
 			controlled.releaseLock();
-			
-			controlled.getChatNamesContainer().getChildren().add(new Label(fullModel.getChatTitle()));
+
+			ChatNameLabel newNameLabel = new ChatNameLabel(fullModel);
+			controlled.getChatNamesContainer().getChildren().add(newNameLabel);
+			newChatController.getControlled().setChatNameLabel(newNameLabel);
+
 			controlled.getViewedChats().put(chatId, newChatController.getControlled());
+			controllers.put(chatId, newChatController);
+
+			newChatController.prepareViewForSwitch((Object[]) null);
+			if (activeChatController != null)
+				activeChatController.prepareViewForSwitch((Object[]) null);
 			controlled.setCurrentViewedChat(newChatController.getControlled());
+			activeChatController = controllers.get(chatId);
 		}
 
 		else {
+			controllers.get(chatId).prepareViewForSwitch((Object[]) null);
+			if (activeChatController != null)
+				activeChatController.prepareViewForSwitch((Object[]) null);
 			controlled.setCurrentViewedChat(controlled.getViewedChats().get(chatId));
+			activeChatController = controllers.get(chatId);
 		}
 		controlled.canBeUpdated().setValue(true);
 	}
@@ -64,12 +88,31 @@ public class ChatsViewController implements Controller {
 
 	private void addBackButtonListener(Button back) {
 		back.setOnAction((ActionEvent e) -> {
+			activeChatController.prepareViewForSwitch((Object[]) null);
+			activeChatController = null;
 			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, (Object[]) null);
 		});
 	}
 
+	private void addReadStateChangeListener(ChatViewController CVC) {
+		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ReadStateWithId>() {
+			@Override
+			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
+					ReadStateWithId newValue) {
+				readStateWithIdProperty.setValue(newValue);
+			}
+		});
+	}
+
 	private ChatsView controlled;
+	private HashMap<Integer, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
+	private ChatViewController activeChatController;
+	private ObjectProperty<ReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
+
+	public ObjectProperty<ReadStateWithId> getReadStateWithIdProperty() {
+		return readStateWithIdProperty;
+	}
 
 	public ChatsView getControlled() {
 		return controlled;

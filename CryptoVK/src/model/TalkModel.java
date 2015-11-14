@@ -2,19 +2,17 @@ package model;
 
 import org.json.JSONObject;
 
-import http.ConnectionOperator;
-
 public class TalkModel extends ChatModel {
 
 
 	public TalkModel(ChatModel superModel) {
 		super(superModel.getChatId(), superModel.getChatTitle(), superModel.getChatIconURL(),
-				superModel.getLoadedMessages(), superModel.getServerMessageCount());
+				superModel.getLoadedMessages(), superModel.getServerMessageCount(), superModel.getReadState());
 	}
 
 	@Override
 	public JSONObject formAndSendRequest(int count, int offset) {
-		return ConnectionOperator.getChatHistory(0, getChatId(), count, offset);
+		return ChatsModel.getConnectionOperator().getChatHistory(0, getChatId(), count, offset);
 	}
 
 	@Override

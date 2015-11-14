@@ -6,17 +6,19 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import http.ConnectionOperator;
+
 public class ChatsModel implements Updated {
 	
 	@Override
-	public void update() {
+	public void update(Object... params) {
 		for (ChatModel CM : chatModels) {
+			CM.getLock();
 			CM.update();
+			CM.releaseLock();
 		}
 	}
 
-	
-	
 	private ArrayList<ChatModel> chatModels = new ArrayList<>();
 	
 	public ArrayList<ChatModel> getChatModels() {
@@ -39,10 +41,15 @@ public class ChatsModel implements Updated {
 	}
 	
 	private Lock lock = new ReentrantLock();
+	private static ConnectionOperator CO = new ConnectionOperator(1000);
 	
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
 		log.setLevel(Level.ALL);
+	}
+	
+	public static ConnectionOperator getConnectionOperator() {
+		return CO;
 	}
 
 }

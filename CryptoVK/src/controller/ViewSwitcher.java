@@ -10,24 +10,23 @@ import view.View.ViewName;
 public class ViewSwitcher {
 
 	private ViewSwitcher() {
-
 	}
 
 	public void setViews(Stage stage, Controller... views) {
 
 		ViewSwitcher.stage = stage;
-
+		stage.show();
 		for (Controller v : views) {
 			this.controllers.put(v.getControlled().getName(), v);
 
 			Scene scene = new Scene(new StackPane());
-			// TODO: Сделать для каждого свои стайлшиты
 
 			scene.getStylesheets().addAll("view/chatPreviewStyle.css", "view/chatsPreviewStyle.css",
 					"view/messageViewStyle.css", "view/chatViewStyle.css",
-					"view/chatsViewStyle.css");
+					"view/chatsViewStyle.css", "view/nodes/attachmentsContainerStyle.css");
 
 			this.scenes.put(v.getControlled().getName(), scene);
+			
 
 		}
 	}
@@ -40,7 +39,6 @@ public class ViewSwitcher {
 		scene.setRoot(controllers.get(redirectName).getControlled().getRoot());
 
 		stage.setScene(scene);
-		stage.show();
 	}
 
 	public Controller getController(ViewName name) {

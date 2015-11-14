@@ -1,5 +1,6 @@
 package view;
 
+import java.net.CookieHandler;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ public class AuthorizeView implements View {
 	public final ViewName name = ViewName.AUTHORIZE_VIEW;
 
 	public AuthorizeView() {
+		CookieHandler.setDefault(new com.sun.webkit.network.CookieManager());
 		buildBrowser();
 
 		root.getChildren().addAll(browser, addressBar);
@@ -30,7 +32,7 @@ public class AuthorizeView implements View {
 		String token = DataOperator.getLastAccessToken();
 		if (!token.equals("")) {
 			ConnectionOperator.setAccessToken(token);
-			if (!ConnectionOperator.getOwner().has("error"))
+			if (!CO.getOwner().has("error"))
 				return true;
 		}
 		return false;
@@ -83,9 +85,10 @@ public class AuthorizeView implements View {
 	private VBox root = new VBox();
 	private WebView browser = new WebView();;
 	private TextField addressBar = new TextField();
-	private String authURL = "http://api.vkontakte.ru/oauth/authorize?" + "client_id=4468911&scope=messages"
+	private String authURL = "http://api.vkontakte.ru/oauth/authorize?" + "client_id=4468911&scope=messages,photos"
 			+ "&redirect_uri=blank.html&response_type=token" + "&display=popup&email=";
 
+	private ConnectionOperator CO = new ConnectionOperator(1000);
 	private static Logger log = Logger.getAnonymousLogger();
 
 	static {

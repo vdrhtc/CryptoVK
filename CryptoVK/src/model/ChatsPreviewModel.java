@@ -20,8 +20,8 @@ public class ChatsPreviewModel implements Updated {
 	}
 	
 	
-	public void update() {
-		JSONArray chatsJSONs = ConnectionOperator.getDialogs(getChats().size(), 0);
+	public void update(Object... params) {
+		JSONArray chatsJSONs = CO.getDialogs(getChats().size(), 0);
 		int i = 0;
 		updateOrder(chatsJSONs);
 		for (ChatPreviewModel e : chats) {
@@ -64,10 +64,15 @@ public class ChatsPreviewModel implements Updated {
 	}
 
 	private ArrayList<ChatPreviewModel> chats = new ArrayList<>();
+	private static ConnectionOperator CO = new ConnectionOperator(1000);
 
 	private static Logger log = Logger.getAnonymousLogger();
 
 	static {
 		log.setLevel(Level.ALL);
+	}
+	
+	public static ConnectionOperator getConnectionOperator() {
+		return CO;
 	}
 }

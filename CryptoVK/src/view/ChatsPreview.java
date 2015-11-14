@@ -27,22 +27,21 @@ public class ChatsPreview implements Updated, View {
 		this.model = new ChatsPreviewModel();
 		initRoot();
 	}
-	
-	
+
 	private void initRoot() {
 
-		this.header.getStyleClass().add("chats-header");
+		this.header.getStyleClass().add("chats-preview-header");
+		this.title.getStyleClass().add("chats-preview-title");
 		this.statusMessage.setId("chats-status-message");
 		this.statusBar.getStyleClass().add("chats-status-bar");
 		this.chatsContainer.getStyleClass().add("chats-container");
-		
-		this.root = new BorderPane();
-		
 		this.root.getStyleClass().add("chats-root");
-				
-		this.accessExpirationInfo.setText("Доступ без пароля до "+DataOperator.getLastTokenExpirationDate());
+		this.lastSeenOnline.getStyleClass().add("chats-preview-last-seen");
+
+		this.accessExpirationInfo.setText("Token valid until " + DataOperator.getLastTokenExpirationDate());
 		this.statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
-		
+
+		header.getChildren().addAll(new VBox(title, lastSeenOnline));
 		this.root.setCenter(chatsContainer);
 		this.root.setTop(header);
 		this.root.setBottom(statusBar);
@@ -53,13 +52,6 @@ public class ChatsPreview implements Updated, View {
 		return root;
 	}
 
-	public Integer getPreviewsCount() {
-		return chatPreviewsCount;
-	}
-
-	public void setPreviewsCount(Integer chatEntriesCount) {
-		this.chatPreviewsCount = chatEntriesCount;
-	}
 
 	public Separator buildHBorder() {
 		Separator hBorder = new Separator(Orientation.HORIZONTAL);
@@ -67,28 +59,32 @@ public class ChatsPreview implements Updated, View {
 		return hBorder;
 	}
 
-	public void update() {
-		for (int i = 0; i < previews.size(); i++) 
+	public void update(Object... params) {
+		for (int i = 0; i < previews.size(); i++)
 			previews.get(i).loadModel(model.getChats().get(i));
 	}
-	
-	private BorderPane root;
-	private HBox statusBar = new HBox(); 
-	private Integer chatPreviewsCount = 0;
+
+	private ChatsPreviewModel model;
+	private HBox header = new HBox();
+	private HBox statusBar = new HBox();
 	private VBox chatsLayout = new VBox();
-	private Label header = new Label("Чаты");
+	private Label title = new Label("Chats");
+	private BorderPane root = new BorderPane();
+	private Label lastSeenOnline = new Label();
 	private Label statusMessage = new Label("Ready");
 	private ProgressBar progressBar = new ProgressBar(0);
-	private ChatsPreviewModel model;
 	private ArrayList<ChatPreview> previews = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
 
-	
-	public ArrayList<ChatPreview> getPreviews(){
-		return previews;
+	public Label getLastSeenOnline() {
+		return lastSeenOnline;
 	}
 	
+	public ArrayList<ChatPreview> getPreviews() {
+		return previews;
+	}
+
 	public BooleanProperty canBeUpdated() {
 		return canBeUpdated;
 	}
@@ -98,18 +94,16 @@ public class ChatsPreview implements Updated, View {
 	}
 
 	private Label accessExpirationInfo = new Label();
-	
-	
+
 	@Override
 	public ViewName getName() {
 		return ChatsPreview.NAME;
 	}
 
-
 	public ScrollPane getChatsContainer() {
 		return chatsContainer;
 	}
-	
+
 	public VBox getChatsLayout() {
 		return chatsLayout;
 	}
@@ -117,7 +111,7 @@ public class ChatsPreview implements Updated, View {
 	public ProgressBar getProgressBar() {
 		return progressBar;
 	}
-	
+
 	public ChatsPreviewModel getModel() {
 		return model;
 	}
@@ -131,6 +125,5 @@ public class ChatsPreview implements Updated, View {
 	public void releaseLock() {
 		model.releaseLock();
 	}
-
 
 }

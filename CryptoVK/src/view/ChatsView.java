@@ -7,12 +7,11 @@ import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import model.ChatsModel;
 import model.Updated;
 
@@ -25,34 +24,33 @@ public class ChatsView implements View, Updated {
 	private void initRoot() {
 		
 		root.getStyleClass().add("chats-root");
-		header.getStyleClass().add("chats-header");
 		chatNamesContainer.getStyleClass().add("chats-names-container");
-
+		back.getStyleClass().add("chats-back-button");
+		header.getStyleClass().add("chats-header");
+		HBox.setHgrow(chatNamesContainer, Priority.ALWAYS);
+		
 		back.setCancelButton(true);
-		header.getChildren().addAll(back, title);
-		root.setTop(new VBox(header, chatNamesContainer));
-	
+		header.getChildren().addAll(back, chatNamesContainer);
+		root.setTop(header);
 	}
-
 
 	public void setCurrentViewedChat(ChatView CV) {
 		this.root.setCenter(CV.getRoot());
 	}
-	
+
 	public HashMap<Integer, ChatView> getViewedChats() {
 		return viewedChats;
 	}
 
 	@Override
-	public void update() {
+	public void update(Object... params) {
 		for(ChatView CV : viewedChats.values()) {
 			CV.update();
 		}
 	}
 
 	private HBox header = new HBox();
-	private Label title = new Label("Чаты");
-	private Button back = new Button("Назад");
+	private Button back = new Button("");
 	private BorderPane root = new BorderPane();
 	private ChatsModel model = new ChatsModel();
 	private FlowPane chatNamesContainer = new FlowPane();
@@ -100,5 +98,4 @@ public class ChatsView implements View, Updated {
 	public FlowPane getChatNamesContainer() {
 		return chatNamesContainer;
 	}
-
 }

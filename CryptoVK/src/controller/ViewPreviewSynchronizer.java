@@ -1,50 +1,36 @@
 package controller;
 
+import controller.ChatViewController.ReadStateWithId;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import view.ChatPreview;
 
-import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import model.ChatPreviewModel;
-import view.ChatsPreview;
-import view.ChatsView;
+public class ViewPreviewSynchronizer {
 
-public class ViewPreviewSynchronizer extends Service<Void>{
-
-	public ViewPreviewSynchronizer(ChatsPreview CPV, ChatsView CV) {
-		this.CPV = CPV;
-		this.CV = CV;
+	public ViewPreviewSynchronizer(ChatsPreviewController CPVC, ChatsViewController CVC) {
+		this.CPVC = CPVC;
+		this.CVC = CVC;
+		addChatViewReadStateListener();
 	}
 	
-	@Override
-	protected Task<Void> createTask() {
-		Task<Void> synchronizeReadStates = new Task<Void>() {
+	private void addChatViewReadStateListener() {
+		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ReadStateWithId>() {
 
 			@Override
-			protected Void call() throws Exception {
-				Thread.currentThread().setName("Read states synchronizer");
-				while(!isCancelled()) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						break;
-					}
-					
-					Platform.runLater(() -> {
-						CPV.getLock();
-						for (ChatPreviewModel CPM : CPV.getModel().getChats()) {
-							
-						}
-					});
-				}
-				
-				
-				return null;
-			}
-		};
-		return synchronizeReadStates;
-	}
-	
-	private ChatsPreview CPV;
-	private ChatsView CV;
+			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
+					ReadStateWithId newValue) {
+				CPVC.getControlled().getModel().getLock();
+				ChatPreview CP = CPVC.getPreviewById(newValue.getChatId());
+				CP.setReadState(newValue.getRS());
+				CP.getCurrentLoadedModel().setReadState(newValue.getRS());
+				CPVC.getControlled().getModel().releaseLock();
 
+			}
+		});
+	}
+
+	private ChatsViewController CVC;
+	private ChatsPreviewController CPVC;
+ 
 }
+ 

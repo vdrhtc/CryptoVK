@@ -1,10 +1,11 @@
 package model;
 
-import http.ConnectionOperator;
-
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
+
+import http.ConnectionOperator;
 
 public class VKPerson {
 
@@ -13,71 +14,86 @@ public class VKPerson {
 		this.lastName = content.getString("last_name");
 		this.id = content.getInt("id");
 		this.photoURL = content.getString("photo_50");
+		this.lastSeenOnline = content.optJSONObject("last_seen") == null ? null
+				: new Date(content.getJSONObject("last_seen").getLong("time")*1000);
 		VKPerson.knownPersons.put(this.id, this);
 	}
-	
+
+	public Date getLastSeenOnline() {
+		return lastSeenOnline;
+	}
+
 	public String getPhotoURL() {
 		return photoURL;
 	}
 
 	@Override
 	public String toString() {
-		return "VKPerson [firstName=" + firstName + ", lastName=" + lastName
-				+ ", id=" + id + ", photoURL=" + photoURL + "]";
+		return "VKPerson [firstName=" + firstName + ", lastName=" + lastName + ", id=" + id + ", photoURL=" + photoURL
+				+ "]";
 	}
 
 	public String getFullName() {
-		return firstName+" "+lastName;
+		return firstName + " " + lastName;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public VKPerson setFirstName(String firstName) {
 		this.firstName = firstName;
 		return this;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public VKPerson setLastName(String lastName) {
 		this.lastName = lastName;
 		return this;
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public VKPerson setId(Integer id) {
 		this.id = id;
 		return this;
 	}
-	
+
 	public static VKPerson getKnownPerson(int id) {
 		VKPerson p = knownPersons.get(id);
 		return p != null ? p : loadById(id);
 	}
-	
+
 	private static VKPerson loadById(int id) {
-		return new VKPerson(ConnectionOperator.getUser(id));
+		return new VKPerson(CO.getUser(id));
 	}
-	
+
 	public static VKPerson getOwner() {
-		return ownerID==0 ? loadOwner() : knownPersons.get(ownerID);
+		return ownerID == 0 ? loadOwner() : knownPersons.get(ownerID);
 	}
-	
+
 	private static VKPerson loadOwner() {
-		VKPerson me = new VKPerson(ConnectionOperator.getOwner());
+		VKPerson me = new VKPerson(CO.getOwner());
 		ownerID = me.getId();
+		knownPersons.put(ownerID, me);
 		return me;
 	}
 
 	private String firstName;
 	private String lastName;
+	private Date lastSeenOnline;
 	private Integer id;
 	private String photoURL;
-	
+	private static ConnectionOperator CO = new ConnectionOperator(1000);
+
 	private static ConcurrentHashMap<Integer, VKPerson> knownPersons = new ConcurrentHashMap<>();
 	private static int ownerID;
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

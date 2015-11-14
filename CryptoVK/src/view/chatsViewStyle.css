@@ -1,6 +1,51 @@
+.chats-back-button {
+	-fx-background-color: transparent;
+	-fx-vorder-color:transparent;
+	-fx-background-image:url(../Resources/back.png);
+	-fx-background-size:contain;
+	-fx-pref-width:50;
+	-fx-pref-height:50;
+	-fx-min-width:50;
+	-fx-min-height:50;
+}
+.chats-back-button:hover{
+	-fx-effect:dropshadow(three-pass-box, white, 2, 0,0,0);
+}
+.chats-back-button:pressed{
+	-fx-effect:dropshadow(three-pass-box, white, 6, 0,0,0);
+}
+
+
+.chats-header {
+	-fx-padding: 5 5 5 6;
+	-fx-spacing: 10;
+	-fx-background-color: #36638E;
+	-fx-alignment: center-left;
+}
 
 .chats-names-container {
 	-fx-orientation: horizontal;
 	-fx-hgap: 5;
 	-fx-vgap:5;
+	-fx-max-width:1000;
+}
+
+.chats-chat-name {
+	-fx-label-padding: 5 5 5 5;
+	-fx-border-radius: 10;
+	-fx-border-width:2;
+	-fx-background-color:white;
+	-fx-border-color: transparent;
+	-fx-background-radius: 10;
+}
+.chats-chat-name:active {
+	-fx-text-fill: #36638E;
+}
+
+.chats-chat-name:viewed {
+	-fx-border-color: #DAE1E8;
+}
+.chats-chat-name:unread {
+	-fx-border-color: transparent;
+	-fx-background-color:derive(#DAE1E8, 20%);
 }

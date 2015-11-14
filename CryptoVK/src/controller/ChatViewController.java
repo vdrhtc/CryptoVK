@@ -1,16 +1,27 @@
 package controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONObject;
+
+import data.ReadStatesDatabase;
+import data.ReadStatesDatabase.ReadState;
 import http.ConnectionOperator;
+import http.Uploader;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
-import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -18,29 +29,88 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+import model.Attachment;
 import model.ChatModel;
-import model.ChatPreviewModel;
+import model.Photo;
 import view.ChatView;
 import view.View.ViewName;
 
 public class ChatViewController implements Controller {
 
-
-	public ChatViewController(ChatModel CM, ChatPreviewModel PM) {
+	public ChatViewController(ChatModel CM) {
 
 		CM.loadMessages(ChatModel.INIT_LOAD_COUNT, 0);
 		this.controlled = new ChatView(CM);
-		this.preview = PM;
+		this.uploader = new Uploader();
 		addScrollPaneListener();
 		addTextChangeListener();
-		addEnterListener();
+		addEnterListenerAndRequestFocus();
 		addSchorcutLocalizer();
+		addReadStateListener();
+		addUploadButtonListener();
+		addReadButtonListener();
 		controlled.getMessagesContainer().setOnScroll(scrollHandler);
+	}
+
+	private void addReadButtonListener() {
+		controlled.getReadButton().setOnAction((ActionEvent a) -> {
+			controlled.getModel().getLock();
+			Thread t = new Thread(() -> {
+				CO.readChat(controlled.getModel().getChatId(),
+						controlled.getModel().getLoadedMessages().get(0).getId());
+			});
+			t.start();
+			controlled.getModel().setReadState(ReadState.READ);
+			ReadStatesDatabase.clear(controlled.getModel().getChatId());
+			controlled.getReadStateProperty().setValue(ReadState.READ);
+			controlled.getModel().releaseLock();
+		});
+	}
+
+	private void addUploadButtonListener() {
+		controlled.getUploadButton().setOnAction((ActionEvent a) -> {
+
+			FileChooser fc = new FileChooser();
+			List<File> selectedFiles = fc.showOpenMultipleDialog(controlled.getUploadButton().getScene().getWindow());
+			if (selectedFiles != null) {
+				for (File selectedFile : selectedFiles) {
+					Task<JSONObject> uploadTask = new Task<JSONObject>() {
+						protected JSONObject call() throws Exception {
+							Thread.currentThread().setName("File uploader");
+							return new JSONObject(uploader.uploadPhoto(selectedFile)).getJSONArray("response")
+									.getJSONObject(0);
+						}
+
+						protected void succeeded() {
+							Platform.runLater(() -> {
+								Photo photoAttachment = new Photo(getValue());
+								controlled.getAttachmentsContainer().addImage(photoAttachment);
+								controlled.getAttachments().add(photoAttachment);
+							});
+						}
+					};
+					Thread t = new Thread(uploadTask);
+					t.start();
+				}
+			}
+		});
 	}
 
 	@Override
 	public void prepareViewForSwitch(Object... params) {
-
+		if (!controlled.getActive()) {
+			controlled.getModel().getLock();
+			controlled.setActive(true);
+			if (controlled.getReadStateProperty().getValue() == ReadState.UNREAD) {
+				controlled.getReadStateProperty().set(ReadState.VIEWED);
+				controlled.getModel().setReadState(ReadState.VIEWED);
+			}
+			controlled.update();
+			controlled.getModel().releaseLock();
+		} else
+			controlled.setActive(false);
 	}
 
 	@Override
@@ -52,31 +122,36 @@ public class ChatViewController implements Controller {
 		controlled.getInputTray().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-//				System.out.println(event.getText());
 				if (event.isControlDown() && !event.getText().equals("")) {
 					if (event.getText().equals("с")) {
 						controlled.getInputTray()
-						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter() , "c",
-								KeyCode.C, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
-								event.isMetaDown()));
+								.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "c", KeyCode.C,
+										event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+										event.isMetaDown()));
 						event.consume();
 					} else if (event.getText().equals("м")) {
 						controlled.getInputTray()
-						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "v",
-								KeyCode.V, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
-								event.isMetaDown()));
+								.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "v", KeyCode.V,
+										event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+										event.isMetaDown()));
 						event.consume();
 					} else if (event.getText().equals("ф")) {
 						controlled.getInputTray()
-						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "a",
-								KeyCode.A, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
-								event.isMetaDown()));
+								.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "a", KeyCode.A,
+										event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+										event.isMetaDown()));
 						event.consume();
 					} else if (event.getText().equals("ч")) {
 						controlled.getInputTray()
-						.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "x",
-								KeyCode.X, event.isShiftDown(), event.isControlDown(), event.isAltDown(),
-								event.isMetaDown()));
+								.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "x", KeyCode.X,
+										event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+										event.isMetaDown()));
+						event.consume();
+					} else if (event.getText().equals("я")) {
+						controlled.getInputTray()
+								.fireEvent(new KeyEvent(event.getEventType(), event.getCharacter(), "z", KeyCode.Z,
+										event.isShiftDown(), event.isControlDown(), event.isAltDown(),
+										event.isMetaDown()));
 						event.consume();
 					}
 
@@ -85,7 +160,21 @@ public class ChatViewController implements Controller {
 		});
 	}
 
-	public void addEnterListener() {
+	public void addEnterListenerAndRequestFocus() {
+
+		controlled.getInputTray().sceneProperty().addListener(new ChangeListener<Scene>() {
+			@Override
+			public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+				if (newValue != null)
+					controlled.getInputTray().getScene().windowProperty().addListener(new ChangeListener<Window>() {
+						public void changed(ObservableValue<? extends Window> observable, Window oldValue,
+								Window newValue) {
+							if (newValue != null)
+								controlled.getInputTray().requestFocus();
+						}
+					});
+			}
+		});
 
 		controlled.getInputTray().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
@@ -96,14 +185,38 @@ public class ChatViewController implements Controller {
 				}
 
 				if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
-					try {
-						ConnectionOperator.sendMessage(controlled.getModel().getChatId(),
-								controlled.getModel().getInterlocutorId(), controlled.getInputTray().getText());
-						controlled.getInputTray().clear();
-						event.consume();
-					} catch (UnsupportedEncodingException e) {
-						controlled.getInputTray().setText("Failed to encode URL! Unsupported characters!");
-					}
+
+					controlled.getModel().getLock();
+					ArrayList<Attachment> aTTs = controlled.getAttachments();
+					String message = controlled.getInputTray().getText();
+					int chatId = controlled.getModel().getChatId();
+					int interlocutorId = controlled.getModel().getInterlocutorId();
+
+					String[] attachmentStrings = new String[aTTs.size()];
+					for (Attachment a : controlled.getAttachments())
+						attachmentStrings[aTTs.indexOf(a)] = a.toString();
+
+					Thread t = new Thread(() -> {
+						Thread.currentThread().setName("Message sender");
+						try {
+							CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
+							ReadStatesDatabase.clear(controlled.getModel().getChatId());
+						} catch (UnsupportedEncodingException e) {
+							Platform.runLater(() -> {
+								controlled.getInputTray().setText("Failed to encode URL! Unsupported characters!");
+							});
+						}
+					});
+					t.start();
+					
+					controlled.getAttachmentsContainer().clear();
+					controlled.getAttachments().clear();
+					controlled.getInputTray().clear();
+					controlled.getModel().setReadState(ReadState.READ);
+					controlled.getReadStateProperty().setValue(ReadState.READ);
+					controlled.getModel().releaseLock();
+					event.consume();
+
 				} else if (event.getCode().equals(KeyCode.ENTER) && event.isShiftDown()) {
 					eventJustFiltered = true;
 					controlled.getInputTray()
@@ -113,32 +226,42 @@ public class ChatViewController implements Controller {
 					event.consume();
 				}
 			}
-
 		});
 
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void addReadStateListener() {
+		controlled.getReadStateProperty().addListener(new ChangeListener<ReadState>() {
+
+			@Override
+			public void changed(ObservableValue<? extends ReadState> observable, ReadState oldValue,
+					ReadState newValue) {
+
+				readStateWithIdProperty.setValue(new ReadStateWithId(controlled.getModel().getChatId(), newValue));
+				controlled.getChatNameLabel().setReadState(newValue);
+			}
+		});
+	}
+
 	public void addTextChangeListener() {
 		TextArea IT = controlled.getInputTray();
-		controlled.getInputTray().textProperty().addListener(new ChangeListener() {
+		controlled.getInputTray().textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue ov, Object t, Object t1) {
+			public void changed(ObservableValue<? extends String> ov, String t, String t1) {
 				Text text = (Text) IT.lookup(".text");
 				IT.setPrefHeight(text.getBoundsInParent().getHeight() + 10);
 			}
 		});
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addScrollPaneListener() {
 
 		ScrollPane SP = controlled.getMessagesContainer();
 		VBox contents = controlled.getMessagesLayout();
 
-		contents.heightProperty().addListener(new ChangeListener() {
+		contents.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue ov, Object t, Object t1) {
+			public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
 				if (controlled.getКостыльДляПрокрутки()) {
 					SP.setVvalue(SP.getVmax());
 					controlled.setКостыльДляПрокрутки(false);
@@ -171,18 +294,20 @@ public class ChatViewController implements Controller {
 	};
 
 	private ChatView controlled;
-	private ChatPreviewModel preview;
+	private ConnectionOperator CO = new ConnectionOperator(1000);
+	private Uploader uploader;
+	private ObjectProperty<ReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
 
 	private boolean eventJustFiltered = false;
 	private LoaderService loader = new LoaderService();
 
+	public ObjectProperty<ReadStateWithId> getReadStateWithIdProperty() {
+		return readStateWithIdProperty;
+	}
+
 	private class LoaderService extends Service<Void> {
-
-		@Override
 		protected Task<Void> createTask() {
-
 			Task<Void> loadMoreChatEntries = new Task<Void>() {
-				@Override
 				protected Void call() {
 					controlled.getModel().getLock();
 					try {
@@ -192,30 +317,50 @@ public class ChatViewController implements Controller {
 						e.printStackTrace();
 					}
 					controlled.getModel().releaseLock();
+
+					Platform.runLater(() -> {
+						controlled.getModel().getLock();
+						controlled.loadModel();
+						controlled.getModel().releaseLock();
+					});
 					return null;
 				}
 			};
-			loadMoreChatEntries.setOnSucceeded(entryLoadResultHandler);
 			return loadMoreChatEntries;
 		}
-
-		private EventHandler<WorkerStateEvent> entryLoadResultHandler = new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent t) {
-
-				Platform.runLater(() -> {
-					controlled.getModel().getLock();
-					controlled.loadModel();
-					controlled.getModel().releaseLock();
-
-				});
-			}
-		};
 	}
 
 	@Override
 	public ChatView getControlled() {
 		return controlled;
+	}
+
+	public class ReadStateWithId {
+
+		public ReadStateWithId(int chatId, ReadState RS) {
+			this.chatId = chatId;
+			this.RS = RS;
+		}
+
+		private int chatId;
+		private ReadState RS;
+
+		public int getChatId() {
+			return chatId;
+		}
+
+		public void setChatId(int chatId) {
+			this.chatId = chatId;
+		}
+
+		public ReadState getRS() {
+			return RS;
+		}
+
+		public void setRS(ReadState rS) {
+			RS = rS;
+		}
+
 	}
 
 }

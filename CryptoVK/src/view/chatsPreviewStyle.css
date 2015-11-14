@@ -1,6 +1,14 @@
-.chats-header{
+.chats-preview-title{
 	-fx-font-size: 3em;
-	-fx-text-fill: #36638E;
+	-fx-text-fill: white;
+	-fx-pref-height: 50;
+}
+.chats-preview-last-seen{
+	-fx-text-fill: white;
+}
+.chats-preview-header{
+	-fx-background-color:#36638E;
+	-fx-padding:5 5 5 5;
 }
 
 .chats-status-bar {

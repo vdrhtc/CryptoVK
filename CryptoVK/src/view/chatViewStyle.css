@@ -1,11 +1,71 @@
-
 .chat-footer {
 	-fx-spacing: 10;
 	-fx-padding: 5 5 5 5;
 }
 
+.chat-button {
+	-fx-background-color: transparent;
+	-fx-boder-width: 2;
+	-fx-vorder-color:transparent;
+	-fx-background-size:contain;
+	-fx-pref-width:24;
+	-fx-pref-height:24;
+	-fx-min-width:24;
+	-fx-min-height:24;
+}
+.chat-button:hover {
+	-fx-effect:innershadow(three-pass-box, #36638E, 5, 0,0,0);
+}
+
+.chat-button:pressed {
+	-fx-background-color:white;
+	-fx-effect:innershadow(three-pass-box, black, 2, 0,0,0);
+}
+.chat-upload-button {
+	-fx-background-image:url(../Resources/upload.png);
+}
+.chat-read-button {
+	-fx-background-image:url(../Resources/read.png);
+}
+.chat-postpone-button {
+	-fx-background-image:url(../Resources/postpone.png);
+}
 .chat-input-tray {
 	-fx-wrap-text: true;
+	-fx-min-height: 50;
 	-fx-pref-height: 50;
 	-fx-vbar-policy: never;
+	-fx-max-width:1000;
 }
+
+.messages-container {
+	-fx-background-color: white;
+	-fx-border-color: white;
+	-fx-fit-to-width: true;
+	-fx-padding:0 1 0 1;
+}
+.messages-container .viewport{
+	-fx-background-color: white;
+	-fx-padding:0 0 0 0;
+	
+}
+
+.messages-container .scroll-bar {
+	-fx-background-color:white;
+}
+.messages-container .scroll-bar .thumb {
+	-fx-background-color: rgba(0,0,0,0.3);
+}
+.messages-container .scroll-bar:vertical .increment-button ,
+.messages-container.scroll-bar:vertical .decrement-button {
+	-fx-background-color:black;
+	-fx-background-radius: 0em;
+	-fx-padding:0 5 0 0;
+}
+
+.messages-container .increment-button .increment-arrow,
+.messages-container .decrement-button .decrement-arrow {
+	-fx-shape:"";
+	-fx-padding:0;
+}
+

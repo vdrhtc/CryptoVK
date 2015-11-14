@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import model.MessageModel.ReadState;
+import data.ReadStatesDatabase.ReadState;
 
 public class DialogPreviewModel extends ChatPreviewModel {
 
@@ -18,16 +18,21 @@ public class DialogPreviewModel extends ChatPreviewModel {
 
 	@Override
 	public void loadContent(JSONObject content) {
-		extractDialogTitle(content);
+		extractInterlocutor(content);
+		extractDialogTitle(this.getInterlocutors().get(0));
 		extractDialogId(content);
 		super.loadContent(content);
 
 	}
 	
-	
-	private void extractDialogTitle(JSONObject content) {
+	public void extractInterlocutor(JSONObject content) {
 		VKPerson interlocutor = VKPerson.getKnownPerson(content.getInt("user_id"));
-		getInterlocutors().add(interlocutor);
+		if (getInterlocutors().size() == 0)
+			getInterlocutors().add(interlocutor);
+	}
+	
+	private void extractDialogTitle(VKPerson interlocutor) {
+	
 		getLog().info(interlocutor.toString());
 		setTitle(interlocutor.getFirstName() + " "
 				+ interlocutor.getLastName());

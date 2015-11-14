@@ -43,13 +43,13 @@ public class LongPollUpdater extends Service<Void>{
 			@Override
 			protected Void call() throws InterruptedException {
 				Thread.currentThread().setName(getName());
-				JSONObject longPollServerData = ConnectionOperator
+				JSONObject longPollServerData = CO
 						.getLongPollServer();
 
 				while (!isCancelled()) {
 					if (isWorking.getValue()) {
 
-						JSONObject updates = ConnectionOperator.getUpdates(
+						JSONObject updates = CO.getUpdates(
 								longPollServerData.getString("server"),
 								longPollServerData.getString("key"),
 								longPollServerData.getLong("ts"));
@@ -91,6 +91,7 @@ public class LongPollUpdater extends Service<Void>{
 	
 	private Updated updatedModel;
 	private Updated updatedView;
+	private ConnectionOperator CO = new ConnectionOperator(30000);
 	private BooleanProperty isWorking = new SimpleBooleanProperty();
 
 }

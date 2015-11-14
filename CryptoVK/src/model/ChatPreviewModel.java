@@ -11,27 +11,27 @@ import org.json.JSONObject;
 
 import data.DataOperator;
 import data.ReadStatesDatabase;
-import model.MessageModel.ReadState;
+import data.ReadStatesDatabase.ReadState;
 
 public class ChatPreviewModel {
-	
-	public ChatPreviewModel() {	}
 
-	public ChatPreviewModel(int chatId, ReadState readState, String title,
-			long lastMessageId, ArrayList<String> chatIconURL, String lastMessage,
-			Date lastMessageDate, VKPerson lastMessageSender,
+	public ChatPreviewModel() {
+	}
+
+	public ChatPreviewModel(int chatId, ReadState readState, String title, long lastMessageId,
+			ArrayList<String> chatIconURL, String lastMessage, Date lastMessageDate, VKPerson lastMessageSender,
 			ArrayList<VKPerson> interlocutors) {
 		this.setChatId(chatId);
+		this.setLastMessageId(lastMessageId);
 		this.setReadState(readState);
 		this.setTitle(title);
-		this.setLastMessageId(lastMessageId);
 		this.setChatIconURL(chatIconURL);
 		this.setLastMessage(lastMessage);
 		this.setLastMessageDate(lastMessageDate);
 		this.setLastMessageSender(lastMessageSender);
 		this.setInterlocutors(interlocutors);
 	}
-	
+
 	public void loadContent(JSONObject content) {
 		getLog().info(content.toString());
 		extractDate(content);
@@ -45,43 +45,44 @@ public class ChatPreviewModel {
 	}
 
 	private void extractLastMessageAndSenderAndReadState(JSONObject content) {
-		setReadState(content.getInt("read_state") == 1 ? true : false);
+		setOrRecallReadState(content.getInt("read_state") == 1 ? ReadState.READ : ReadState.UNREAD);
 		setLastMessage(content.getString("body"));
-		if (content.getInt("out") !=1 )
+		if (content.getInt("out") != 1)
 			setLastMessageSender(VKPerson.getKnownPerson(content.getInt("user_id")));
-		else
+		else {
 			setLastMessageSender(VKPerson.getOwner());
+			if (RS == ReadState.UNREAD)
+				setReadState(ReadState.VIEWED);
+		}
 	}
 
 	private void extractDate(JSONObject content) {
 		this.setLastMessageDate(new Date(content.getLong("date") * 1000));
 	}
-	
-	public void addInterlocutor(JSONObject user) {
-		interlocutors.add(new VKPerson(user));
-	}
+
 	
 	public void update(JSONObject content) {
-		setReadState(content.getInt("read_state") == 1 ? true : false);
-		
-		if(getLastMessageId() != content.getLong("id")) {
-			System.out.println("Updating "+toString());
+		setOrRecallReadState(content.getInt("read_state") == 1 ? ReadState.READ
+				: content.getInt("out") == 1 ? ReadState.VIEWED : ReadState.UNREAD);
+
+		if (getLastMessageId() != content.getLong("id")) {
+			System.out.println("Updating " + toString());
 			this.loadContent(content);
 		}
 	}
-	
+
 	public boolean isContentCorresponding(JSONObject content) {
 		return true;
 	}
-	
+
 	public static boolean isDialog(JSONObject content) {
 		return content.optInt("chat_id") == 0 ? true : false;
 	}
-	
+
 	private void extractChatIcon() {
-		if(chatIconURL.size() > 0)
+		if (chatIconURL.size() > 0)
 			return;
-		
+
 		int min = Math.min(4, getInterlocutors().size());
 		ArrayList<String> urls = new ArrayList<>(min);
 		List<Integer> indices = new ArrayList<>();
@@ -92,12 +93,11 @@ public class ChatPreviewModel {
 			urls.add(getInterlocutors().get(indices.get(i)).getPhotoURL());
 		setChatIconURL(urls);
 	}
-	
-	
+
 	@Override
 	public String toString() {
-		return "ChatEntry [title=" + getTitle() + ", read=" + getReadState()
-				+ ", lastMessageDate=" + getLastMessageDate() + "]";
+		return "ChatEntry [title=" + getTitle() + ", read=" + getReadState() + ", lastMessageDate="
+				+ getLastMessageDate() + "]";
 	}
 
 	private int chatId;
@@ -111,10 +111,11 @@ public class ChatPreviewModel {
 	private ArrayList<VKPerson> interlocutors = new ArrayList<>();
 
 	private static Logger log = Logger.getAnonymousLogger();
+
 	static {
-		getLog().setLevel(Level.SEVERE);
+		getLog().setLevel(Level.WARNING);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -138,15 +139,15 @@ public class ChatPreviewModel {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public ChatPreviewModel clone() {
-		return new ChatPreviewModel(getChatId(),getReadState(), getTitle(), getLastMessageId(), getChatIconURL(),
+		return new ChatPreviewModel(getChatId(), getReadState(), getTitle(), getLastMessageId(), getChatIconURL(),
 				getLastMessage(), getLastMessageDate(), getLastMessageSender(), getInterlocutors());
 	}
 
-	public String getTitle() { 
-		return title; 
+	public String getTitle() {
+		return title;
 	}
 
 	public String getLastMessageDateString() {
@@ -156,11 +157,11 @@ public class ChatPreviewModel {
 	public ArrayList<String> getChatIconURL() {
 		return chatIconURL;
 	}
-	
+
 	public String getLastMessage() {
 		return lastMessage;
 	}
-	
+
 	public VKPerson getLastMessageSender() {
 		return lastMessageSender;
 	}
@@ -203,17 +204,20 @@ public class ChatPreviewModel {
 
 	public void setReadState(ReadState RS) {
 		this.RS = RS;
+		ReadStatesDatabase.put(chatId, lastMessageId, getReadState());
 	}
-	
-	public void setReadState(Boolean read) {
-		if (read==false) {
-			JSONObject state = ReadStatesDatabase.get(chatId);
-			if (state!=null)
-				if (state.getInt("lastMessageId") == lastMessageId)
-					setReadState(ReadState.valueOf(state.getString("readState")));
-				else
-					setReadState(ReadState.UNREAD);
-		}
+
+	private void setOrRecallReadState(ReadState RS) {
+		JSONObject state = ReadStatesDatabase.get(chatId);
+		if (state == null)
+			setReadState(RS);
+		else if (state.getInt("lastMessageId") != lastMessageId) 
+			setReadState(RS);
+		else if (RS == ReadState.READ) 
+			setReadState(ReadState.READ);
+		else 
+			setReadState(ReadState.valueOf(state.getString("readState")));
+		
 	}
 
 	protected long getLastMessageId() {

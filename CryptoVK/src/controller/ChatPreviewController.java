@@ -14,7 +14,7 @@ public class ChatPreviewController implements Controller {
 		
 		this.controlled = new ChatPreview(CPM);
 		this.controlled.getRoot().setOnMouseClicked((MouseEvent event) -> {
-			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_VIEW, controlled.getCurrentLoadedModel());
+			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_VIEW, controlled);
 		});
 	}
 	

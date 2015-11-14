@@ -3,9 +3,14 @@ package model;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import data.ReadStatesDatabase;
+import data.ReadStatesDatabase.ReadState;
 
 public class ChatModel implements Updated {
 	
@@ -15,14 +20,16 @@ public class ChatModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	
-	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle) {
+	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle, ReadState RS) {
 		this.chatId = chatId;
 		this.chatIconURL = chatIconUrl;
 		this.chatTitle = chatTitle;
+		this.RS = RS;
 	}
 	
 	public ChatModel(int chatId, String chatTitle, ArrayList<String> chatIconURL,
-			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount) {
+			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount, ReadState RS) {
+		this.RS = RS;
 		this.chatId = chatId;
 		this.chatTitle = chatTitle;
 		this.chatIconURL = chatIconURL;
@@ -38,7 +45,7 @@ public class ChatModel implements Updated {
 		JSONArray messageContents = chatHistory.getJSONArray("items");
 
 		for (int i = 0; i < messageContents.length(); i++)
-			this.getLoadedMessages().add(new MessageModel(messageContents.getJSONObject(i)));
+			this.getLoadedMessages().add(new MessageModel(messageContents.getJSONObject(i), chatId));
 	}
 	
 	public JSONObject formAndSendRequest(int count, int offset) {
@@ -46,21 +53,26 @@ public class ChatModel implements Updated {
 	}
 	
 	@Override
-	public void update() {
+	public void update(Object... params) {
 		int currentLoadedMessagesCount = loadedMessages.size();
 		JSONObject newChatHistory = formAndSendRequest(currentLoadedMessagesCount, 0);
 		serverMessageCount = newChatHistory.getInt("count");
 		for (int i = 0; i< currentLoadedMessagesCount; i++) 
-			loadedMessages.set(i, new MessageModel(newChatHistory.getJSONArray("items").getJSONObject(i)));
+			loadedMessages.set(i, new MessageModel(newChatHistory.getJSONArray("items").getJSONObject(i), chatId));
 	}
 	
 	
 	public void getLock() {
+		log.info("Getting lock: "+Thread.currentThread().getName());
 		lock.lock();
+		log.info("Got lock: "+Thread.currentThread().getName());
+
 	}
 	
 	public void releaseLock() {
 		lock.unlock();
+		log.info("Releasing lock: "+Thread.currentThread().getName());
+
 	}
 
 	private int chatId;
@@ -68,6 +80,12 @@ public class ChatModel implements Updated {
 	private ArrayList<String> chatIconURL;
 	private Integer serverMessageCount;
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
+	private ReadState RS;
+	
+	private static Logger log = Logger.getAnonymousLogger();
+	static {
+		log.setLevel(Level.ALL);
+	}
 
 
 	public ArrayList<String> getChatIconURL() {
@@ -156,15 +174,19 @@ public class ChatModel implements Updated {
 
 	@Override
 	public ChatModel clone() {
-		return new ChatModel(chatId, chatTitle, chatIconURL, loadedMessages, serverMessageCount);
+		return new ChatModel(chatId, chatTitle, chatIconURL, loadedMessages, serverMessageCount, RS);
 	}
 
 	public int getInterlocutorId() {
 		return 0;
 	}
 
+	public void setReadState(ReadState RS) {
+		this.RS = RS;
+		ReadStatesDatabase.put(chatId, loadedMessages.get(0).getId(), RS);
+	}
 
-
-
-
+	public ReadState getReadState() {
+		return RS;
+	}
 }

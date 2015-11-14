@@ -1,60 +1,81 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import data.DataOperator;
+import data.ReadStatesDatabase;
+import data.ReadStatesDatabase.ReadState;
 
 public class MessageModel {
-	
-	public enum ReadState {
-		READ, UNREAD, POSTPONED, VIEWED;
-	}
 
-	public MessageModel(int id, Date date, String text, Boolean read, VKPerson sender, ReadState RS) {
-		super();
+	public MessageModel(Long id, Date date, String text, VKPerson sender, ReadState RS, int chatId) {
 		this.id = id;
 		this.date = date;
 		this.text = text;
-		this.read = read;
 		this.sender = sender;
 		this.RS = RS;
+		this.chatId = chatId;
 	}
 
-	public MessageModel(JSONObject content) {
+	public MessageModel(JSONObject content, int chatId) {
 		this.date = new Date(content.getLong("date") * 1000);
-		this.id = content.getInt("id");
-		if (content.getInt("out") !=1 )
+		this.id = content.getLong("id");
+		if (content.getInt("out") != 1)
 			this.sender = VKPerson.getKnownPerson(content.getInt("from_id"));
 		else
 			this.sender = VKPerson.getOwner();
 		this.text = content.getString("body");
-		this.read = content.getInt("read_state") == 1;
+		this.chatId = chatId;
+		JSONArray attachments = content.optJSONArray("attachments");
+		if (attachments != null)
+			for (int i = 0; i<attachments.length(); i++) 
+				this.attachments.add(attachments.getJSONObject(i));
+		
+		setOrRecallReadState(content.getInt("read_state") == 1 ? true : false);
 	}
-	
+
+	public ArrayList<JSONObject> getAttachments() {
+		return attachments;
+	}
+
 	public boolean isIncoming() {
 		return !sender.equals(VKPerson.getOwner());
 	}
-	
-	
-	private int id;
-	private Date date;
-	private String text;
-	private Boolean read;
-	private VKPerson sender;	
-	private ReadState RS;
-	private Boolean viewed;
-	
-	public Boolean isViewed() {
-		return viewed;
-	}
-	
-	public MessageModel clone() {
-		return new MessageModel(id, date, text, read, sender, RS);
+
+	public void setReadState(ReadState RS) {
+		this.RS = RS;
+		ReadStatesDatabase.putMessage(chatId, id, RS, !isIncoming());
 	}
 
-	public int getId() {
+	private void setOrRecallReadState(boolean read) {
+		JSONObject info = ReadStatesDatabase.get(chatId).optJSONObject(id.toString());
+		ReadState RS = read ? ReadState.READ : ReadState.UNREAD;
+		if (info == null) {
+			setReadState(RS);
+		} else if (RS == ReadState.READ) {
+			setReadState(ReadState.READ);
+		} else {
+			setReadState(ReadState.valueOf(info.getString("readState")));
+		}
+	}
+
+	private Long id;
+	private Date date;
+	private String text;
+	private VKPerson sender;
+	private ReadState RS;
+	private Integer chatId;
+	private ArrayList<JSONObject> attachments = new ArrayList<>();
+
+	public MessageModel clone() {
+		return new MessageModel(id, date, text, sender, RS, chatId);
+	}
+
+	public Long getId() {
 		return id;
 	}
 
@@ -66,9 +87,9 @@ public class MessageModel {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((RS == null) ? 0 : RS.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((read == null) ? 0 : read.hashCode());
+		result = (int) (prime * result + id);
 		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
 		result = prime * result + ((text == null) ? 0 : text.hashCode());
 		return result;
@@ -86,6 +107,9 @@ public class MessageModel {
 			return false;
 		}
 		MessageModel other = (MessageModel) obj;
+		if (RS != other.RS) {
+			return false;
+		}
 		if (date == null) {
 			if (other.date != null) {
 				return false;
@@ -94,13 +118,6 @@ public class MessageModel {
 			return false;
 		}
 		if (id != other.id) {
-			return false;
-		}
-		if (read == null) {
-			if (other.read != null) {
-				return false;
-			}
-		} else if (!read.equals(other.read)) {
 			return false;
 		}
 		if (sender == null) {
@@ -126,16 +143,16 @@ public class MessageModel {
 
 	@Override
 	public String toString() {
-		return "MessageModel [id=" + id + ", date=" + date + ", text=" + text + ", read=" + read + ", sender=" + sender
-				+ "]";
+		return "MessageModel [id=" + id + ", date=" + date + ", text=" + text + ", read=" + RS.toString() + ", sender="
+				+ sender + "]";
 	}
 
-	public Boolean isRead() {
-		return read;
+	public ReadState getReadState() {
+		return RS;
 	}
-
 	public VKPerson getSender() {
 		return sender;
 	}
-	
+
+
 }

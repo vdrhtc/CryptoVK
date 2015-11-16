@@ -1,8 +1,10 @@
 package controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import controller.ChatViewController.ReadStateWithId;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import view.ChatPreview;
 
 public class ViewPreviewSynchronizer {
@@ -12,25 +14,32 @@ public class ViewPreviewSynchronizer {
 		this.CVC = CVC;
 		addChatViewReadStateListener();
 	}
-	
+
 	private void addChatViewReadStateListener() {
-		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ReadStateWithId>() {
+		CVC.getReadStateWithIdProperty().addListener(new ListChangeListener<ReadStateWithId>() {
 
 			@Override
-			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
-					ReadStateWithId newValue) {
-				CPVC.getControlled().getModel().getLock();
-				ChatPreview CP = CPVC.getPreviewById(newValue.getChatId());
-				CP.setReadState(newValue.getRS());
-				CP.getCurrentLoadedModel().setReadState(newValue.getRS());
-				CPVC.getControlled().getModel().releaseLock();
-
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends ReadStateWithId> c) {
+				c.next();
+				if (c.wasAdded())
+					for (ReadStateWithId RSId : c.getAddedSubList()) {
+						log.info("Synchronizing preview read state, chatId: "+RSId.getChatId());
+						CPVC.getControlled().getModel().getLock();
+						ChatPreview CP = CPVC.getPreviewById(RSId.getChatId());
+						CP.setReadState(RSId.getRS());
+						CP.getCurrentLoadedModel().setReadState(RSId.getRS());
+						CPVC.getControlled().getModel().releaseLock();
+						c.getList().remove(RSId);
+					}
 			}
+			
 		});
 	}
 
 	private ChatsViewController CVC;
 	private ChatsPreviewController CPVC;
- 
+	private static Logger log = Logger.getAnonymousLogger();
+	static {
+		log.setLevel(Level.ALL);
+	}
 }
- 

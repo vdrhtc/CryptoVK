@@ -1,6 +1,6 @@
 package view;
 
-import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 
 public interface View {
 	public enum ViewName {
@@ -8,5 +8,5 @@ public interface View {
 	}
 
 	public ViewName getName();
-	public Parent getRoot();
+	public Pane getRoot();
 }

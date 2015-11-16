@@ -3,19 +3,15 @@ package view;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.IIOException;
-
 import data.ImageOperator;
 import data.ReadStatesDatabase.ReadState;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
-import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -44,7 +40,7 @@ public class MessageView implements View {
 		date.getStyleClass().add("message-date");
 		senderName.getStyleClass().add("message-sender-name");
 		plug.setMinWidth(50);
-		ImageOperator.clipImage(senderPhoto);
+//		ImageOperator.clipImage(senderPhoto);
 
 		messageContainer.getChildren().addAll(senderName, message, date);
 		MenuItem copy = new MenuItem("Copy text");
@@ -79,7 +75,7 @@ public class MessageView implements View {
 			date.setText(model.getDate());
 			message.setText(model.getText());
 			senderName.setText(model.getSender().getFirstName());
-			senderPhoto.setImage(getIcon(model));
+			getIcon(model);
 			setReadState(model.getReadState());
 
 			if (model.getAttachments().size() > 0)
@@ -89,21 +85,8 @@ public class MessageView implements View {
 		return false;
 	}
 
-	private Image getIcon(MessageModel model) {
-		Image im;
-		try {
-			im = ImageOperator.getIconFrom(model.getSender().getPhotoURL());
-		} catch (IIOException e) {
-			log.warning("Couldn't load the icon for " + this.model.getId() + "! Retrying in .5 seconds...");
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-
-			im = getIcon(model);
-		}
-		return im;
+	private void getIcon(MessageModel model) {
+		ImageOperator.asyncLoadImage(senderPhoto, model.getSender().getPhotoURL());
 	}
 
 	private Separator buildVBorder() {
@@ -152,7 +135,7 @@ public class MessageView implements View {
 	}
 
 	@Override
-	public Parent getRoot() {
+	public Pane getRoot() {
 		return root;
 	}
 

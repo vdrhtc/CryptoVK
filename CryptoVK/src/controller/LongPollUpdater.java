@@ -58,7 +58,7 @@ public class LongPollUpdater extends Service<Void>{
 						if (needsUpdating(updates)) {
 							
 							updatedModel.getLock();
-							updatedModel.update();
+							updatedModel.update(updates);
 							updatedModel.releaseLock();
 
 							isWorking.setValue(false);

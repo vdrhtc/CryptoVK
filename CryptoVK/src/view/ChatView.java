@@ -4,22 +4,19 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.IIOException;
-
 import data.ImageOperator;
 import data.ReadStatesDatabase.ReadState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import model.Attachment;
@@ -41,18 +38,15 @@ public class ChatView implements View, Updated {
 
 	private void initRoot() {
 
+		postponeButton.getStyleClass().addAll("chat-postpone-button", "chat-button");
 		uploadButton.getStyleClass().addAll("chat-upload-button", "chat-button");
 		readButton.getStyleClass().addAll("chat-read-button", "chat-button");
-		postponeButton.getStyleClass().addAll("chat-postpone-button", "chat-button");
 		messagesContainer.getStyleClass().add("messages-container");
-		
-		footer.getStyleClass().add("chat-footer");
 		inputTray.getStyleClass().add("chat-input-tray");
+		footer.getStyleClass().add("chat-footer");
 
-		icon.setImage(getIcon(model.getChatIconURL().toArray(new String[0])));
-		ImageOperator.clipImage(icon);
-		ownerIcon.setImage(getIcon(VKPerson.getOwner().getPhotoURL()));
-		ImageOperator.clipImage(ownerIcon);
+		getIcon(model.getChatIconURL().toArray(new String[0]));
+		getOwnerIcon(VKPerson.getOwner().getPhotoURL());
 		footer.getChildren().addAll(ownerIcon, new VBox(readButton, postponeButton), new VBox(inputTray, getAttachmentsContainer()),
 				new VBox(uploadButton), icon);
 		messagesContainer.setContent(messagesLayout);
@@ -121,11 +115,7 @@ public class ChatView implements View, Updated {
 					messagesLayout.getChildren().set(messagesLayout.getChildren().size() - 1 - i,
 							loadedMessageViews.get(i).getRoot());
 			}
-
 		}
-
-		if (messagesContainer.getVvalue() > 0.9)
-			костыльДляПрокрутки = true;
 	}
 
 	public double getMessageHeight() {
@@ -136,21 +126,12 @@ public class ChatView implements View, Updated {
 		return inputTray;
 	}
 
-	private Image getIcon(String... urls) {
-		Image im;
-		try {
-			im = ImageOperator.getIconFrom(urls);
-		} catch (IIOException e) {
-			log.warning("Couldn't load the icon for " + this.model.getChatId() + "! Retrying in .5 seconds...");
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-
-			im = getIcon(urls);
-		}
-		return im;
+	private void getIcon(String... urls) {
+		ImageOperator.asyncLoadImage(icon, urls);
+	}
+	
+	private void getOwnerIcon(String url) {
+		ImageOperator.asyncLoadImage(ownerIcon, url);
 	}
 
 	private Button uploadButton = new Button();
@@ -166,7 +147,6 @@ public class ChatView implements View, Updated {
 	private VBox messagesLayout = new VBox();
 	private ImageView icon = new ImageView();
 	private BorderPane root = new BorderPane();
-	private Boolean костыльДляПрокрутки = true;
 	private TextArea inputTray = new TextArea();
 	private ImageView ownerIcon = new ImageView();
 	private Label totalMessagesCounter = new Label();
@@ -222,7 +202,7 @@ public class ChatView implements View, Updated {
 	}
 
 	@Override
-	public Parent getRoot() {
+	public Pane getRoot() {
 		return root;
 	}
 
@@ -248,13 +228,6 @@ public class ChatView implements View, Updated {
 		model.releaseLock();
 	}
 
-	public Boolean getКостыльДляПрокрутки() {
-		return костыльДляПрокрутки;
-	}
-
-	public void setКостыльДляПрокрутки(Boolean костыльДляПрокрутки) {
-		this.костыльДляПрокрутки = костыльДляПрокрутки;
-	}
 
 	@Override
 	public ViewName getName() {

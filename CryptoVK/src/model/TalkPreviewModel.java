@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TalkPreviewModel extends ChatPreviewModel {
@@ -51,7 +52,8 @@ public class TalkPreviewModel extends ChatPreviewModel {
 
 
 	private void extractTalkId(JSONObject content) {
-		this.setChatId(content.getInt("chat_id"));
+		try{ this.setChatId(content.getInt("chat_id"));}
+		catch (JSONException e) {System.out.println(content.toString(4));e.printStackTrace();;}
 	}
 
 	private void extractTalkTitle(JSONObject content) {

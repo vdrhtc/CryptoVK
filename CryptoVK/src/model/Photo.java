@@ -1,11 +1,6 @@
 package model;
 
-import javax.imageio.IIOException;
-
 import org.json.JSONObject;
-
-import data.ImageOperator;
-import javafx.scene.image.Image;
 
 public class Photo extends Attachment {
 	
@@ -36,6 +31,10 @@ public class Photo extends Attachment {
 	private int height;
 	private String largestResolutionUrl;
 	
+	public String getPreviewURL() {
+		return previewUrl;
+	}
+	
 	@Override
 	public String toString() {
 		return "photo"+owner.getId()+"_"+photoId;
@@ -51,15 +50,6 @@ public class Photo extends Attachment {
 	
 	public int getHeight() {
 		return height;
-	}
-	
-	public Image getPreviewImage() {
-		try {
-			return ImageOperator.getIconFrom(previewUrl);
-		} catch (IIOException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	public VKPerson getOwner() {

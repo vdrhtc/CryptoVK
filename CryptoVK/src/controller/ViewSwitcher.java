@@ -3,7 +3,8 @@ package controller;
 import java.util.HashMap;
 
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import view.View.ViewName;
 
@@ -19,26 +20,26 @@ public class ViewSwitcher {
 		for (Controller v : views) {
 			this.controllers.put(v.getControlled().getName(), v);
 
-			Scene scene = new Scene(new StackPane());
-
-			scene.getStylesheets().addAll("view/chatPreviewStyle.css", "view/chatsPreviewStyle.css",
-					"view/messageViewStyle.css", "view/chatViewStyle.css",
-					"view/chatsViewStyle.css", "view/nodes/attachmentsContainerStyle.css");
-
-			this.scenes.put(v.getControlled().getName(), scene);
-			
+//			this.scenes.put(v.getControlled().getName(), scene);
 
 		}
+		
+		scene.getStylesheets().addAll("view/chatPreviewStyle.css", "view/chatsPreviewStyle.css",
+				"view/messageViewStyle.css", "view/chatViewStyle.css", "view/chatsViewStyle.css",
+				"view/nodes/attachmentsContainerStyle.css");
+
 	}
 
 	public void switchToView(ViewName name, Object... params) {
+		
 		ViewName redirectName = controllers.get(name).redirectTo();
 
 		controllers.get(redirectName).prepareViewForSwitch(params);
-		Scene scene = scenes.get(redirectName);
-		scene.setRoot(controllers.get(redirectName).getControlled().getRoot());
-
+		
+		Pane root = controllers.get(redirectName).getControlled().getRoot();
+		scene.setRoot(root);
 		stage.setScene(scene);
+		stage.show();
 	}
 
 	public Controller getController(ViewName name) {
@@ -54,7 +55,8 @@ public class ViewSwitcher {
 	}
 
 	private static Stage stage;
+	private Scene scene = new Scene(new BorderPane());
 	private static ViewSwitcher INSTANCE;
 	private HashMap<ViewName, Controller> controllers = new HashMap<>();
-	private HashMap<ViewName, Scene> scenes = new HashMap<>();
+//	private HashMap<ViewName, Scene> scenes = new HashMap<>();
 }

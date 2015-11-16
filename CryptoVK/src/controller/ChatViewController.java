@@ -30,7 +30,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Window;
 import model.Attachment;
 import model.ChatModel;
 import model.Photo;
@@ -84,11 +83,9 @@ public class ChatViewController implements Controller {
 						}
 
 						protected void succeeded() {
-							Platform.runLater(() -> {
-								Photo photoAttachment = new Photo(getValue());
-								controlled.getAttachmentsContainer().addImage(photoAttachment);
-								controlled.getAttachments().add(photoAttachment);
-							});
+							Photo photoAttachment = new Photo(getValue());
+							controlled.getAttachmentsContainer().addImage(photoAttachment);
+							controlled.getAttachments().add(photoAttachment);
 						}
 					};
 					Thread t = new Thread(uploadTask);
@@ -166,13 +163,7 @@ public class ChatViewController implements Controller {
 			@Override
 			public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
 				if (newValue != null)
-					controlled.getInputTray().getScene().windowProperty().addListener(new ChangeListener<Window>() {
-						public void changed(ObservableValue<? extends Window> observable, Window oldValue,
-								Window newValue) {
-							if (newValue != null)
-								controlled.getInputTray().requestFocus();
-						}
-					});
+					controlled.getInputTray().requestFocus();
 			}
 		});
 
@@ -260,12 +251,9 @@ public class ChatViewController implements Controller {
 		VBox contents = controlled.getMessagesLayout();
 
 		contents.heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-				if (controlled.getКостыльДляПрокрутки()) {
+				if (!scrollLockOn) 
 					SP.setVvalue(SP.getVmax());
-					controlled.setКостыльДляПрокрутки(false);
-				}
 			}
 		});
 
@@ -289,11 +277,16 @@ public class ChatViewController implements Controller {
 
 			} else
 				controlled.getMessagesContainer().setVvalue(newVvalue);
+			if(newVvalue >= 1)
+				scrollLockOn = false;
+			else
+				scrollLockOn = true;
 
 		}
 	};
 
 	private ChatView controlled;
+	private boolean scrollLockOn = false;
 	private ConnectionOperator CO = new ConnectionOperator(1000);
 	private Uploader uploader;
 	private ObjectProperty<ReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();

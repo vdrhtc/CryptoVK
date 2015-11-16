@@ -8,16 +8,58 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 public class ImageOperator {
+	
+	public static final String deleted = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";
+	
+	public static void asyncLoadImage(ImageView imageView, String... urls) {
+		imageView.setImage(wait);
+		Task<Image> loadTask = new Task<Image>() {
+			protected Image call() throws Exception {
+				return getImageFrom(urls);
+			}
+			
+			@Override
+			protected void succeeded() {
+				if(!getValue().isError()) {
+					imageView.setImage(getValue());
+					clipImageView(imageView);
+				}
+			}
+		};
+		Thread t = new Thread(loadTask);
+		t.start();
+	}
+	
+	public static void asyncLoadSmallImage(ImageView imageView, String url) {
+		imageView.setImage(wait_33);
+		Task<Image> loadTask = new Task<Image>() {
+			protected Image call() throws Exception {
+				return getLastSenderPhotoFrom(url);
+			}
+			protected void succeeded() {
+				if(!getValue().isError()) {
+					imageView.setImage(getValue());
+					clipImageView(imageView);
+				}
+			}
+		};
+		Thread t = new Thread(loadTask);
+		t.start();
+	}
+	
 	
 	public static synchronized Image getLastSenderPhotoFrom(String url) {
 		if(lastSenderPhotosDatabase.containsKey(url))
@@ -27,14 +69,15 @@ public class ImageOperator {
 		return image;
 	}
 
-	public static synchronized void clipImage(ImageView image) {
+	public static synchronized void clipImageView(ImageView image) {
 		Rectangle rR = new Rectangle(0, 0, image.getImage().getWidth(), image.getImage().getHeight());
 		rR.setArcHeight(10);
 		rR.setArcWidth(10);
 		image.setClip(rR);
 	}
 
-	public static synchronized Image getIconFrom(String... urls) throws IIOException {
+	public static synchronized Image getImageFrom(String... urls) throws IIOException {
+		
 		String hash = String.join("", urls);
 
 		if (imageDatabase.containsKey(hash)) {
@@ -47,11 +90,7 @@ public class ImageOperator {
 
 		ArrayList<BufferedImage> BIs = new ArrayList<>();
 		for (String url : urls) {
-			try {
-				BIs.add(ImageIO.read(new URL(url)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			addImage(BIs, url);
 		}
 
 		BufferedImage icon = new BufferedImage(110, 110, BufferedImage.TYPE_INT_ARGB);
@@ -69,7 +108,23 @@ public class ImageOperator {
 		return imageDatabase.get(hash);
 	}
 
+	private static void addImage(ArrayList<BufferedImage> BIs, String url) {
+		try {
+			BIs.add(ImageIO.read(new URL(url).openStream()));
+		} catch (IOException e) {
+			log.warning(Thread.currentThread().getName()+" is retrying to load image: "+url);
+			addImage(BIs, url);
+		}
+	}
+
 	private static HashMap<String, Image> imageDatabase = new HashMap<>();
 	private static HashMap<String, Image> lastSenderPhotosDatabase = new HashMap<>();
+	private static Image wait = new Image(ImageOperator.class.getResource("/Resources/wait.png").toString());
+	private static Image wait_33 = new Image(ImageOperator.class.getResource("/Resources/wait.png").toString(), 33, 33, true, true);
 
+	
+	private static Logger log = Logger.getAnonymousLogger();
+	static {
+		log.setLevel(Level.ALL);
+	}
 }

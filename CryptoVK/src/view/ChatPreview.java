@@ -3,13 +3,10 @@ package view;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.IIOException;
-
 import data.ImageOperator;
 import data.ReadStatesDatabase.ReadState;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -30,11 +27,11 @@ public class ChatPreview implements View {
 			this.currentLoadedModel = model.clone();
 			date.setText(model.getLastMessageDateString());
 			title.setText(model.getTitle());
-			icon.setImage(getIcon(model));
+			getIcon(model);
 			setReadState(model.getReadState());
 			lastMessage.setText(model.getLastMessage());
-			lastSenderPhoto.setImage(getLastSenderPhoto(model));
-			ImageOperator.clipImage(lastSenderPhoto);
+			getLastSenderPhoto(model);
+//			ImageOperator.clipImage(lastSenderPhoto);
 		}
 	}
 
@@ -46,35 +43,21 @@ public class ChatPreview implements View {
 		title.getStyleClass().add("chat-entry-title");
 		icon.getStyleClass().add("chat-entry-icon");
 		root.getStyleClass().add("chat-entry-hbox");
+		lastSenderPhoto.getStyleClass().add("chat-entry-last-sender-photo");
 
-		ImageOperator.clipImage(icon);
+//		ImageOperator.clipImage(icon);
 		metaInfoContainer.getChildren().addAll(title, date);
 		lastMessageContainer.getChildren().addAll(lastSenderPhoto, lastMessage);
 		root.getChildren().addAll(icon, metaInfoContainer, lastMessageContainer);
 		HBox.setHgrow(lastMessageContainer, Priority.ALWAYS);
 	}
 
-	private Image getLastSenderPhoto(ChatPreviewModel model) {
-		Image im = ImageOperator.getLastSenderPhotoFrom(model.getLastMessageSender().getPhotoURL());
-		return im;
+	private void getLastSenderPhoto(ChatPreviewModel model) {
+		ImageOperator.asyncLoadSmallImage(lastSenderPhoto, model.getLastMessageSender().getPhotoURL());
 	}
 
-	private Image getIcon(ChatPreviewModel model) {
-		Image im;
-		try {
-			im = ImageOperator.getIconFrom(model.getChatIconURL().toArray(new String[0]));
-		} catch (IIOException e) {
-			log.warning("Couldn't load the icon for " + this.currentLoadedModel.getChatId()
-					+ "! Retrying in .5 seconds...");
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			
-			im = getIcon(model);
-		}
-		return im;
+	private void getIcon(ChatPreviewModel model) {
+		ImageOperator.asyncLoadImage(icon, model.getChatIconURL().toArray(new String[0]));//(model.getChatIconURL().toArray(new String[0]));
 	}
 
 	public void setReadState(ReadState RS) {

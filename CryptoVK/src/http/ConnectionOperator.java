@@ -17,10 +17,16 @@ public class ConnectionOperator extends HttpOperator {
 		super();
 	}
 
-	public int readChat(int chatId, Long lastMessageId) {
-		String realRequest = messages_readTemplate
-				.concat("&start_message_id=" + lastMessageId).concat("&message_ids=" + lastMessageId)
+	public JSONObject getMesageById(int messageId) {
+		String realRequest = messages_getByIdTemplate.concat("&message_ids=" + messageId)
 				.concat("&access_token=" + acess_token);
+		return new JSONObject(sendRequest(realRequest)).getJSONObject("response").getJSONArray("items")
+				.getJSONObject(0);
+	}
+
+	public int readChat(int chatId, Long lastMessageId) {
+		String realRequest = messages_readTemplate.concat("&start_message_id=" + lastMessageId)
+				.concat("&message_ids=" + lastMessageId).concat("&access_token=" + acess_token);
 		return new JSONObject(sendRequest(realRequest)).getInt("response");
 	}
 
@@ -127,6 +133,7 @@ public class ConnectionOperator extends HttpOperator {
 	private static String messages_getHistoryTemplate = "https://api.vk.com/method/messages.getHistory?&v=5.23";
 	private static String messages_sendTemplate = "https://api.vk.com/method/messages.send?&v=5.23";
 	private static String messages_readTemplate = "https://api.vk.com/method/messages.markAsRead?&v=5.23";
+	private static String messages_getByIdTemplate = "https://api.vk.com/method/messages.getById?&v=5.23";
 
 	static {
 		log.setLevel(Level.ALL);

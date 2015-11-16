@@ -1,4 +1,13 @@
 
+.chat-entry-icon {
+	-fx-pref-width:50;
+	-fx-pref-height:50;
+}
+.chat-entry-last-sender-photo {
+	-fx-pref-width:33;
+	-fx-pref-height:33;
+}
+
 .chat-entry-hbox{
 	-fx-border-width: 0 2 0 2;
 	-fx-border-color:transparent;

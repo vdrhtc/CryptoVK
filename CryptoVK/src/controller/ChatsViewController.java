@@ -3,10 +3,10 @@ package controller;
 import java.util.HashMap;
 
 import controller.ChatViewController.ReadStateWithId;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import model.ChatModel;
@@ -22,7 +22,7 @@ public class ChatsViewController implements Controller {
 
 	public ChatsViewController() {
 		this.controlled = new ChatsView();
-
+		
 		addBackButtonListener(controlled.getBackButton());
 		this.updater = new ChatsViewLPU(controlled);
 		this.controlled.canBeUpdated()
@@ -54,7 +54,7 @@ public class ChatsViewController implements Controller {
 			addReadStateChangeListener(newChatController);
 
 			controlled.getModel().getLock();
-			controlled.getModel().getChatModels().add(fullModel);
+			controlled.getModel().getChatModels().put(fullModel.getChatId(), fullModel);
 			controlled.releaseLock();
 
 			ChatNameLabel newNameLabel = new ChatNameLabel(fullModel);
@@ -99,7 +99,7 @@ public class ChatsViewController implements Controller {
 			@Override
 			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
 					ReadStateWithId newValue) {
-				readStateWithIdProperty.setValue(newValue);
+				changedReadStatesWithIds.add(newValue);
 			}
 		});
 	}
@@ -108,10 +108,14 @@ public class ChatsViewController implements Controller {
 	private HashMap<Integer, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;
-	private ObjectProperty<ReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
+	private ObservableList<ReadStateWithId> changedReadStatesWithIds = FXCollections.observableArrayList();
+	
+	public HashMap<Integer, ChatViewController> getControllers() {
+		return controllers;
+	}
 
-	public ObjectProperty<ReadStateWithId> getReadStateWithIdProperty() {
-		return readStateWithIdProperty;
+	public ObservableList<ReadStateWithId> getReadStateWithIdProperty() {
+		return changedReadStatesWithIds;
 	}
 
 	public ChatsView getControlled() {

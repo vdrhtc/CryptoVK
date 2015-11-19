@@ -1,0 +1,41 @@
+.photo-container {
+	-fx-hgap: 15;
+	-fx-vgap: 15;
+}
+.photo-container-incoming {
+	-fx-alignment:top-right;
+	-fx-hgap: 15;
+	-fx-vgap: 15;
+}
+
+.document-container {
+	-fx-hgap: 15;
+	-fx-vgap: 15;
+}
+
+.document-container-incoming {
+	-fx-alignment:top-right;
+	-fx-hgap: 15;
+	-fx-vgap: 15;
+}
+
+.document-label {
+	-fx-background-color:#36638E;
+	-fx-text-fill:white;
+	-fx-background-radius:10;
+	-fx-padding:7 7 7 7;
+}
+
+.image-context-menu-item{
+	-fx-text-fill:black;
+}
+
+.image-context-menu-item:focused {
+	-fx-background-color:white;
+	-fx-text-fill:black;
+	
+}
+.image-context-menu-item:hover {
+	-fx-background-color:blue;
+	-fx-text-fill:white;
+}

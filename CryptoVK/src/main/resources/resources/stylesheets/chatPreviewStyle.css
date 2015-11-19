@@ -1,0 +1,100 @@
+.chat-entry-icon {
+	-fx-pref-width:50;
+	-fx-pref-height:50;
+}
+.chat-entry-last-sender-photo {
+	-fx-pref-width:33;
+	-fx-pref-height:33;
+}
+
+.chat-entry-hbox{
+	-fx-border-width: 0 2 0 2;
+	-fx-border-color:transparent;
+	-fx-background-radius: 10;
+	-fx-spacing: 10;
+	-fx-alignment: center-left;
+	-fx-padding: 2 2 2 2;
+}
+.chat-entry-hbox:hover {
+	-fx-border-width: 0 2 0 2;
+	-fx-border-radius: 10;
+	-fx-border-color: #36638E;
+}
+.chat-entry-hbox:pressed {
+	-fx-background-color: derive( #DAE1E8, 30%);
+}
+.chat-entry-title{
+	-fx-text-fill: #36638E;
+	-fx-wrap-text: true;
+}
+.chat-entry-meta-info-container{
+	-fx-alignment: center-left;
+	-fx-min-width: 160;
+	-fx-pref-width: 160;
+}
+.chat-entry-left-container{
+	-fx-alignment: center-left;
+	-fx-min-width: 180;
+	-fx-pref-width: 180;
+}
+.chat-entry-last-message-container{
+	-fx-alignment:center-left;
+	-fx-border-radius: 20;
+	-fx-border-width: 2;
+	-fx-border-color: transparent;
+	-fx-padding: 10;
+	-fx-background-radius: 20;
+	-fx-spacing: 10;
+}
+.chat-entry-last-message-container:unread{
+	-fx-background-color: derive(#DAE1E8, 20%);
+	-fx-border-radius: 20;
+	-fx-border-width: 2;
+	-fx-border-color: transparent;
+	-fx-padding: 10;
+	-fx-alignment:center-left;
+	-fx-spacing: 10;
+}
+.chat-entry-last-message-container:viewed{
+	-fx-border-radius: 20;
+	-fx-border-width: 2;
+	-fx-border-color: derive(#DAE1E8, 20%);
+	-fx-alignment:center-left;
+	-fx-spacing: 10;
+}
+.chat-entry-last-message-container:postponed{
+	-fx-background-color: derive(#E8E1DA, 20%);
+	-fx-alignment:center-left;
+	-fx-spacing: 10;
+}
+.chat-entry-message{
+	-fx-wrap-text: true;
+	-fx-min-width: 50;
+}
+
+
+.chat-preview-button {
+	-fx-background-color: transparent;
+	-fx-boder-width: 2;
+	-fx-vorder-color:transparent;
+	-fx-background-size:contain;
+	-fx-pref-width:24;
+	-fx-pref-height:24;
+	-fx-min-width:24;
+	-fx-min-height:24;
+}
+
+.chat-preview-button:pressed {
+	-fx-background-color:derive( #DAE1E8, 30%);
+	-fx-effect:innershadow(three-pass-box, black, 2, 0,0,0);
+}	
+
+.chat-preview-read-button:parent-hover {
+	-fx-background-image:url(../assets/readOff.png);
+}
+.chat-preview-read-button:hover {
+	-fx-background-image:url(../assets/read.png);
+}
+
+
+

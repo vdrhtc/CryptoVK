@@ -15,16 +15,8 @@ public class ChatReadStateWithId {
 		return chatId;
 	}
 
-	public void setChatId(Long chatId) {
-		this.chatId = chatId;
-	}
 
 	public ChatReadState getRS() {
 		return RS;
 	}
-
-	public void setRS(ChatReadState rS) {
-		RS = rS;
-	}
-
 }

@@ -146,9 +146,11 @@ public class ChatsPreviewController implements Controller {
 
 	public ChatPreview getPreviewById(Long chatId) {
 		for (ChatPreview CP : this.controlled.getPreviews()) {
-			if (CP.getModel().getChatId() == chatId)
+			System.out.println("Checking chat " + CP.getModel().getChatId());
+			if (CP.getModel().getChatId().equals(chatId))
 				return CP;
 		}
+		System.out.println("Not found chat " + chatId);
 		return null;
 	}
 

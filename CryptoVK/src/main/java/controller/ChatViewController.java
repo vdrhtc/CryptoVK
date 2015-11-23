@@ -79,8 +79,8 @@ public class ChatViewController implements Controller {
 					controlled.getModel().getLock();
 					ArrayList<Attachment> aTTs = controlled.getFooter().getAttachments();
 					String message = controlled.getFooter().getInputTray().getText();
-					int chatId = controlled.getModel().getChatId();
-					int interlocutorId = controlled.getModel().getInterlocutorId();
+					Long chatId = controlled.getModel().getChatId();
+					Long interlocutorId = controlled.getModel().getInterlocutorId();
 
 					String[] attachmentStrings = new String[aTTs.size()];
 					for (Attachment a : controlled.getFooter().getAttachments())

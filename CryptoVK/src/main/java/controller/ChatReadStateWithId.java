@@ -3,19 +3,19 @@ import data.ReadStatesDatabase.ChatReadState;
 
 public class ChatReadStateWithId {
 
-	public ChatReadStateWithId(int chatId, ChatReadState RS) {
+	public ChatReadStateWithId(Long chatId, ChatReadState RS) {
 		this.chatId = chatId;
 		this.RS = RS;
 	}
 
-	private int chatId;
+	private Long chatId;
 	private ChatReadState RS;
 
-	public int getChatId() {
+	public Long getChatId() {
 		return chatId;
 	}
 
-	public void setChatId(int chatId) {
+	public void setChatId(Long chatId) {
 		this.chatId = chatId;
 	}
 

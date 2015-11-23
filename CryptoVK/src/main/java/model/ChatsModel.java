@@ -33,7 +33,7 @@ public class ChatsModel implements Updated {
 				continue;
 			}
 
-			ChatModel CM = chatModels.get(chatId.intValue());
+			ChatModel CM = chatModels.get(chatId);
 			if (CM != null) {
 				System.out.println("Updating " + CM.toString());
 				CM.getLock();
@@ -43,9 +43,9 @@ public class ChatsModel implements Updated {
 		}
 	}
 
-	private HashMap<Integer, ChatModel> chatModels = new HashMap<>();
+	private HashMap<Long, ChatModel> chatModels = new HashMap<>();
 
-	public HashMap<Integer, ChatModel> getChatModels() {
+	public HashMap<Long, ChatModel> getChatModels() {
 		return chatModels;
 	}
 

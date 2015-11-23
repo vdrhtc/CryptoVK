@@ -20,14 +20,14 @@ public class ChatModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	
-	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle, ChatReadState RS) {
+	public ChatModel(Long chatId, ArrayList<String> chatIconUrl, String chatTitle, ChatReadState RS) {
 		this.chatId = chatId;
 		this.chatIconURL = chatIconUrl;
 		this.chatTitle = chatTitle;
 		this.RS = RS;
 	}
 	
-	public ChatModel(int chatId, String chatTitle, ArrayList<String> chatIconURL,
+	public ChatModel(Long chatId, String chatTitle, ArrayList<String> chatIconURL,
 			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount, ChatReadState RS) {
 		this.RS = RS;
 		this.chatId = chatId;
@@ -75,7 +75,7 @@ public class ChatModel implements Updated {
 
 	}
 
-	private int chatId;
+	private Long chatId;
 	private String chatTitle;
 	private ArrayList<String> chatIconURL;
 	private Integer serverMessageCount;
@@ -104,11 +104,11 @@ public class ChatModel implements Updated {
 		this.serverMessageCount = serverMessageCount;
 	}
 	
-	public int getChatId() {
+	public Long getChatId() {
 		return chatId;
 	}
 
-	public void setChatId(int chatId) {
+	public void setChatId(Long chatId) {
 		this.chatId = chatId;
 	}
 
@@ -131,7 +131,7 @@ public class ChatModel implements Updated {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + chatIconURL.hashCode();
-		result = prime * result + chatId;
+		result = prime * result + chatId.intValue();
 		result = prime * result + ((chatTitle == null) ? 0 : chatTitle.hashCode());
 		result = prime * result + ((loadedMessages == null) ? 0 : loadedMessages.hashCode());
 		return result;
@@ -177,8 +177,8 @@ public class ChatModel implements Updated {
 		return new ChatModel(chatId, chatTitle, chatIconURL, loadedMessages, serverMessageCount, RS);
 	}
 
-	public int getInterlocutorId() {
-		return 0;
+	public Long getInterlocutorId() {
+		return null;
 	}
 
 	public void setReadState(ChatReadState RS) {

@@ -38,7 +38,7 @@ public class ChatsView implements View, Updated {
 		this.root.setCenter(CV.getRoot());
 	}
 
-	public HashMap<Integer, ChatView> getViewedChats() {
+	public HashMap<Long, ChatView> getViewedChats() {
 		return viewedChats;
 	}
 
@@ -54,7 +54,7 @@ public class ChatsView implements View, Updated {
 	private BorderPane root = new BorderPane();
 	private ChatsModel model = new ChatsModel();
 	private FlowPane chatNamesContainer = new FlowPane();
-	private HashMap<Integer, ChatView> viewedChats = new HashMap<>();
+	private HashMap<Long, ChatView> viewedChats = new HashMap<>();
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty();
 
 	private static Logger log = Logger.getAnonymousLogger();

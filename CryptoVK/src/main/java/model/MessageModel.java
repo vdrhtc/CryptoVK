@@ -13,7 +13,7 @@ import data.ReadStatesDatabase.MessageReadState;
 
 public class MessageModel {
 
-	public MessageModel(Long id, Date date, String text, VKPerson sender, MessageReadState RS, int chatId) {
+	public MessageModel(Long id, Date date, String text, VKPerson sender, MessageReadState RS, Long chatId) {
 		this.id = id;
 		this.date = date;
 		this.text = text;
@@ -30,7 +30,7 @@ public class MessageModel {
 		else
 			this.sender = VKPerson.getOwner();
 		this.text = content.getString("body");
-		this.chatId = content.optInt("chat_id")==0 ? content.getInt("user_id") : content.getInt("chat_id");
+		this.chatId = content.optLong("chat_id")==0 ? content.getLong("user_id") : content.getLong("chat_id");
 		
 		JSONArray attachments = content.optJSONArray("attachments");
 		if (attachments != null)
@@ -76,14 +76,14 @@ public class MessageModel {
 	private String text;
 	private VKPerson sender;
 	private MessageReadState RS;
-	private Integer chatId;
+	private Long chatId;
 	private ArrayList<JSONObject> attachments = new ArrayList<>();
 
 	public MessageModel clone() {
 		return new MessageModel(id, date, text, sender, RS, chatId);
 	}
 	
-	public Integer getChatId() {
+	public Long getChatId() {
 		return chatId;
 	}
 

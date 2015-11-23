@@ -37,6 +37,13 @@
 	-fx-border-color: transparent;
 	-fx-background-radius: 10;
 }
+
+.chats-chat-name:hover{
+	-fx-effect:dropshadow(three-pass-box, white, 5, 0,0,0);
+}
+.chats-chat-name:pressed{
+	-fx-effect:dropshadow(three-pass-box, white, 10, 0,0,0);
+}
 .chats-chat-name:active {
 	-fx-text-fill: #36638E;
 }

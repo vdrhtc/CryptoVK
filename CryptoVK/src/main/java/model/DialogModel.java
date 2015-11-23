@@ -12,7 +12,7 @@ public class DialogModel extends ChatModel {
 
 	@Override
 	public JSONObject formAndSendRequest(int count, int offset) {
-		return ChatsModel.getConnectionOperator().getChatHistory(interlocutor.getId(), interlocutor.getId(), count, offset);
+		return ChatsModel.getConnectionOperator().getChatHistory(interlocutor.getId(), interlocutor.getId().longValue(), count, offset);
 	}
 
 	private VKPerson interlocutor;
@@ -22,7 +22,7 @@ public class DialogModel extends ChatModel {
 		return new DialogModel(super.clone(), interlocutor);
 	}
 
-	public int getInterlocutorId() {
+	public Long getInterlocutorId() {
 		return getChatId();
 	}
 

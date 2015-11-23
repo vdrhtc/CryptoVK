@@ -31,7 +31,7 @@ public class ReadStatesDatabase {
 	}
 	public static final String READ_STATE_DATABASE = System.getProperty("user.home")+"/.concrypt/readStateDatabase.json";
 
-	public static void put(Integer chatId, long lastMessageId, ChatReadState RS) {
+	public static void put(Long chatId, long lastMessageId, ChatReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
 		if (state == null)
@@ -42,7 +42,7 @@ public class ReadStatesDatabase {
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
 
-	public static void putMessage(Integer chatId, Long messageId, MessageReadState RS, boolean out) {
+	public static void putMessage(Long chatId, Long messageId, MessageReadState RS, boolean out) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject messageInfo = new JSONObject().put("readState", RS.toString()).put("out", out);
 		JSONObject chatReadStateInfo = db.getJSONObject(chatId.toString()).put(messageId.toString(), messageInfo);
@@ -51,7 +51,7 @@ public class ReadStatesDatabase {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void clear(Integer chatId) {
+	public static void clear(Long chatId) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject old = (JSONObject) db.remove(chatId.toString());
 		JSONObject newObj = new JSONObject();
@@ -68,7 +68,7 @@ public class ReadStatesDatabase {
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
 
-	public static JSONObject optChatJSON(Integer chatId) {
+	public static JSONObject optChatJSON(Long chatId) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		return db.optJSONObject(chatId.toString());
 	}

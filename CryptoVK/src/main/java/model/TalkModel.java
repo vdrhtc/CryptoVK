@@ -19,8 +19,4 @@ public class TalkModel extends ChatModel {
 	public TalkModel clone() {
 		return new TalkModel(super.clone());
 	}
-
-	public int getInterlocutorId() {
-		return 0;
-	}
 }

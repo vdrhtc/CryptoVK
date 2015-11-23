@@ -13,7 +13,7 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		
 	}
 
-	public TalkPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
+	public TalkPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
 		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
 	}
@@ -52,7 +52,7 @@ public class TalkPreviewModel extends ChatPreviewModel {
 
 
 	private void extractTalkId(JSONObject content) {
-		this.chatId = content.getInt("chat_id");
+		this.chatId = content.getLong("chat_id");
 	}
 
 	private void extractTalkTitle(JSONObject content) {

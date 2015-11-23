@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import model.ChatModel;
 import model.ChatPreviewModel;
 import model.DialogModel;
@@ -36,7 +37,7 @@ public class ChatsViewController implements Controller {
 	public void prepareViewForSwitch(Object... params) {
 		ChatPreview preview = (ChatPreview) params[0];
 		ChatPreviewModel previewModel = preview.getModel();
-		Integer chatId = previewModel.getChatId();
+		Long chatId = previewModel.getChatId();
 
 		if (!controlled.getViewedChats().containsKey(chatId)) {
 
@@ -55,6 +56,7 @@ public class ChatsViewController implements Controller {
 			controlled.releaseLock();
 
 			ChatNameLabel newNameLabel = new ChatNameLabel(fullModel);
+			addChatLabelListener(newNameLabel);
 			controlled.getChatNamesContainer().getChildren().add(newNameLabel);
 			newChatController.getControlled().setChatNameLabel(newNameLabel);
 
@@ -69,13 +71,17 @@ public class ChatsViewController implements Controller {
 		}
 
 		else {
-			controllers.get(chatId).prepareViewForSwitch((Object[]) null);
-			if (activeChatController != null)
-				activeChatController.prepareViewForSwitch((Object[]) null);
-			controlled.setCurrentViewedChat(controlled.getViewedChats().get(chatId));
-			activeChatController = controllers.get(chatId);
+			switchChatTo(chatId);
 		}
 		controlled.canBeUpdated().setValue(true);
+	}
+
+	public void switchChatTo(Long chatId) {
+		controllers.get(chatId).prepareViewForSwitch((Object[]) null);
+		if (activeChatController != null)
+			activeChatController.prepareViewForSwitch((Object[]) null);
+		controlled.setCurrentViewedChat(controlled.getViewedChats().get(chatId));
+		activeChatController = controllers.get(chatId);
 	}
 
 	@Override
@@ -90,6 +96,12 @@ public class ChatsViewController implements Controller {
 			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, (Object[]) null);
 		});
 	}
+	
+	private void addChatLabelListener(ChatNameLabel label) {
+		label.setOnMouseClicked((MouseEvent e)-> {
+			switchChatTo(label.getChatId());
+		});
+	}
 
 	private void addReadStateChangeListener(ChatViewController CVC) {
 		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
@@ -102,12 +114,12 @@ public class ChatsViewController implements Controller {
 	}
 
 	private ChatsView controlled;
-	private HashMap<Integer, ChatViewController> controllers = new HashMap<>();
+	private HashMap<Long, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;
 	private ObservableList<ChatReadStateWithId> changedReadStatesWithIds = FXCollections.observableArrayList();
 	
-	public HashMap<Integer, ChatViewController> getControllers() {
+	public HashMap<Long, ChatViewController> getControllers() {
 		return controllers;
 	}
 

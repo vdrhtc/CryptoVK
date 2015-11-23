@@ -25,6 +25,7 @@ public class ChatFooterController {
 		this.controlled = controlled;
 		addTextChangeListener();
 		addSchorcutLocalizer();
+		addFocusRequester();
 		addUploadButtonListener();
 	}
 

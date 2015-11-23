@@ -144,7 +144,7 @@ public class ChatsPreviewController implements Controller {
 		}
 	};
 
-	public ChatPreview getPreviewById(int chatId) {
+	public ChatPreview getPreviewById(Long chatId) {
 		for (ChatPreview CP : this.controlled.getPreviews()) {
 			if (CP.getModel().getChatId() == chatId)
 				return CP;

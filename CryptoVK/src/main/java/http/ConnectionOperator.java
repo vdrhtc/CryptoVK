@@ -24,13 +24,13 @@ public class ConnectionOperator extends HttpOperator {
 				.getJSONObject(0);
 	}
 
-	public int readChat(int chatId, Long lastMessageId) {
+	public int readChat(Long chatId, Long lastMessageId) {
 		String realRequest = messages_readTemplate.concat("&start_message_id=" + lastMessageId)
 				.concat("&message_ids=" + lastMessageId).concat("&access_token=" + acess_token);
 		return new JSONObject(sendRequest(realRequest)).getInt("response");
 	}
 
-	public int sendMessage(int chatId, int userId, String message, String... attachments)
+	public int sendMessage(Long chatId, Long userId, String message, String... attachments)
 			throws UnsupportedEncodingException {
 
 		String realRequest = messages_sendTemplate.concat("&chat_id=" + chatId).concat("&user_id=" + userId)
@@ -91,7 +91,7 @@ public class ConnectionOperator extends HttpOperator {
 		return new JSONObject(sendRequest(realRequest)).optJSONObject("response");
 	}
 
-	public JSONObject getChatHistory(int interlocutorId, int chatId, int count, int offset) {
+	public JSONObject getChatHistory(int interlocutorId, Long chatId, int count, int offset) {
 
 		String realRequest = messages_getHistoryTemplate.concat("&chat_id=" + chatId).concat("&count=" + count)
 				.concat("&user_id=" + interlocutorId).concat("&offset=" + offset)

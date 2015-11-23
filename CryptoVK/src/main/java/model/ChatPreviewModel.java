@@ -16,7 +16,7 @@ public class ChatPreviewModel {
 	public ChatPreviewModel() {
 	}
 
-	public ChatPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
+	public ChatPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
 		this.chatId = chatId;
 		this.lastMessage = lastMessage;
@@ -75,7 +75,7 @@ public class ChatPreviewModel {
 		chatIconURL = urls;
 	}
 
-	protected int chatId;
+	protected Long chatId;
 	protected ChatReadState RS;
 	protected String title;
 	protected MessageModel lastMessage;
@@ -124,10 +124,9 @@ public class ChatPreviewModel {
 				+ lastMessage.getDate() + "]";
 	}
 
-	public int getChatId() {
+	public Long getChatId() {
 		return chatId;
 	}
-
 
 	public ChatReadState getReadState() {
 		return RS;

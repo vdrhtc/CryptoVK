@@ -11,7 +11,7 @@ public class DialogPreviewModel extends ChatPreviewModel {
 	public DialogPreviewModel() {
 	}
 
-	public DialogPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
+	public DialogPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
 		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
 	}

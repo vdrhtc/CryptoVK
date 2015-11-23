@@ -9,6 +9,7 @@ public class ChatNameLabel extends Label {
 
 	public ChatNameLabel(ChatModel fullModel) {
 		super();
+		this.chatId = fullModel.getChatId();
 		setText(fullModel.getChatTitle());
 		setReadState(fullModel.getReadState());
 		getStyleClass().add("chats-chat-name");
@@ -37,4 +38,9 @@ public class ChatNameLabel extends Label {
 		pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), postponed);
 	}
 	
+	private Long chatId;
+	
+	public Long getChatId() {
+		return chatId;
+	}
 }

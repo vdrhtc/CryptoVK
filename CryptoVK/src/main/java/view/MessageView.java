@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import data.ImageOperator;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.MessageReadState;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
@@ -94,27 +94,23 @@ public class MessageView implements View {
 		return vBorder;
 	}
 
-	public void setReadState(ReadState RS) {
+	public void setReadState(MessageReadState RS) {
 		switch (RS) {
 		case READ:
-			setMessageContainerPseudoClass(false, false, false);
+			setMessageContainerPseudoClass(false, false);
 			break;
 		case UNREAD:
-			setMessageContainerPseudoClass(true, false, false);
+			setMessageContainerPseudoClass(true, false);
 			break;
 		case VIEWED:
-			setMessageContainerPseudoClass(false, true, false);
-			break;
-		case POSTPONED:
-			setMessageContainerPseudoClass(false, false, true);
+			setMessageContainerPseudoClass(false, true);
 			break;
 		}
 	}
 
-	private void setMessageContainerPseudoClass(boolean unread, boolean viewed, boolean postponed) {
+	private void setMessageContainerPseudoClass(boolean unread, boolean viewed) {
 		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), unread);
 		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("viewed"), viewed);
-		messageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), postponed);
 	}
 
 	private MessageModel model;

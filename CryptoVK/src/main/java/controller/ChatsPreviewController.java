@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import data.DataOperator;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 import http.ConnectionOperator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -59,11 +59,11 @@ public class ChatsPreviewController implements Controller {
 							cp.getModel().getLastMessage().getId());
 				});
 				t.start();
-				cp.setReadState(ReadState.READ);
-				cp.getModel().setReadState(ReadState.READ);
+				cp.setReadState(ChatReadState.READ);
+				cp.getModel().setReadState(ChatReadState.READ);
 				controlled.getModel().releaseLock();
 				readStateWithIdProperty
-						.setValue(new ReadStateWithId(cp.getModel().getChatId(), ReadState.READ));
+						.setValue(new ChatReadStateWithId(cp.getModel().getChatId(), ChatReadState.READ));
 			}
 		});
 	}
@@ -154,7 +154,7 @@ public class ChatsPreviewController implements Controller {
 
 	private ChatsPreview controlled;
 	private ChatsPreviewLPU updater;
-	private ObjectProperty<ReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<ChatReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
 	private ConnectionOperator CO = ChatsPreviewModel.getConnectionOperator();
 	private LoaderService loader = new LoaderService();
 
@@ -162,7 +162,7 @@ public class ChatsPreviewController implements Controller {
 		return controlled;
 	}
 
-	public ObjectProperty<ReadStateWithId> getReadStateWithIdProperty() {
+	public ObjectProperty<ChatReadStateWithId> getReadStateWithIdProperty() {
 		return readStateWithIdProperty;
 	}
 

@@ -21,18 +21,21 @@ public class ChatsModel implements Updated {
 
 		for (int i = 0; i < updatesList.length(); i++) {
 			JSONObject message = null;
+			Long chatId = null;
 			if (updatesList.getJSONArray(i).getInt(0) <= 4) {
 				message = CO.getMesageById(updatesList.getJSONArray(i).getInt(1));
+				chatId = message.optInt("chat_id") == 0 ? message.getLong("user_id") : message.getLong("chat_id");
 			} else if (updatesList.getJSONArray(i).getInt(0) == 6 || updatesList.getJSONArray(i).getInt(0) == 7) {
-				message = CO.getMesageById(updatesList.getJSONArray(i).getInt(2));
-
+				chatId = updatesList.getJSONArray(i).getLong(1);
+				if (chatId > 2000000000)
+					chatId = chatId-2000000000;
 			} else {
-				return;
+				continue;
 			}
-			Integer chatId = message.optInt("chat_id") == 0 ? message.getInt("user_id") : message.getInt("chat_id");
 
-			ChatModel CM = chatModels.get(chatId);
+			ChatModel CM = chatModels.get(chatId.intValue());
 			if (CM != null) {
+				System.out.println("Updating " + CM.toString());
 				CM.getLock();
 				CM.update();
 				CM.releaseLock();

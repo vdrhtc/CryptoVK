@@ -25,7 +25,6 @@ import model.Photo;
 public class Uploader extends HttpOperator {
 
 	public Uploader() {
-		super();
 	}
 
 	public Uploader(int connectionTimeout) {

@@ -92,10 +92,10 @@ public class ChatsViewController implements Controller {
 	}
 
 	private void addReadStateChangeListener(ChatViewController CVC) {
-		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ReadStateWithId>() {
+		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 			@Override
-			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
-					ReadStateWithId newValue) {
+			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
+					ChatReadStateWithId newValue) {
 				changedReadStatesWithIds.add(newValue);
 			}
 		});
@@ -105,13 +105,13 @@ public class ChatsViewController implements Controller {
 	private HashMap<Integer, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;
-	private ObservableList<ReadStateWithId> changedReadStatesWithIds = FXCollections.observableArrayList();
+	private ObservableList<ChatReadStateWithId> changedReadStatesWithIds = FXCollections.observableArrayList();
 	
 	public HashMap<Integer, ChatViewController> getControllers() {
 		return controllers;
 	}
 
-	public ObservableList<ReadStateWithId> getReadStateWithIdProperty() {
+	public ObservableList<ChatReadStateWithId> getReadStateWithIdProperty() {
 		return changedReadStatesWithIds;
 	}
 

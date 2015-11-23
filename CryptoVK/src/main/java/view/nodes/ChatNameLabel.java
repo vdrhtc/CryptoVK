@@ -1,6 +1,6 @@
 package view.nodes;
 
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
 import model.ChatModel;
@@ -14,8 +14,8 @@ public class ChatNameLabel extends Label {
 		getStyleClass().add("chats-chat-name");
 	}
 	
-	public void setReadState(ReadState RS) {
-		switch (RS) {
+	public void setReadState(ChatReadState chatReadState) {
+		switch (chatReadState) {
 		case READ:
 			setPseudoClass(false, false, false);
 			break;

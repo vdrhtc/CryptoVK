@@ -9,35 +9,35 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 
 import data.ReadStatesDatabase;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 
 public class ChatPreviewModel {
 
 	public ChatPreviewModel() {
 	}
 
-	public ChatPreviewModel(int chatId, ReadState readState, String title, ArrayList<String> chatIconURL,
+	public ChatPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
 		this.chatId = chatId;
 		this.lastMessage = lastMessage;
 		this.title = title;
 		this.chatIconURL = chatIconURL;
 		this.interlocutors = interlocutors;
-		this.setReadState(readState);
+		this.setReadState(chatReadState);
 	}
 
 	public void loadContent(JSONObject content) {
 		lastMessage = new MessageModel(content);
 		chatId = lastMessage.getChatId();
 
-		setOrRecallReadState(content.getInt("read_state") == 1 ? ReadState.READ
-				: content.getInt("out") == 1 ? ReadState.VIEWED : ReadState.UNREAD);
+		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
+				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
 		extractChatIcon();
 	}
 
 	public void update(JSONObject content) {
-		setOrRecallReadState(content.getInt("read_state") == 1 ? ReadState.READ
-				: content.getInt("out") == 1 ? ReadState.VIEWED : ReadState.UNREAD);
+		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
+				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
 
 		if (lastMessage.getId() != content.getLong("id")) {
 			System.out.println("Updating " + toString());
@@ -45,16 +45,16 @@ public class ChatPreviewModel {
 		}
 	}
 
-	private void setOrRecallReadState(ReadState RS) {
+	private void setOrRecallReadState(ChatReadState RS) {
 		JSONObject state = ReadStatesDatabase.optChatJSON(chatId);
 		if (state == null)
 			setReadState(RS);
 		else if (state.getInt("lastMessageId") != lastMessage.getId())
 			setReadState(RS);
-		else if (RS == ReadState.READ)
-			setReadState(ReadState.READ);
+		else if (RS == ChatReadState.READ)
+			setReadState(ChatReadState.READ);
 		else
-			setReadState(ReadState.valueOf(state.getString("readState")));
+			setReadState(ChatReadState.valueOf(state.getString("readState")));
 	}
 
 	public boolean isContentCorresponding(JSONObject content) {return false;}
@@ -76,7 +76,7 @@ public class ChatPreviewModel {
 	}
 
 	protected int chatId;
-	protected ReadState RS;
+	protected ChatReadState RS;
 	protected String title;
 	protected MessageModel lastMessage;
 	protected ArrayList<String> chatIconURL = new ArrayList<>();
@@ -129,11 +129,11 @@ public class ChatPreviewModel {
 	}
 
 
-	public ReadState getReadState() {
+	public ChatReadState getReadState() {
 		return RS;
 	}
 
-	public void setReadState(ReadState RS) {
+	public void setReadState(ChatReadState RS) {
 		this.RS = RS;
 		ReadStatesDatabase.put(chatId, lastMessage.getId(), getReadState());
 	}

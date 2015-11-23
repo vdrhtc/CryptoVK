@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 
 public class DialogPreviewModel extends ChatPreviewModel {
 
 	public DialogPreviewModel() {
 	}
 
-	public DialogPreviewModel(int chatId, ReadState readState, String title, ArrayList<String> chatIconURL,
+	public DialogPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
-		super(chatId, readState, title, chatIconURL, lastMessage, interlocutors);
+		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
 	}
 
 	@Override

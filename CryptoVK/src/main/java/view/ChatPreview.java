@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import data.ImageOperator;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -63,27 +63,30 @@ public class ChatPreview implements View {
 		ImageOperator.asyncLoadImage(icon, model.getChatIconURL().toArray(new String[0]));//(model.getChatIconURL().toArray(new String[0]));
 	}
 
-	public void setReadState(ReadState RS) {
-		switch (RS) {
+	public void setReadState(ChatReadState chatReadState) {
+		switch (chatReadState) {
 		case READ:
-			setMessageContainerPseusoClass(false, false, false);
+			setMessageContainerPseusoClass(false, false);
+			leftContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), false);
 			break;
 		case UNREAD:
-			setMessageContainerPseusoClass(true, false, false);
+			setMessageContainerPseusoClass(true, false);
+			leftContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), false);
 			break;
 		case VIEWED:
-			setMessageContainerPseusoClass(false, true, false);
+			setMessageContainerPseusoClass(false, true);
+			leftContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), false);
 			break;
 		case POSTPONED:
-			setMessageContainerPseusoClass(false, false, true);
+			setMessageContainerPseusoClass(false, true);
+			leftContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("postponed"), true);
 			break;
 		}
 	}
 
-	private void setMessageContainerPseusoClass(boolean unread, boolean viewed, boolean postponed) {
+	private void setMessageContainerPseusoClass(boolean unread, boolean viewed) {
 		lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("unread"), unread);
 		lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("viewed"), viewed);
-		lastMessageContainer.pseudoClassStateChanged(PseudoClass.getPseudoClass("posponed"), postponed);
 	}
 
 	private HBox root = new HBox();

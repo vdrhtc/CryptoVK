@@ -81,12 +81,11 @@ public class ImageOperator {
 		return image;
 	}
 
-	public static synchronized void clipImageView(ImageView image) {
+	public static void clipImageView(ImageView image) {
 		Rectangle rR = new Rectangle(0, 0, image.getImage().getWidth(), image.getImage().getHeight());
 		rR.setArcHeight(10);
 		rR.setArcWidth(10);
-		image.setClip(rR);
-	}
+		image.setClip(rR);	}
 
 	public static synchronized Image getImageFrom(String... urls) throws IIOException {
 		
@@ -130,7 +129,6 @@ public class ImageOperator {
 	private static HashMap<String, Image> lastSenderPhotosDatabase = new HashMap<>();
 	private static Image wait = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString());
 	private static Image wait_33 = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString(), 33, 33, true, true);
-
 	
 	private static Logger log = Logger.getAnonymousLogger();
 	static {

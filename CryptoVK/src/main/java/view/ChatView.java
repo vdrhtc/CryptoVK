@@ -4,27 +4,20 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import data.ImageOperator;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
+import data.ReadStatesDatabase.MessageReadState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import model.Attachment;
 import model.ChatModel;
 import model.MessageModel;
 import model.Updated;
-import model.VKPerson;
-import view.nodes.AttachmentsContainer;
+import view.nodes.ChatFooter;
 import view.nodes.ChatNameLabel;
 
 public class ChatView implements View, Updated {
@@ -38,22 +31,13 @@ public class ChatView implements View, Updated {
 
 	private void initRoot() {
 
-		postponeButton.getStyleClass().addAll("chat-postpone-button", "chat-button");
-		uploadButton.getStyleClass().addAll("chat-upload-button", "chat-button");
-		readButton.getStyleClass().addAll("chat-read-button", "chat-button");
 		messagesContainer.getStyleClass().add("messages-container");
-		inputTray.getStyleClass().add("chat-input-tray");
-		footer.getStyleClass().add("chat-footer");
-
-		getIcon(model.getChatIconURL().toArray(new String[0]));
-		getOwnerIcon(VKPerson.getOwner().getPhotoURL());
-		footer.getChildren().addAll(ownerIcon, new VBox(readButton, postponeButton), new VBox(inputTray, getAttachmentsContainer()),
-				new VBox(uploadButton), icon);
+	
+		footer = new ChatFooter(readStateProperty.getValue(), model.getChatIconURL().toArray(new String[0]));
 		messagesContainer.setContent(messagesLayout);
 		messagesContainer.setVvalue(messagesContainer.getVmax());
 		root.setCenter(messagesContainer);
 		root.setBottom(new VBox(footer, totalMessagesCounter));
-		HBox.setHgrow(inputTray, Priority.ALWAYS);
 	}
 
 	public void loadModel() {
@@ -64,8 +48,8 @@ public class ChatView implements View, Updated {
 		readStateProperty.setValue(model.getReadState());
 		for (MessageModel m : model.getLoadedMessages().subList(messagesLayout.getChildren().size(),
 				model.getLoadedMessages().size())) {
-			if (m.getReadState() == ReadState.UNREAD)
-				m.setReadState(ReadState.VIEWED);
+			if (m.getReadState() == MessageReadState.UNREAD)
+				m.setReadState(MessageReadState.VIEWED);
 			MessageView MV = new MessageView(m);
 			loadedMessageViews.add(MV);
 			messagesLayout.getChildren().add(0, MV.getRoot());
@@ -83,23 +67,23 @@ public class ChatView implements View, Updated {
 			viewedMessagesCount = model.getServerMessageCount();
 
 			if (active) {
-				model.setReadState(ReadState.VIEWED);
-				readStateProperty.set(ReadState.VIEWED);
+				model.setReadState(ChatReadState.VIEWED);
+				readStateProperty.set(ChatReadState.VIEWED);
 			} else {
-				model.setReadState(ReadState.UNREAD);
-				readStateProperty.set(ReadState.UNREAD);
+				model.setReadState(ChatReadState.UNREAD);
+				readStateProperty.set(ChatReadState.UNREAD);
 			}
-		} else if (model.getLoadedMessages().get(0).getReadState() == ReadState.READ) {
-			model.setReadState(ReadState.READ);
-			readStateProperty.set(ReadState.READ);
+		} else if (model.getLoadedMessages().get(0).getReadState() == MessageReadState.READ) {
+			model.setReadState(ChatReadState.READ);
+			readStateProperty.set(ChatReadState.READ);
 		}
 
 		for (int i = 0; i < model.getLoadedMessages().size(); i++) {
 			if (i < newMessagesCount) {
 				MessageModel nextModel = model.getLoadedMessages().get(i);
 
-				if (nextModel.getReadState() == ReadState.UNREAD && active)
-					nextModel.setReadState(ReadState.VIEWED);
+				if (nextModel.getReadState() == MessageReadState.UNREAD && active)
+					nextModel.setReadState(MessageReadState.VIEWED);
 
 				MessageView newMessageView = new MessageView(nextModel);
 				messagesLayout.getChildren().add(messagesLayout.getChildren().size() - i, newMessageView.getRoot());
@@ -108,8 +92,8 @@ public class ChatView implements View, Updated {
 				loadedMessageViews.remove(loadedMessageViews.size() - 1);
 
 			} else {
-				if (model.getLoadedMessages().get(i).getReadState() == ReadState.UNREAD && active)
-					model.getLoadedMessages().get(i).setReadState(ReadState.VIEWED);
+				if (model.getLoadedMessages().get(i).getReadState() == MessageReadState.UNREAD && active)
+					model.getLoadedMessages().get(i).setReadState(MessageReadState.VIEWED);
 
 				if (loadedMessageViews.get(i).loadModel(model.getLoadedMessages().get(i)))
 					messagesLayout.getChildren().set(messagesLayout.getChildren().size() - 1 - i,
@@ -122,55 +106,30 @@ public class ChatView implements View, Updated {
 		return messagesLayout.getHeight() / messagesLayout.getChildren().size();
 	}
 
-	public TextArea getInputTray() {
-		return inputTray;
-	}
 
-	private void getIcon(String... urls) {
-		ImageOperator.asyncLoadImage(icon, urls);
-	}
-	
-	private void getOwnerIcon(String url) {
-		ImageOperator.asyncLoadImage(ownerIcon, url);
-	}
-
-	private Button uploadButton = new Button();
-	private Button readButton = new Button();
-	private Button postponeButton = new Button();
 	private ChatModel model;
+	private Boolean active = false;
 	private int viewedMessagesCount;
 	private ChatNameLabel chatNameLabel;
-	private ArrayList<Attachment> attachments = new ArrayList<>();
-	private AttachmentsContainer attachmentsContainer = new AttachmentsContainer(false);
-	private Boolean active = false;
-	private HBox footer = new HBox();
 	private VBox messagesLayout = new VBox();
-	private ImageView icon = new ImageView();
 	private BorderPane root = new BorderPane();
-	private TextArea inputTray = new TextArea();
-	private ImageView ownerIcon = new ImageView();
+	private ChatFooter footer;
 	private Label totalMessagesCounter = new Label();
 	private ScrollPane messagesContainer = new ScrollPane();
 	private ArrayList<MessageView> loadedMessageViews = new ArrayList<>();
-	private ObjectProperty<ReadState> readStateProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
 
 	private static Logger log = Logger.getAnonymousLogger();
 
 	static {
 		log.setLevel(Level.WARNING);
 	}
-
-	public Button getUploadButton() {
-		return uploadButton;
+	
+	public ChatFooter getFooter() {
+		return footer;
 	}
 
-	public Button getPostponeButton() {
-		return postponeButton;
-	}
 
-	public Button getReadButton() {
-		return readButton;
-	}
 
 	public void setChatNameLabel(ChatNameLabel label) {
 		this.chatNameLabel = label;
@@ -180,15 +139,8 @@ public class ChatView implements View, Updated {
 		return chatNameLabel;
 	}
 
-	public AttachmentsContainer getAttachmentsContainer() {
-		return attachmentsContainer;
-	}
 
-	public ArrayList<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public ObjectProperty<ReadState> getReadStateProperty() {
+	public ObjectProperty<ChatReadState> getReadStateProperty() {
 		return readStateProperty;
 	}
 

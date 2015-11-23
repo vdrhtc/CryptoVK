@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 
 public class TalkPreviewModel extends ChatPreviewModel {
 
@@ -13,9 +13,9 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		
 	}
 
-	public TalkPreviewModel(int chatId, ReadState readState, String title, ArrayList<String> chatIconURL,
+	public TalkPreviewModel(int chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
 			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
-		super(chatId, readState, title, chatIconURL, lastMessage, interlocutors);
+		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
 	}
 
 	private String deletedImageURL = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";

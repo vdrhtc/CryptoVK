@@ -10,7 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import data.ReadStatesDatabase;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
 
 public class ChatModel implements Updated {
 	
@@ -20,7 +20,7 @@ public class ChatModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	
-	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle, ReadState RS) {
+	public ChatModel(int chatId, ArrayList<String> chatIconUrl, String chatTitle, ChatReadState RS) {
 		this.chatId = chatId;
 		this.chatIconURL = chatIconUrl;
 		this.chatTitle = chatTitle;
@@ -28,7 +28,7 @@ public class ChatModel implements Updated {
 	}
 	
 	public ChatModel(int chatId, String chatTitle, ArrayList<String> chatIconURL,
-			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount, ReadState RS) {
+			ArrayList<MessageModel> loadedMessages, Integer serverMessageCount, ChatReadState RS) {
 		this.RS = RS;
 		this.chatId = chatId;
 		this.chatTitle = chatTitle;
@@ -80,7 +80,7 @@ public class ChatModel implements Updated {
 	private ArrayList<String> chatIconURL;
 	private Integer serverMessageCount;
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
-	private ReadState RS;
+	private ChatReadState RS;
 	
 	private static Logger log = Logger.getAnonymousLogger();
 	static {
@@ -181,12 +181,17 @@ public class ChatModel implements Updated {
 		return 0;
 	}
 
-	public void setReadState(ReadState RS) {
+	public void setReadState(ChatReadState RS) {
 		this.RS = RS;
 		ReadStatesDatabase.put(chatId, loadedMessages.get(0).getId(), RS);
 	}
 
-	public ReadState getReadState() {
+	public ChatReadState getReadState() {
 		return RS;
+	}
+	
+	@Override
+	public String toString() {
+		return "ChatModel [chatId=" + chatId + ", chatTitle=" + chatTitle + ", RS=" + RS + "]";
 	}
 }

@@ -15,7 +15,6 @@
 	-fx-effect:dropshadow(three-pass-box, white, 6, 0,0,0);
 }
 
-
 .chats-header {
 	-fx-padding: 5 5 5 6;
 	-fx-spacing: 10;
@@ -48,4 +47,7 @@
 .chats-chat-name:unread {
 	-fx-border-color: transparent;
 	-fx-background-color:derive(#DAE1E8, 20%);
+}
+.chats-chat-name:postponed {
+	-fx-border-color: derive(red, 90%);
 }

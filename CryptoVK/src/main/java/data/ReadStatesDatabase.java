@@ -17,7 +17,11 @@ import org.json.JSONObject;
 
 public class ReadStatesDatabase {
 
-	public enum ReadState {
+	public enum MessageReadState {
+		READ, UNREAD, VIEWED;
+	}
+	
+	public enum ChatReadState {
 		READ, UNREAD, POSTPONED, VIEWED;
 	}
 
@@ -27,7 +31,7 @@ public class ReadStatesDatabase {
 	}
 	public static final String READ_STATE_DATABASE = System.getProperty("user.home")+"/.concrypt/readStateDatabase.json";
 
-	public static void put(Integer chatId, long lastMessageId, ReadState RS) {
+	public static void put(Integer chatId, long lastMessageId, ChatReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
 		if (state == null)
@@ -38,7 +42,7 @@ public class ReadStatesDatabase {
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
 
-	public static void putMessage(Integer chatId, Long messageId, ReadState RS, boolean out) {
+	public static void putMessage(Integer chatId, Long messageId, MessageReadState RS, boolean out) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject messageInfo = new JSONObject().put("readState", RS.toString()).put("out", out);
 		JSONObject chatReadStateInfo = db.getJSONObject(chatId.toString()).put(messageId.toString(), messageInfo);

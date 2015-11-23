@@ -8,11 +8,12 @@ import org.json.JSONObject;
 
 import data.DataOperator;
 import data.ReadStatesDatabase;
-import data.ReadStatesDatabase.ReadState;
+import data.ReadStatesDatabase.ChatReadState;
+import data.ReadStatesDatabase.MessageReadState;
 
 public class MessageModel {
 
-	public MessageModel(Long id, Date date, String text, VKPerson sender, ReadState RS, int chatId) {
+	public MessageModel(Long id, Date date, String text, VKPerson sender, MessageReadState RS, int chatId) {
 		this.id = id;
 		this.date = date;
 		this.text = text;
@@ -47,7 +48,7 @@ public class MessageModel {
 		return !sender.equals(VKPerson.getOwner());
 	}
 
-	public void setReadState(ReadState RS) {
+	public void setReadState(MessageReadState RS) {
 		this.RS = RS;
 		ReadStatesDatabase.putMessage(chatId, id, RS, !isIncoming());
 	}
@@ -55,18 +56,18 @@ public class MessageModel {
 	private void setOrRecallReadState(boolean read) {
 		
 		if (ReadStatesDatabase.optChatJSON(chatId) == null) {
-			ReadStatesDatabase.put(chatId, id, read ? ReadState.READ : ReadState.UNREAD);
-			setReadState(read ? ReadState.READ : ReadState.UNREAD);
+			ReadStatesDatabase.put(chatId, id, read ? ChatReadState.READ : ChatReadState.UNREAD);
+			setReadState(read ? MessageReadState.READ : MessageReadState.UNREAD);
 		}
 		
 		JSONObject info = ReadStatesDatabase.optChatJSON(chatId).optJSONObject(id.toString());
-		ReadState RS = read ? ReadState.READ : ReadState.UNREAD;
+		MessageReadState RS = read ? MessageReadState.READ : MessageReadState.UNREAD;
 		if (info == null) {
 			setReadState(RS);
-		} else if (RS == ReadState.READ) {
-			setReadState(ReadState.READ);
+		} else if (RS == MessageReadState.READ) {
+			setReadState(MessageReadState.READ);
 		} else {
-			setReadState(ReadState.valueOf(info.getString("readState")));
+			setReadState(MessageReadState.valueOf(info.getString("readState")));
 		}
 	}
 
@@ -74,7 +75,7 @@ public class MessageModel {
 	private Date date;
 	private String text;
 	private VKPerson sender;
-	private ReadState RS;
+	private MessageReadState RS;
 	private Integer chatId;
 	private ArrayList<JSONObject> attachments = new ArrayList<>();
 
@@ -158,7 +159,7 @@ public class MessageModel {
 				+ sender + "]";
 	}
 
-	public ReadState getReadState() {
+	public MessageReadState getReadState() {
 		return RS;
 	}
 	public VKPerson getSender() {

@@ -18,11 +18,11 @@ public class ViewPreviewSynchronizer {
 	}
 	
 	private void addChatPreviewReadStateListener() {
-		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ReadStateWithId>() {
+		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 
 			@Override
-			public void changed(ObservableValue<? extends ReadStateWithId> observable, ReadStateWithId oldValue,
-					ReadStateWithId RSId) {
+			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
+					ChatReadStateWithId RSId) {
 				log.info("Synchronizing view read state, chatId: "+RSId.getChatId());
 				ChatViewController chatController = CVC.getControllers().get(RSId.getChatId());
 				if (chatController != null)
@@ -33,13 +33,13 @@ public class ViewPreviewSynchronizer {
 	}
 
 	private void addChatViewReadStateListener() {
-		CVC.getReadStateWithIdProperty().addListener(new ListChangeListener<ReadStateWithId>() {
+		CVC.getReadStateWithIdProperty().addListener(new ListChangeListener<ChatReadStateWithId>() {
 
 			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends ReadStateWithId> c) {
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends ChatReadStateWithId> c) {
 				c.next();
 				if (c.wasAdded())
-					for (ReadStateWithId RSId : c.getAddedSubList()) {
+					for (ChatReadStateWithId RSId : c.getAddedSubList()) {
 						log.info("Synchronizing preview read state, chatId: "+RSId.getChatId());
 						CPVC.getControlled().getModel().getLock();
 						ChatPreview CP = CPVC.getPreviewById(RSId.getChatId());

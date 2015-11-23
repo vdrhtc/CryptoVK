@@ -1,8 +1,15 @@
 .chat-footer {
 	-fx-spacing: 10;
-	-fx-padding: 5 5 5 5;
+	-fx-padding: 3 5 3 5;
+	-fx-border-width: 2 0 2 0;
+	-fx-border-radius: 10;
+	-fx-border-color:transparent;
+	-fx-max-width:2000;
+	
 }
-
+.chat-footer:postponed {
+	-fx-border-color: derive(red, 90%);
+}
 .chat-button {
 	-fx-background-color: transparent;
 	-fx-boder-width: 2;
@@ -35,7 +42,7 @@
 	-fx-min-height: 50;
 	-fx-pref-height: 50;
 	-fx-vbar-policy: never;
-	-fx-max-width:1000;
+	-fx-max-width:2000;
 }
 
 .messages-container {
@@ -47,7 +54,6 @@
 .messages-container .viewport{
 	-fx-background-color: white;
 	-fx-padding:0 0 0 0;
-	
 }
 
 .messages-container .scroll-bar {

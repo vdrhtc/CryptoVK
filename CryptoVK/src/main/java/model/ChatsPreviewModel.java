@@ -41,8 +41,11 @@ public class ChatsPreviewModel implements Updated {
 						break;
 					}
 				}
-			if (!matchFound)
-				chats.add(0, new ChatPreviewModel());
+			if (!matchFound) {
+				ChatPreviewModel newModel = new ChatPreviewModel();
+				newModel.loadContent(chatsJSONs.getJSONObject(i).getJSONObject("message"));
+				chats.add(0, newModel);
+			}
 		}
 	}
 

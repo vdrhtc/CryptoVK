@@ -6,20 +6,18 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import data.DataOperator;
-import data.ReadStatesDatabase.ChatReadState;
+import data.ReadStatesDatabase;
 import http.ConnectionOperator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
-import javafx.css.PseudoClass;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import model.ChatPreviewModel;
 import model.ChatsPreviewModel;
@@ -45,25 +43,20 @@ public class ChatsPreviewController implements Controller {
 						updater.isWorkingProperty().setValue(true);
 					updater.start();
 				});
-	}
-
-	private void addReadButtonListener(ChatPreview cp) {
-		cp.getRead().setOnMousePressed((MouseEvent e) -> {
-			cp.getRoot().pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
+		
+		this.readStateWithIdProperty.addListener(new ChangeListener<ChatReadStateWithId>() {
+			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
+					ChatReadStateWithId newValue) {
+				controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
+			}
 		});
-		cp.getRead().setOnAction((ActionEvent e) -> {
-			if (cp.getModel().getLastMessage().isIncoming()) {
-				controlled.getModel().getLock();
-				Thread t = new Thread(() -> {
-					CO.readChat(cp.getModel().getChatId(),
-							cp.getModel().getLastMessage().getId());
-				});
-				t.start();
-				cp.setReadState(ChatReadState.READ);
-				cp.getModel().setReadState(ChatReadState.READ);
-				controlled.getModel().releaseLock();
-				readStateWithIdProperty
-						.setValue(new ChatReadStateWithId(cp.getModel().getChatId(), ChatReadState.READ));
+	}
+	
+	private void addReadStateChangeListener(ChatPreviewController CPVC) {
+		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
+			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
+					ChatReadStateWithId newValue) {
+				readStateWithIdProperty.setValue(newValue);
 			}
 		});
 	}
@@ -77,25 +70,6 @@ public class ChatsPreviewController implements Controller {
 			loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
 			controlled.canBeUpdated().setValue(true);
 		}
-		
-	}
-
-	public void loadNextPreviews(int count) {
-		ArrayList<Node> toAppend = new ArrayList<>();
-		int oldChatEntriesCount = controlled.getChatsLayout().getChildren().size() / 2;
-		for (int i = oldChatEntriesCount; i < oldChatEntriesCount + count; i++) {
-			ChatPreviewController newController = new ChatPreviewController(controlled.getModel().getChats().get(i));
-			newController.getControlled().getRoot().prefHeightProperty()
-					.bind(controlled.getRoot().heightProperty().divide(ChatsPreview.CHATS_PER_PAGE));
-
-			controlled.getPreviews().add(newController.getControlled());
-			addReadButtonListener(newController.getControlled());
-
-			toAppend.add(newController.getControlled().getRoot());
-			toAppend.add(controlled.buildHBorder());
-
-		}
-		controlled.getChatsLayout().getChildren().addAll(toAppend);
 	}
 
 	public void loadNextModels(int count) {
@@ -112,6 +86,23 @@ public class ChatsPreviewController implements Controller {
 			entry.loadContent(content);
 			controlled.getModel().getChats().add(entry);
 		}
+	}
+	
+
+	public void loadNextPreviews(int count) {
+		ArrayList<Node> toAppend = new ArrayList<>();
+		int oldChatEntriesCount = controlled.getChatsLayout().getChildren().size() / 2;
+		for (int i = oldChatEntriesCount; i < oldChatEntriesCount + count; i++) {
+			ChatPreviewController newController = new ChatPreviewController(controlled.getModel().getChats().get(i));
+			addReadStateChangeListener(newController);
+			
+			controlled.getPreviews().add(newController.getControlled());
+
+			toAppend.add(newController.getControlled().getRoot());
+			toAppend.add(controlled.buildHBorder());
+
+		}
+		controlled.getChatsLayout().getChildren().addAll(toAppend);
 	}
 
 	@Override

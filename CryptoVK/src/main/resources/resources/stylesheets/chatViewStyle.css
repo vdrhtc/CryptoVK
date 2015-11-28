@@ -39,8 +39,6 @@
 }
 .chat-input-tray {
 	-fx-wrap-text: true;
-	-fx-min-height: 50;
-	-fx-pref-height: 50;
 	-fx-vbar-policy: never;
 	-fx-max-width:2000;
 }

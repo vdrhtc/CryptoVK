@@ -74,6 +74,8 @@
 .chat-preview-button:pressed {
 	-fx-background-color:derive( #DAE1E8, 30%);
 	-fx-effect:innershadow(three-pass-box, black, 2, 0,0,0);
+	-fx-background-image:url(../assets/readOff.png);
+	
 }	
 
 .chat-preview-read-button:parent-hover {

@@ -183,7 +183,7 @@ public class ChatModel implements Updated {
 
 	public void setReadState(ChatReadState RS) {
 		this.RS = RS;
-		ReadStatesDatabase.put(chatId, loadedMessages.get(0).getId(), RS);
+		ReadStatesDatabase.putChat(chatId, loadedMessages.get(0).getId(), RS);
 	}
 
 	public ChatReadState getReadState() {

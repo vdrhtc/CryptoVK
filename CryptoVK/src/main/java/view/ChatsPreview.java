@@ -3,6 +3,7 @@ package view;
 import java.util.ArrayList;
 
 import data.DataOperator;
+import data.ReadStatesDatabase;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
@@ -19,7 +20,7 @@ import model.Updated;
 
 public class ChatsPreview implements Updated, View {
 
-	public static final int LOAD_NEW_COUNT = 6;
+	public static final int LOAD_NEW_COUNT = 5;
 	public static final int CHATS_PER_PAGE = 10;
 	public static final ViewName NAME = ViewName.CHATS_PREVIEW;
 
@@ -37,11 +38,12 @@ public class ChatsPreview implements Updated, View {
 		this.chatsContainer.getStyleClass().add("chats-container");
 		this.root.getStyleClass().add("chats-root");
 		this.lastSeenOnline.getStyleClass().add("chats-preview-last-seen");
+		this.unreadMessagesCounter.getStyleClass().add("chats-preview-last-seen");
 
 		this.accessExpirationInfo.setText("Token valid until " + DataOperator.getLastTokenExpirationDate());
 		this.statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
 
-		header.getChildren().addAll(new VBox(title, lastSeenOnline));
+		header.getChildren().addAll(new VBox(title, lastSeenOnline), unreadMessagesCounter);
 		this.root.setCenter(chatsContainer);
 		this.root.setTop(header);
 		this.root.setBottom(statusBar);
@@ -51,7 +53,6 @@ public class ChatsPreview implements Updated, View {
 	public Pane getRoot() {
 		return root;
 	}
-
 
 	public Separator buildHBorder() {
 		Separator hBorder = new Separator(Orientation.HORIZONTAL);
@@ -76,7 +77,13 @@ public class ChatsPreview implements Updated, View {
 	private ArrayList<ChatPreview> previews = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
+	private Label unreadMessagesCounter = new Label();
 
+	
+	public Label getUnreadMessagesCounter() {
+		return unreadMessagesCounter;
+	}
+	
 	public Label getLastSeenOnline() {
 		return lastSeenOnline;
 	}

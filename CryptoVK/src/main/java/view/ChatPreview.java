@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import data.ImageOperator;
 import data.ReadStatesDatabase.ChatReadState;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -99,12 +101,17 @@ public class ChatPreview implements View {
 	private ChatPreviewModel currentLoadedModel;
 	private HBox lastMessageContainer = new HBox();
 	private ImageView lastSenderPhoto = new ImageView();
+	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
 	private HBox leftContainer = new HBox();
 
 	private static Logger log = Logger.getAnonymousLogger();
 
 	static {
 		log.setLevel(Level.WARNING);
+	}
+	
+	public ObjectProperty<ChatReadState> getReadStateProperty() {
+		return readStateProperty;
 	}
 
 	@Override

@@ -20,39 +20,58 @@ public class ReadStatesDatabase {
 	public enum MessageReadState {
 		READ, UNREAD, VIEWED;
 	}
-	
+
 	public enum ChatReadState {
 		READ, UNREAD, POSTPONED, VIEWED;
 	}
 
 	static {
-		File appData = new File(System.getProperty("user.home")+"/.concrypt");
+		File appData = new File(System.getProperty("user.home") + "/.concrypt");
 		appData.mkdir();
 	}
-	public static final String READ_STATE_DATABASE = System.getProperty("user.home")+"/.concrypt/readStateDatabase.json";
 
-	public static void put(Long chatId, long lastMessageId, ChatReadState RS) {
+	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
+			+ "/.concrypt/readStateDatabase.json";
+
+	public static void putChat(Long chatId, long lastMessageId, ChatReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
-		if (state == null)
+		ChatReadState previousReadState = null;
+		if (state == null) { // No record, creating it:
 			state = new JSONObject().put("lastMessageId", lastMessageId).put("readState", RS);
-		else
+			db.put(chatId.toString(), state);
+		} else {
+			previousReadState = ChatReadState.valueOf(state.getString("readState"));
 			state.put("lastMessageId", lastMessageId).put("readState", RS);
-		db.put(chatId.toString(), state);
+		}
+		
+		if (RS == ChatReadState.READ)
+			db = clear(db, chatId); // No need to store read chat data
+
+		if (RS == ChatReadState.READ || RS == ChatReadState.VIEWED) {
+			if (previousReadState == ChatReadState.UNREAD) // decrementing counter
+				db.put("unreadCount", db.optInt("unreadCount") - 1);
+		} else if (RS == ChatReadState.UNREAD)
+			if (previousReadState != RS) // incrementing  counter
+				db.put("unreadCount", db.optInt("unreadCount") + 1);
+
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
 
 	public static void putMessage(Long chatId, Long messageId, MessageReadState RS, boolean out) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject messageInfo = new JSONObject().put("readState", RS.toString()).put("out", out);
-		JSONObject chatReadStateInfo = db.getJSONObject(chatId.toString()).put(messageId.toString(), messageInfo);
-		db.put(chatId.toString(), chatReadStateInfo);
+		db.getJSONObject(chatId.toString()).put(messageId.toString(), messageInfo);
 		writeJSONtoFile(READ_STATE_DATABASE, db);
+	}
+	
+	public static Integer getUnreadCounter() {
+		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
+		return db.getInt("unreadCount");
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void clear(Long chatId) {
-		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
+	private static JSONObject clear(JSONObject db, Long chatId) {
 		JSONObject old = (JSONObject) db.remove(chatId.toString());
 		JSONObject newObj = new JSONObject();
 		Iterator<String> iter = old.keys();
@@ -65,7 +84,7 @@ public class ReadStatesDatabase {
 				newObj.put(key, old.getJSONObject(key));
 		}
 		db.put(chatId.toString(), newObj);
-		writeJSONtoFile(READ_STATE_DATABASE, db);
+		return db;
 	}
 
 	public static JSONObject optChatJSON(Long chatId) {
@@ -76,9 +95,7 @@ public class ReadStatesDatabase {
 	public static void writeJSONtoFile(String path, JSONObject JO) {
 		rwlock.writeLock().lock();
 		try {
-			Files.write(Paths.get(path),
-					JO.toString(4).getBytes(),
-					StandardOpenOption.TRUNCATE_EXISTING);
+			Files.write(Paths.get(path), JO.toString(4).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -124,6 +141,6 @@ public class ReadStatesDatabase {
 			e1.printStackTrace();
 		}
 	}
-	
-    private static ReadWriteLock rwlock = new ReentrantReadWriteLock();
+
+	private static ReadWriteLock rwlock = new ReentrantReadWriteLock();
 }

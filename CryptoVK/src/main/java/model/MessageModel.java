@@ -55,8 +55,8 @@ public class MessageModel {
 
 	private void setOrRecallReadState(boolean read) {
 		
-		if (ReadStatesDatabase.optChatJSON(chatId) == null) {
-			ReadStatesDatabase.put(chatId, id, read ? ChatReadState.READ : ChatReadState.UNREAD);
+		if (ReadStatesDatabase.optChatJSON(chatId) == null) { // Happens while loading preview last message
+			ReadStatesDatabase.putChat(chatId, id, read ? ChatReadState.READ : ChatReadState.UNREAD);
 			setReadState(read ? MessageReadState.READ : MessageReadState.UNREAD);
 		}
 		

@@ -31,6 +31,8 @@ public class ChatFooter extends HBox {
 		getChildren().addAll(ownerIcon, new VBox(readButton, postponeButton), editorArea,
 				new VBox(uploadButton), icon);
 		setReadState(chatReadState);
+		inputTray.setPrefHeight(50);
+		inputTray.setMinHeight(50);
 		HBox.setHgrow(editorArea, Priority.ALWAYS);
 		HBox.setHgrow(inputTray, Priority.ALWAYS);
 	}

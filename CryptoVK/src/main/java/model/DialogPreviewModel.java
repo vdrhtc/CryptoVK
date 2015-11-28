@@ -9,6 +9,7 @@ import data.ReadStatesDatabase.ChatReadState;
 public class DialogPreviewModel extends ChatPreviewModel {
 
 	public DialogPreviewModel() {
+		
 	}
 
 	public DialogPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,

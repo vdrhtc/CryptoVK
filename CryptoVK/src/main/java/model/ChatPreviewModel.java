@@ -29,7 +29,6 @@ public class ChatPreviewModel {
 	public void loadContent(JSONObject content) {
 		lastMessage = new MessageModel(content);
 		chatId = lastMessage.getChatId();
-
 		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
 				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
 		extractChatIcon();
@@ -134,7 +133,7 @@ public class ChatPreviewModel {
 
 	public void setReadState(ChatReadState RS) {
 		this.RS = RS;
-		ReadStatesDatabase.put(chatId, lastMessage.getId(), getReadState());
+		ReadStatesDatabase.putChat(chatId, lastMessage.getId(), getReadState());
 	}
 	
 }

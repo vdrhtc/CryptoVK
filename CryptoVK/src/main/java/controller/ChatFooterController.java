@@ -10,7 +10,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -71,20 +70,18 @@ public class ChatFooterController {
 			@Override
 			public void changed(ObservableValue<? extends String> ov, String t, String t1) {
 				Text text = (Text) IT.lookup(".text");
-				IT.setPrefHeight(text.getBoundsInParent().getHeight() + 10);
-				IT.setPrefRowCount((int)(IT.getPrefHeight()/text.getFont().getSize()));
-				ScrollBar scrollBarv = (ScrollBar)IT.lookup(".scroll-bar:vertical");
-				scrollBarv.setDisable(true);
+				if (text.getBoundsInParent().getHeight() < 300) 
+					IT.setPrefHeight(text.getBoundsInParent().getHeight() + 10);
+				
 			}
 		});
 		IT.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
 				Text text = (Text) IT.lookup(".text");
-				IT.setPrefHeight(text.getBoundsInParent().getHeight() + 10);
-				IT.setPrefRowCount((int)(IT.getPrefHeight()/text.getFont().getSize()));
-				ScrollBar scrollBarv = (ScrollBar)IT.lookup(".scroll-bar:vertical");
-				scrollBarv.setDisable(true);
+				if (text.getBoundsInParent().getHeight() < 300) 
+					IT.setPrefHeight(text.getBoundsInParent().getHeight() + 10);
+				
 			}
 		});
 	}

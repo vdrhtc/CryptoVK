@@ -25,7 +25,6 @@
 #chats-status-message {
 	-fx-min-width: 100;
 }
-
 .chats-container {
 	-fx-background-color: white;
 	-fx-border-color: white;
@@ -53,11 +52,6 @@
 	-fx-shape:"";
 	-fx-padding:0;
 }
-.chats-container:focused {
-	-fx-background-color: white;
-	-fx-border-color: white;
-}
-
 
 .chats-border:horizontal .line {
     -fx-background-color: #D8DFEA; /* if padding lets say >=3 line becomes rectangle and bg color can be seen */

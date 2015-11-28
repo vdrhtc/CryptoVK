@@ -19,4 +19,9 @@ public class TalkModel extends ChatModel {
 	public TalkModel clone() {
 		return new TalkModel(super.clone());
 	}
+	
+	@Override
+	public Long getInterlocutorId() {
+		return Long.valueOf("0");
+	}
 }

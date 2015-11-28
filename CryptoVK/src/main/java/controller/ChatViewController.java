@@ -3,7 +3,6 @@ package controller;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import data.ReadStatesDatabase;
 import data.ReadStatesDatabase.ChatReadState;
 import http.ConnectionOperator;
 import javafx.application.Platform;
@@ -90,7 +89,6 @@ public class ChatViewController implements Controller {
 						Thread.currentThread().setName("Message sender");
 						try {
 							CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
-							ReadStatesDatabase.clear(controlled.getModel().getChatId());
 						} catch (UnsupportedEncodingException e) {
 							Platform.runLater(() -> {
 								controlled.getFooter().getInputTray().setText("Failed to encode URL! Unsupported characters!");
@@ -125,7 +123,7 @@ public class ChatViewController implements Controller {
 					ChatReadState newValue) {
 				readStateWithIdProperty.setValue(new ChatReadStateWithId(controlled.getModel().getChatId(), newValue));
 				controlled.getChatNameLabel().setReadState(newValue);
-				controlled.getFooter().setReadState(newValue);
+				controlled.getFooter().setReadState(newValue); // TODO: For the postponed state, maybe simplify
 			}
 		});
 	}
@@ -160,12 +158,9 @@ public class ChatViewController implements Controller {
 		});
 		t.start();
 		controlled.getModel().setReadState(ChatReadState.READ);
-		ReadStatesDatabase.clear(controlled.getModel().getChatId());
 		controlled.getReadStateProperty().setValue(ChatReadState.READ);
 		controlled.getModel().releaseLock();
 	}
-
-
 
 	public void addScrollPaneListener() {
 

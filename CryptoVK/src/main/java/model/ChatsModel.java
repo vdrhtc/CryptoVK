@@ -35,10 +35,10 @@ public class ChatsModel implements Updated {
 
 			ChatModel CM = chatModels.get(chatId);
 			if (CM != null) {
-				System.out.println("Updating " + CM.toString());
-				CM.getLock();
+				CM.getLock("ChatModel.update");
 				CM.update();
-				CM.releaseLock();
+				System.out.println("Updated " + CM.toString());
+				CM.releaseLock("ChatModel.update");
 			}
 		}
 	}
@@ -50,17 +50,16 @@ public class ChatsModel implements Updated {
 	}
 
 	@Override
-	public void getLock() {
-		log.info("Waiting for lock: " + Thread.currentThread().getName());
+	public void getLock(String takerName) {
+		log.info("Getting lock: "+Thread.currentThread().getName()+" "+takerName);
 		lock.lock();
-		log.info("Got lock: " + Thread.currentThread().getName());
-
+		log.info("Got lock: "+Thread.currentThread().getName()+" "+takerName);
 	}
-
+	
 	@Override
-	public void releaseLock() {
-		log.info("Releasing lock: " + Thread.currentThread().getName());
+	public void releaseLock(String takerName) {
 		lock.unlock();
+		log.info("Releasing lock: "+Thread.currentThread().getName()+" "+takerName);
 
 	}
 
@@ -76,5 +75,4 @@ public class ChatsModel implements Updated {
 	public static ConnectionOperator getConnectionOperator() {
 		return CO;
 	}
-
 }

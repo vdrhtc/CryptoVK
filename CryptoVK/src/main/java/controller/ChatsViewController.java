@@ -8,12 +8,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import model.ChatModel;
 import model.ChatPreviewModel;
 import model.DialogModel;
 import model.TalkModel;
 import view.ChatPreview;
+import view.ChatView;
 import view.ChatsView;
 import view.View.ViewName;
 import view.nodes.ChatNameLabel;
@@ -22,7 +24,7 @@ public class ChatsViewController implements Controller {
 
 	public ChatsViewController() {
 		this.controlled = new ChatsView();
-		
+
 		addBackButtonListener(controlled.getBackButton());
 		this.updater = new ChatsViewLPU(controlled);
 		this.controlled.canBeUpdated()
@@ -45,15 +47,14 @@ public class ChatsViewController implements Controller {
 					previewModel.getTitle(), previewModel.getReadState());
 			if (previewModel.getInterlocutors().size() == 1)
 				fullModel = new DialogModel(fullModel, previewModel.getInterlocutors().get(0));
-			else 
+			else
 				fullModel = new TalkModel(fullModel);
 
 			ChatViewController newChatController = new ChatViewController(fullModel);
 			addReadStateChangeListener(newChatController);
 
-			controlled.getModel().getLock();
+			controlled.getModel().getLock("ChatsViewController.initView");
 			controlled.getModel().getChatModels().put(fullModel.getChatId(), fullModel);
-			controlled.releaseLock();
 
 			ChatNameLabel newNameLabel = new ChatNameLabel(fullModel);
 			addChatLabelListener(newNameLabel);
@@ -68,6 +69,8 @@ public class ChatsViewController implements Controller {
 				activeChatController.prepareViewForSwitch((Object[]) null);
 			controlled.setCurrentViewedChat(newChatController.getControlled());
 			activeChatController = controllers.get(chatId);
+
+			controlled.releaseLock("ChatsViewController.initView");
 		}
 
 		else {
@@ -84,22 +87,41 @@ public class ChatsViewController implements Controller {
 		activeChatController = controllers.get(chatId);
 	}
 
-	@Override
-	public ViewName redirectTo() {
-		return controlled.getName();
+	public void removeChat(Long chatId) {
+		controlled.getModel().getLock("ChatsViewController.removeChat");
+		ChatView removed = controlled.getViewedChats().remove(chatId);
+		Integer index = controlled.getChatNamesContainer().getChildren().indexOf(removed.getChatNameLabel());
+		controlled.getChatNamesContainer().getChildren().remove(removed.getChatNameLabel());
+		Integer newSize = controlled.getChatNamesContainer().getChildren().size();
+		if (newSize > 0) {
+			index = index == newSize ? newSize-1 : index;
+			Long nextId = ((ChatNameLabel) controlled.getChatNamesContainer().getChildren().get(index)).getChatId();
+			switchChatTo(nextId);
+		} else
+			returnToPreview();
+		controllers.remove(chatId);
+		controlled.getModel().releaseLock("ChatsViewController.removeChat");
+
 	}
 
 	private void addBackButtonListener(Button back) {
 		back.setOnAction((ActionEvent e) -> {
-			activeChatController.prepareViewForSwitch((Object[]) null);
-			activeChatController = null;
-			ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, (Object[]) null);
+			returnToPreview();
 		});
 	}
-	
+
+	public void returnToPreview() {
+		activeChatController.prepareViewForSwitch((Object[]) null);
+		activeChatController = null;
+		ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, (Object[]) null);
+	}
+
 	private void addChatLabelListener(ChatNameLabel label) {
-		label.setOnMouseClicked((MouseEvent e)-> {
-			switchChatTo(label.getChatId());
+		label.setOnMouseClicked((MouseEvent e) -> {
+			if (e.getButton().equals(MouseButton.MIDDLE))
+				removeChat(label.getChatId());
+			else if (e.getButton().equals(MouseButton.PRIMARY))
+				switchChatTo(label.getChatId());
 		});
 	}
 
@@ -118,7 +140,7 @@ public class ChatsViewController implements Controller {
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;
 	private ObservableList<ChatReadStateWithId> changedReadStatesWithIds = FXCollections.observableArrayList();
-	
+
 	public HashMap<Long, ChatViewController> getControllers() {
 		return controllers;
 	}
@@ -129,5 +151,10 @@ public class ChatsViewController implements Controller {
 
 	public ChatsView getControlled() {
 		return controlled;
+	}
+
+	@Override
+	public ViewName redirectTo() {
+		return controlled.getName();
 	}
 }

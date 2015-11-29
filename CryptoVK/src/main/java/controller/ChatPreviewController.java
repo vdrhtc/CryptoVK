@@ -36,10 +36,11 @@ public class ChatPreviewController implements Controller {
 				controlled.getRead().pseudoClassStateChanged(PseudoClass.getPseudoClass("parent-hover"), false);
 			}
 		});
+		addReadStateListener();
 		addReadButtonListener();
 	}
 	
-	public void addReadStateListener() {
+	private void addReadStateListener() {
 		controlled.getReadStateProperty().addListener(new ChangeListener<ChatReadState>() {
 			public void changed(ObservableValue<? extends ChatReadState> observable, ChatReadState oldValue,
 					ChatReadState newValue) {

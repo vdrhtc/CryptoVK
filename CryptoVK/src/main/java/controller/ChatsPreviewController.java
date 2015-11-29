@@ -43,20 +43,15 @@ public class ChatsPreviewController implements Controller {
 						updater.isWorkingProperty().setValue(true);
 					updater.start();
 				});
-		
-		this.readStateWithIdProperty.addListener(new ChangeListener<ChatReadStateWithId>() {
-			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
-					ChatReadStateWithId newValue) {
-				controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
-			}
-		});
 	}
-	
+
 	private void addReadStateChangeListener(ChatPreviewController CPVC) {
 		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
 					ChatReadStateWithId newValue) {
+				System.out.println("==== Preview read state changed, " + newValue.toString());
 				readStateWithIdProperty.setValue(newValue);
+				controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
 			}
 		});
 	}
@@ -68,6 +63,7 @@ public class ChatsPreviewController implements Controller {
 					"You were last seen online on " + DataOperator.formatDate(VKPerson.getOwner().getLastSeenOnline()));
 			loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
 			loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
+			controlled.getUnreadMessagesCounter().setText(controlled.getModel().getUnreadMessagesCount().toString());
 			controlled.canBeUpdated().setValue(true);
 		}
 	}
@@ -78,7 +74,7 @@ public class ChatsPreviewController implements Controller {
 		for (int i = offset; i < offset + count; i++) {
 			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
 			ChatPreviewModel entry;
-			if (content.optInt("chat_id")==0)
+			if (content.optInt("chat_id") == 0)
 				entry = new DialogPreviewModel();
 			else
 				entry = new TalkPreviewModel();
@@ -87,7 +83,6 @@ public class ChatsPreviewController implements Controller {
 			controlled.getModel().getChats().add(entry);
 		}
 	}
-	
 
 	public void loadNextPreviews(int count) {
 		ArrayList<Node> toAppend = new ArrayList<>();
@@ -95,7 +90,7 @@ public class ChatsPreviewController implements Controller {
 		for (int i = oldChatEntriesCount; i < oldChatEntriesCount + count; i++) {
 			ChatPreviewController newController = new ChatPreviewController(controlled.getModel().getChats().get(i));
 			addReadStateChangeListener(newController);
-			
+
 			controlled.getPreviews().add(newController.getControlled());
 
 			toAppend.add(newController.getControlled().getRoot());
@@ -164,23 +159,23 @@ public class ChatsPreviewController implements Controller {
 			Task<Void> loadNextModels = new Task<Void>() {
 				protected Void call() {
 					Thread.currentThread().setName("Preview scroll loader");
-					controlled.getModel().getLock();
+					controlled.getModel().getLock("");
 					if (controlled.getChatsLayout().getChildren().size() / 2 + ChatsPreview.LOAD_NEW_COUNT >= controlled
 							.getModel().getChats().size())
 						loadNextModels(ChatsPreview.LOAD_NEW_COUNT);
-					controlled.getModel().releaseLock();
+					controlled.getModel().releaseLock("");
 
 					Platform.runLater(() -> {
-						controlled.getModel().getLock();
+						controlled.getModel().getLock("ChatsPreviewController.handleScroll");
 						loadNextPreviews(ChatsPreview.LOAD_NEW_COUNT);
-						controlled.getModel().releaseLock();
+						controlled.getModel().releaseLock("ChatsPreviewController.handleScroll");
 
 						controlled.getProgressBar().setProgress(1);
 						controlled.getStatusMessage().setText("Ready");
 					});
 					return null;
 				}
-				
+
 				@Override
 				protected void failed() {
 					getException().printStackTrace();

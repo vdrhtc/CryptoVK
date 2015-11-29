@@ -33,41 +33,49 @@ public class ReadStatesDatabase {
 	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
 			+ "/.concrypt/readStateDatabase.json";
 
-	public static void putChat(Long chatId, long lastMessageId, ChatReadState RS) {
+	public static void putChat(Long chatId, Long lastMessageId, boolean lastMessageOut, ChatReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
 		ChatReadState previousReadState = null;
-		if (state == null) { // No record, creating it:
-			state = new JSONObject().put("lastMessageId", lastMessageId).put("readState", RS);
+		Boolean previousLastMessageOut = true;
+		if (state == null) { // No record, creating:
+			state = new JSONObject().put("lastMessageId", lastMessageId).put("readState", RS).put("lastMessageOut",
+					lastMessageOut);
 			db.put(chatId.toString(), state);
 		} else {
 			previousReadState = ChatReadState.valueOf(state.getString("readState"));
+			previousLastMessageOut = state.getBoolean("lastMessageOut");
 			state.put("lastMessageId", lastMessageId).put("readState", RS);
 		}
-		
+
+		if (lastMessageOut == false || previousLastMessageOut == false)
+			if (RS == ChatReadState.READ || RS == ChatReadState.VIEWED) {
+				if (previousReadState == ChatReadState.UNREAD) {
+					db.put("unreadCount", db.optInt("unreadCount") - 1);
+					System.out.println("&&&&&& Decrementing");
+				}
+			} else if (RS == ChatReadState.UNREAD)
+				if (previousReadState != RS) {
+					db.put("unreadCount", db.optInt("unreadCount") + 1);
+					System.out.println("&&&&&& Incrementing");
+				}
+
 		if (RS == ChatReadState.READ)
 			db = clear(db, chatId); // No need to store read chat data
-
-		if (RS == ChatReadState.READ || RS == ChatReadState.VIEWED) {
-			if (previousReadState == ChatReadState.UNREAD) // decrementing counter
-				db.put("unreadCount", db.optInt("unreadCount") - 1);
-		} else if (RS == ChatReadState.UNREAD)
-			if (previousReadState != RS) // incrementing  counter
-				db.put("unreadCount", db.optInt("unreadCount") + 1);
 
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
 
-	public static void putMessage(Long chatId, Long messageId, MessageReadState RS, boolean out) {
+	public static void putMessage(Long chatId, Long messageId, boolean out, MessageReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject messageInfo = new JSONObject().put("readState", RS.toString()).put("out", out);
 		db.getJSONObject(chatId.toString()).put(messageId.toString(), messageInfo);
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
-	
+
 	public static Integer getUnreadCounter() {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
-		return db.getInt("unreadCount");
+		return db.optInt("unreadCount");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,7 +85,7 @@ public class ReadStatesDatabase {
 		Iterator<String> iter = old.keys();
 		while (iter.hasNext()) {
 			String key = (String) iter.next();
-			if (key.equals("lastMessageId") || key.equals("readState"))
+			if (key.equals("lastMessageId") || key.equals("readState") || key.equals("lastMessageOut"))
 				newObj.put(key, old.get(key));
 			else if (old.getJSONObject(key).getBoolean("out")
 					&& !old.getJSONObject(key).getString("readState").equals("READ"))

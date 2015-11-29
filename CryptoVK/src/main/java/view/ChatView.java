@@ -32,7 +32,7 @@ public class ChatView implements View, Updated {
 	private void initRoot() {
 
 		messagesContainer.getStyleClass().add("messages-container");
-	
+
 		footer = new ChatFooter(readStateProperty.getValue(), model.getChatIconURL().toArray(new String[0]));
 		messagesContainer.setContent(messagesLayout);
 		messagesContainer.setVvalue(messagesContainer.getVmax());
@@ -106,7 +106,6 @@ public class ChatView implements View, Updated {
 		return messagesLayout.getHeight() / messagesLayout.getChildren().size();
 	}
 
-
 	private ChatModel model;
 	private Boolean active = false;
 	private int viewedMessagesCount;
@@ -124,12 +123,10 @@ public class ChatView implements View, Updated {
 	static {
 		log.setLevel(Level.WARNING);
 	}
-	
+
 	public ChatFooter getFooter() {
 		return footer;
 	}
-
-
 
 	public void setChatNameLabel(ChatNameLabel label) {
 		this.chatNameLabel = label;
@@ -138,7 +135,6 @@ public class ChatView implements View, Updated {
 	public ChatNameLabel getChatNameLabel() {
 		return chatNameLabel;
 	}
-
 
 	public ObjectProperty<ChatReadState> getReadStateProperty() {
 		return readStateProperty;
@@ -171,15 +167,14 @@ public class ChatView implements View, Updated {
 	}
 
 	@Override
-	public void getLock() {
-		model.getLock();
+	public void getLock(String takerName) {
+		model.getLock(takerName);
 	}
 
 	@Override
-	public void releaseLock() {
-		model.releaseLock();
+	public void releaseLock(String takerName) {
+		model.releaseLock(takerName);
 	}
-
 
 	@Override
 	public ViewName getName() {

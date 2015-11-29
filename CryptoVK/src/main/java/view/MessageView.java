@@ -51,6 +51,7 @@ public class MessageView implements View {
 		message.setContextMenu(new ContextMenu(copy));
 		
 		HBox.setHgrow(message, Priority.ALWAYS);
+
 		if (attachementsContainer != null)
 			messageContainer.getChildren().add(2, attachementsContainer);
 
@@ -65,6 +66,8 @@ public class MessageView implements View {
 
 			root.getChildren().addAll(senderPhoto, buildVBorder(), messageContainer, plug);
 		}
+		
+		
 	}
 
 	public boolean loadModel(MessageModel model) {

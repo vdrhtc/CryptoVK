@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.json.JSONArray;
 
+import data.ReadStatesDatabase;
 import http.ConnectionOperator;
 
 public class ChatsPreviewModel implements Updated {
@@ -16,10 +17,8 @@ public class ChatsPreviewModel implements Updated {
 	private Lock lock = new ReentrantLock();
 
 	public ChatsPreviewModel() {
-		
 	}
-	
-	
+
 	public void update(Object... params) {
 		JSONArray chatsJSONs = CO.getDialogs(getChats().size(), 0);
 		int i = 0;
@@ -53,28 +52,33 @@ public class ChatsPreviewModel implements Updated {
 		return chats;
 	}
 
-
-	public void releaseLock() {
-		log.info("Releasing lock: " + Thread.currentThread().getName());
-		lock.unlock();
-
-	}
-
-	public void getLock() {
-		log.info("Waiting for lock: "+Thread.currentThread().getName());
+	@Override
+	public void getLock(String takerName) {
+		log.info("Getting lock: "+Thread.currentThread().getName()+" "+takerName);
 		lock.lock();
-		log.info("Got lock: " + Thread.currentThread().getName());
+		log.info("Got lock: "+Thread.currentThread().getName()+" "+takerName);
+	}
+	
+	@Override
+	public void releaseLock(String takerName) {
+		lock.unlock();
+		log.info("Releasing lock: "+Thread.currentThread().getName()+" "+takerName);
+
 	}
 
 	private ArrayList<ChatPreviewModel> chats = new ArrayList<>();
 	private static ConnectionOperator CO = new ConnectionOperator(1000);
+
+	public Integer getUnreadMessagesCount() {
+		return ReadStatesDatabase.getUnreadCounter();
+	}
 
 	private static Logger log = Logger.getAnonymousLogger();
 
 	static {
 		log.setLevel(Level.ALL);
 	}
-	
+
 	public static ConnectionOperator getConnectionOperator() {
 		return CO;
 	}

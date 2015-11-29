@@ -3,7 +3,6 @@ package view;
 import java.util.ArrayList;
 
 import data.DataOperator;
-import data.ReadStatesDatabase;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
@@ -124,13 +123,13 @@ public class ChatsPreview implements Updated, View {
 	}
 
 	@Override
-	public void getLock() {
-		model.getLock();
+	public void getLock(String takerName) {
+		model.getLock(takerName);
 	}
 
 	@Override
-	public void releaseLock() {
-		model.releaseLock();
+	public void releaseLock(String takerName) {
+		model.releaseLock(takerName);
 	}
 
 }

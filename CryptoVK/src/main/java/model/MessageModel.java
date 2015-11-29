@@ -50,13 +50,13 @@ public class MessageModel {
 
 	public void setReadState(MessageReadState RS) {
 		this.RS = RS;
-		ReadStatesDatabase.putMessage(chatId, id, RS, !isIncoming());
+		ReadStatesDatabase.putMessage(chatId, id, !isIncoming(), RS);
 	}
 
 	private void setOrRecallReadState(boolean read) {
 		
 		if (ReadStatesDatabase.optChatJSON(chatId) == null) { // Happens while loading preview last message
-			ReadStatesDatabase.putChat(chatId, id, read ? ChatReadState.READ : ChatReadState.UNREAD);
+			ReadStatesDatabase.putChat(chatId, id, !isIncoming(), read ? ChatReadState.READ : ChatReadState.UNREAD);
 			setReadState(read ? MessageReadState.READ : MessageReadState.UNREAD);
 		}
 		

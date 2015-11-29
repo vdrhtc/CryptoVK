@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import model.ChatsModel;
 import model.Updated;
+import view.nodes.ChatNameLabel;
 
 public class ChatsView implements View, Updated {
 
@@ -37,6 +38,7 @@ public class ChatsView implements View, Updated {
 	public void setCurrentViewedChat(ChatView CV) {
 		this.root.setCenter(CV.getRoot());
 	}
+	
 
 	public HashMap<Long, ChatView> getViewedChats() {
 		return viewedChats;
@@ -82,13 +84,13 @@ public class ChatsView implements View, Updated {
 	}
 
 	@Override
-	public void getLock() {
-		model.getLock();
+	public void getLock(String takerName) {
+		model.getLock(takerName);
 	}
 
 	@Override
-	public void releaseLock() {
-		model.releaseLock();
+	public void releaseLock(String takerName) {
+		model.releaseLock(takerName);
 	}
 
 	public BooleanProperty canBeUpdated() {
@@ -98,4 +100,5 @@ public class ChatsView implements View, Updated {
 	public FlowPane getChatNamesContainer() {
 		return chatNamesContainer;
 	}
+
 }

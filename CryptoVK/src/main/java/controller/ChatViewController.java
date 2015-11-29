@@ -44,14 +44,14 @@ public class ChatViewController implements Controller {
 	@Override
 	public void prepareViewForSwitch(Object... params) {
 		if (!controlled.getActive()) {
-			controlled.getModel().getLock();
+			controlled.getModel().getLock("ChatViewController.prepareViewForSwitch");
 			controlled.setActive(true);
 			if (controlled.getReadStateProperty().getValue() == ChatReadState.UNREAD) {
 				controlled.getReadStateProperty().set(ChatReadState.VIEWED);
 				controlled.getModel().setReadState(ChatReadState.VIEWED);
 			}
 			controlled.update();
-			controlled.getModel().releaseLock();
+			controlled.getModel().releaseLock("ChatViewController.prepareViewForSwitch");
 		} else
 			controlled.setActive(false);
 	}
@@ -75,7 +75,7 @@ public class ChatViewController implements Controller {
 
 				if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
 
-					controlled.getModel().getLock();
+					controlled.getModel().getLock("ChatViewController.handleMessageSend");
 					ArrayList<Attachment> aTTs = controlled.getFooter().getAttachments();
 					String message = controlled.getFooter().getInputTray().getText();
 					Long chatId = controlled.getModel().getChatId();
@@ -102,7 +102,7 @@ public class ChatViewController implements Controller {
 					controlled.getFooter().getInputTray().clear();
 					controlled.getModel().setReadState(ChatReadState.READ);
 					controlled.getReadStateProperty().setValue(ChatReadState.READ);
-					controlled.getModel().releaseLock();
+					controlled.getModel().releaseLock("ChatViewController.handleMessageSend");
 					event.consume();
 
 				} else if (event.getCode().equals(KeyCode.ENTER) && event.isShiftDown()) {
@@ -130,7 +130,7 @@ public class ChatViewController implements Controller {
 
 	private void addPostponeButtonListener() {
 		controlled.getFooter().getPostponeButton().setOnAction((ActionEvent a) -> {
-			controlled.getModel().getLock();
+			controlled.getModel().getLock("ChatViewController.postponeButton");
 			if (controlled.getModel().getReadState() == ChatReadState.POSTPONED) {
 				controlled.getModel().setReadState(ChatReadState.VIEWED);
 				controlled.getReadStateProperty().setValue(ChatReadState.VIEWED);
@@ -138,7 +138,7 @@ public class ChatViewController implements Controller {
 				controlled.getModel().setReadState(ChatReadState.POSTPONED);
 				controlled.getReadStateProperty().setValue(ChatReadState.POSTPONED);
 			}
-			controlled.getModel().releaseLock();
+			controlled.getModel().releaseLock("ChatViewController.postponeButton");
 		});
 	}
 
@@ -152,14 +152,14 @@ public class ChatViewController implements Controller {
 		if (!controlled.getModel().getLoadedMessages().get(0).isIncoming())
 			return;
 
-		controlled.getModel().getLock();
+		controlled.getModel().getLock("ChatViewController.readButton");
 		Thread t = new Thread(() -> {
 			CO.readChat(controlled.getModel().getChatId(), controlled.getModel().getLoadedMessages().get(0).getId());
 		});
 		t.start();
 		controlled.getModel().setReadState(ChatReadState.READ);
 		controlled.getReadStateProperty().setValue(ChatReadState.READ);
-		controlled.getModel().releaseLock();
+		controlled.getModel().releaseLock("ChatViewController.readButton");
 	}
 
 	public void addScrollPaneListener() {
@@ -218,19 +218,20 @@ public class ChatViewController implements Controller {
 		protected Task<Void> createTask() {
 			Task<Void> loadMoreChatEntries = new Task<Void>() {
 				protected Void call() {
-					controlled.getModel().getLock();
+					Thread.currentThread().setName("View scroll loader");
+					controlled.getModel().getLock("");
 					try {
 						controlled.getModel().loadMessages(ChatModel.LOAD_NEW_COUNT,
 								controlled.getModel().getLoadedMessages().size());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					controlled.getModel().releaseLock();
+					controlled.getModel().releaseLock("");
 
 					Platform.runLater(() -> {
-						controlled.getModel().getLock();
+						controlled.getModel().getLock("ChatViewController.handleScroll");
 						controlled.loadModel();
-						controlled.getModel().releaseLock();
+						controlled.getModel().releaseLock("ChatViewController.handleScroll");
 					});
 					return null;
 				}

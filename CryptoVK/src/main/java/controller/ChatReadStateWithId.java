@@ -19,4 +19,9 @@ public class ChatReadStateWithId {
 	public ChatReadState getRS() {
 		return RS;
 	}
+	
+	@Override
+	public String toString() {
+		return "[chatId=" + chatId + ", RS=" + RS + "]";
+	}
 }

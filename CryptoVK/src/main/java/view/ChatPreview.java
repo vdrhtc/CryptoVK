@@ -19,22 +19,21 @@ import model.ChatPreviewModel;
 public class ChatPreview implements View {
 
 	public ChatPreview(ChatPreviewModel model) {
-
 		this.loadModel(model);
 		this.initRoot();
 	}
-
+	
+	// TODO Think about the structure of references 
 	public void loadModel(ChatPreviewModel model) {
-		if (!model.equals(currentLoadedModel)) {
-
-			this.currentLoadedModel = model.clone();
+		if (model.isInvalidated()) { 
+			this.currentLoadedModel = model;
 			date.setText(model.getLastMessageDateString());
 			title.setText(model.getTitle());
 			getIcon(model);
 			setReadState(model.getReadState());
 			lastMessage.setText(model.getLastMessage().getText());
 			getLastSenderPhoto(model);
-//			ImageOperator.clipImage(lastSenderPhoto);
+			model.setInvalited(true);
 		}
 	}
 
@@ -66,6 +65,7 @@ public class ChatPreview implements View {
 	}
 
 	public void setReadState(ChatReadState chatReadState) {
+		readStateProperty.set(chatReadState);
 		switch (chatReadState) {
 		case READ:
 			setMessageContainerPseusoClass(false, false);

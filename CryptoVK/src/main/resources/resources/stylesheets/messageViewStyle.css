@@ -65,6 +65,7 @@
 	-fx-background-radius: 20;
 	-fx-spacing: 5;
 }
+
 .message-container:unread{
 	-fx-border-color: derive(#DAE1E8, 0%);
 }

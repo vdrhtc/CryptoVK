@@ -27,6 +27,7 @@ public class ChatPreviewModel {
 	}
 
 	public void loadContent(JSONObject content) {
+		invalidated = true;
 		lastMessage = new MessageModel(content);
 		chatId = lastMessage.getChatId();
 		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
@@ -39,8 +40,8 @@ public class ChatPreviewModel {
 				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
 
 		if (lastMessage.getId() != content.getLong("id")) {
-			System.out.println("Updating " + toString());
 			this.loadContent(content);
+			System.out.println("Updated " + toString());
 		}
 	}
 
@@ -80,6 +81,7 @@ public class ChatPreviewModel {
 	protected MessageModel lastMessage;
 	protected ArrayList<String> chatIconURL = new ArrayList<>();
 	protected ArrayList<VKPerson> interlocutors = new ArrayList<>();
+	protected Boolean invalidated;
 
 	protected static Logger log = Logger.getAnonymousLogger();
 
@@ -92,7 +94,15 @@ public class ChatPreviewModel {
 		return new ChatPreviewModel(getChatId(), getReadState(), getTitle(), getChatIconURL(), getLastMessage(),
 				getInterlocutors());
 	}
+	
+	public void setInvalited(Boolean value) {
+		invalidated = value;
+	}
 
+	public Boolean isInvalidated() {
+		return invalidated;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -133,7 +143,7 @@ public class ChatPreviewModel {
 
 	public void setReadState(ChatReadState RS) {
 		this.RS = RS;
-		ReadStatesDatabase.putChat(chatId, lastMessage.getId(), getReadState());
+		ReadStatesDatabase.putChat(chatId, lastMessage.getId(), !lastMessage.isIncoming(), getReadState());
 	}
 	
 }

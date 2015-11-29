@@ -49,6 +49,7 @@
 	-fx-fit-to-width: true;
 	-fx-padding:0 1 0 1;
 }
+
 .messages-container .viewport{
 	-fx-background-color: white;
 	-fx-padding:0 0 0 0;

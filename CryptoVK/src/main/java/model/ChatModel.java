@@ -61,17 +61,17 @@ public class ChatModel implements Updated {
 			loadedMessages.set(i, new MessageModel(newChatHistory.getJSONArray("items").getJSONObject(i)));
 	}
 	
-	
-	public void getLock() {
-		log.info("Getting lock: "+Thread.currentThread().getName());
+	@Override
+	public void getLock(String takerName) {
+		log.info("Getting lock: "+Thread.currentThread().getName()+" "+takerName);
 		lock.lock();
-		log.info("Got lock: "+Thread.currentThread().getName());
-
+		log.info("Got lock: "+Thread.currentThread().getName()+" "+takerName);
 	}
 	
-	public void releaseLock() {
+	@Override
+	public void releaseLock(String takerName) {
 		lock.unlock();
-		log.info("Releasing lock: "+Thread.currentThread().getName());
+		log.info("Releasing lock: "+Thread.currentThread().getName()+" "+takerName);
 
 	}
 
@@ -181,9 +181,9 @@ public class ChatModel implements Updated {
 		return null;
 	}
 
-	public void setReadState(ChatReadState RS) {
+	public void setReadState(ChatReadState RS) { 
 		this.RS = RS;
-		ReadStatesDatabase.putChat(chatId, loadedMessages.get(0).getId(), RS);
+		ReadStatesDatabase.putChat(chatId, loadedMessages.get(0).getId(), !loadedMessages.get(0).isIncoming(), RS);
 	}
 
 	public ChatReadState getReadState() {

@@ -30,7 +30,8 @@ public class LongPollUpdater extends Service<Void> {
 
 		for (int i = 0; i < updatesList.length(); i++) {
 			int updateType = updatesList.getJSONArray(i).getInt(0);
-			if (!(updateType == 9 || updateType == 8 || updateType == 1 || updateType == 2 || updateType == 3))
+			if (!(updateType == 9 || updateType == 8 || updateType == 1 || updateType == 2 || updateType == 3
+					|| updateType == 80))
 				return true;
 		}
 		return false;
@@ -43,7 +44,7 @@ public class LongPollUpdater extends Service<Void> {
 			@Override
 			protected Void call() throws InterruptedException {
 				Thread.currentThread().setName(getName());
-				JSONObject longPollServerData = CO.getLongPollServer();
+				JSONObject longPollServerData = auxCO.getLongPollServer();
 
 				while (!isCancelled()) {
 					if (isWorking.getValue()) {
@@ -54,15 +55,15 @@ public class LongPollUpdater extends Service<Void> {
 						longPollServerData.put("ts", updates.getLong("ts"));
 						if (needsUpdating(updates)) {
 
-							updatedModel.getLock();
+							updatedModel.getLock("");
 							updatedModel.update(updates);
-							updatedModel.releaseLock();
+							updatedModel.releaseLock("");
 
 							isWorking.setValue(false);
 							Platform.runLater(() -> {
-								updatedView.getLock();
+								updatedView.getLock("Updater");
 								updatedView.update();
-								updatedView.releaseLock();
+								updatedView.releaseLock("Updater");
 								isWorking.setValue(true);
 							});
 						}
@@ -86,6 +87,8 @@ public class LongPollUpdater extends Service<Void> {
 	private Updated updatedModel;
 	private Updated updatedView;
 	private ConnectionOperator CO = new ConnectionOperator(30000);
+	private ConnectionOperator auxCO = new ConnectionOperator(1000);
+
 	private BooleanProperty isWorking = new SimpleBooleanProperty();
 
 }

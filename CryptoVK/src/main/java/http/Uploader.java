@@ -39,7 +39,7 @@ public class Uploader extends HttpOperator {
 			fileExtension = file.getAbsolutePath().substring(i + 1);
 		}
 
-		if (Arrays.asList("png", "jpg", "bmp", "gif").contains(fileExtension))
+		if (Arrays.asList("png", "jpg", "bmp", "gif").contains(fileExtension.toLowerCase()))
 			return uploadPhoto(file);
 		else
 			return uploadDocument(file);

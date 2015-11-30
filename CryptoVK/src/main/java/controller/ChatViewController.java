@@ -33,7 +33,7 @@ public class ChatViewController implements Controller {
 		this.controlled = new ChatView(CM);
 		new ChatFooterController(controlled.getFooter());
 		addScrollPaneListener();
-		addEnterListenerAndRequestFocus();
+		addEnterListener();
 		addReadStateListener();
 		addReadButtonListener();
 		addPostponeButtonListener();
@@ -63,7 +63,7 @@ public class ChatViewController implements Controller {
 
 	
 
-	public void addEnterListenerAndRequestFocus() {
+	private void addEnterListener() {
 
 		controlled.getFooter().getInputTray().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
@@ -75,35 +75,7 @@ public class ChatViewController implements Controller {
 
 				if (event.getCode().equals(KeyCode.ENTER) && !event.isShiftDown()) {
 
-					controlled.getModel().getLock("ChatViewController.handleMessageSend");
-					ArrayList<Attachment> aTTs = controlled.getFooter().getAttachments();
-					String message = controlled.getFooter().getInputTray().getText();
-					Long chatId = controlled.getModel().getChatId();
-					Long interlocutorId = controlled.getModel().getInterlocutorId();
-
-					String[] attachmentStrings = new String[aTTs.size()];
-					for (Attachment a : controlled.getFooter().getAttachments())
-						attachmentStrings[aTTs.indexOf(a)] = a.toString();
-
-					Thread t = new Thread(() -> {
-						Thread.currentThread().setName("Message sender");
-						try {
-							CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
-						} catch (UnsupportedEncodingException e) {
-							Platform.runLater(() -> {
-								controlled.getFooter().getInputTray().setText("Failed to encode URL! Unsupported characters!");
-							});
-						}
-					});
-					t.start();
-
-					controlled.getFooter().getAttachmentsContainer().clear();
-					controlled.getFooter().getAttachments().clear();
-					controlled.getFooter().getInputTray().clear();
-					controlled.getModel().setReadState(ChatReadState.READ);
-					controlled.getReadStateProperty().setValue(ChatReadState.READ);
-					controlled.getModel().releaseLock("ChatViewController.handleMessageSend");
-					event.consume();
+					sendMessage(event);
 
 				} else if (event.getCode().equals(KeyCode.ENTER) && event.isShiftDown()) {
 					eventJustFiltered = true;
@@ -113,6 +85,37 @@ public class ChatViewController implements Controller {
 									event.isMetaDown()));
 					event.consume();
 				}
+			}
+
+			private void sendMessage(KeyEvent event) {
+				controlled.getModel().getLock("ChatViewController.handleMessageSend");
+				ArrayList<Attachment> aTTs = controlled.getFooter().getAttachmentsContainer().getAttachments();
+				String message = controlled.getFooter().getInputTray().getText();
+				Long chatId = controlled.getModel().getChatId();
+				Long interlocutorId = controlled.getModel().getInterlocutorId();
+
+				String[] attachmentStrings = new String[aTTs.size()];
+				for (Attachment a : controlled.getFooter().getAttachmentsContainer().getAttachments())
+					attachmentStrings[aTTs.indexOf(a)] = a.toString();
+
+				Thread t = new Thread(() -> {
+					Thread.currentThread().setName("Message sender");
+					try {
+						CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
+					} catch (UnsupportedEncodingException e) {
+						Platform.runLater(() -> {
+							controlled.getFooter().getInputTray().setText("Failed to encode URL! Unsupported characters!");
+						});
+					}
+				});
+				t.start();
+
+				controlled.getFooter().getAttachmentsContainer().clear();
+				controlled.getFooter().getInputTray().clear();
+				controlled.getModel().setReadState(ChatReadState.READ);
+				controlled.getReadStateProperty().setValue(ChatReadState.READ);
+				controlled.getModel().releaseLock("ChatViewController.handleMessageSend");
+				event.consume();
 			}
 		});
 	}

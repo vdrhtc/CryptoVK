@@ -81,7 +81,7 @@ public class MessageView implements View {
 			setReadState(model.getReadState());
 
 			if (model.getAttachments().size() > 0)
-				attachementsContainer = new AttachmentsContainer(model.getAttachments(), model.isIncoming());
+				attachementsContainer = new AttachmentsContainer(model.getAttachments(), model.isIncoming(), false);
 			return true;
 		}
 		return false;

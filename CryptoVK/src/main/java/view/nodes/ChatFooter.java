@@ -1,7 +1,5 @@
 package view.nodes;
 
-import java.util.ArrayList;
-
 import data.ImageOperator;
 import data.ReadStatesDatabase.ChatReadState;
 import javafx.css.PseudoClass;
@@ -11,7 +9,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import model.Attachment;
 import model.VKPerson;
 
 public class ChatFooter extends HBox {
@@ -79,8 +76,7 @@ public class ChatFooter extends HBox {
 	private TextArea inputTray = new TextArea();
 	private Button postponeButton = new Button();
 	private ImageView ownerIcon = new ImageView();
-	private ArrayList<Attachment> attachments = new ArrayList<>();
-	private AttachmentsContainer attachmentsContainer = new AttachmentsContainer(false);
+	private AttachmentsContainer attachmentsContainer = new AttachmentsContainer(false, true);
 	
 
 	public AttachmentsContainer getAttachmentsContainer() {
@@ -96,9 +92,5 @@ public class ChatFooter extends HBox {
 
 	public Button getReadButton() {
 		return readButton;
-	}
-
-	public ArrayList<Attachment> getAttachments() {
-		return attachments;
 	}
 }

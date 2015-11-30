@@ -12,15 +12,15 @@ import model.Photo;
 
 public class AttachmentsContainer extends VBox {
 
-	public AttachmentsContainer(Boolean isMessageIncoming) {
-		this.photoContainer = new PhotoContainer(isMessageIncoming);
-		this.documentContainer = new DocumentContainer(isMessageIncoming);
+	public AttachmentsContainer(Boolean isMessageIncoming, Boolean editable) {
+		this.photoContainer = new PhotoContainer(isMessageIncoming, editable);
+		this.documentContainer = new DocumentContainer(isMessageIncoming, editable);
 		this.getChildren().addAll(photoContainer.getRoot(), documentContainer.getRoot());
 	}
 
-	public AttachmentsContainer(ArrayList<JSONObject> attachments, Boolean isMessageIncoming) {
-		this.photoContainer = new PhotoContainer(isMessageIncoming);
-		this.documentContainer = new DocumentContainer(isMessageIncoming);
+	public AttachmentsContainer(ArrayList<JSONObject> attachments, Boolean isMessageIncoming, Boolean editable) {
+		this.photoContainer = new PhotoContainer(isMessageIncoming, editable);
+		this.documentContainer = new DocumentContainer(isMessageIncoming, editable);
 
 		for (JSONObject attachment : attachments) {
 			switch (attachment.getString("type")) {
@@ -57,9 +57,15 @@ public class AttachmentsContainer extends VBox {
 	public void clear() {
 		photoContainer.clear();
 		documentContainer.clear();
-		
 	}
 
 	private PhotoContainer photoContainer;
 	private DocumentContainer documentContainer;
+	
+	public ArrayList<Attachment> getAttachments() {
+		ArrayList<Attachment> tmp = new ArrayList<>();
+		tmp.addAll(photoContainer.getPhotos());
+		tmp.addAll(documentContainer.getDocuments());
+		return tmp;
+	}
 }

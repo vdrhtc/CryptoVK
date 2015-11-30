@@ -44,7 +44,6 @@ public class ChatFooterController {
 						protected void succeeded() {
 							Attachment attachment = getValue();
 							controlled.getAttachmentsContainer().addAttachment(attachment);
-							controlled.getAttachments().add(attachment);
 						}
 					};
 					Thread t = new Thread(uploadTask);

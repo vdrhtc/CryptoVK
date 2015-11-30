@@ -1,3 +1,4 @@
+
 .message-sender-name {
 	-fx-text-fill: #36638E;
 	-fx-wrap-text: true;
@@ -39,8 +40,8 @@
 	-fx-background-color: derive( #DAE1E8, 30%);
 }
 .message-date{
-	-fx-font-style: italic;
-	-fx-font-size: 10 em;
+	-fx-font-family:Quicksand-Regular;
+	-fx-font-size: 0.9em;
 }
 .message-meta-info-container{
 	-fx-alignment: center-left;

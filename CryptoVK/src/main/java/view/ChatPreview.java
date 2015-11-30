@@ -48,6 +48,7 @@ public class ChatPreview implements View {
 		lastSenderPhoto.getStyleClass().add("chat-entry-last-sender-photo");
 		read.getStyleClass().addAll("chat-preview-button", "chat-preview-read-button");
 		leftContainer.getStyleClass().add("chat-entry-left-container");
+		date.getStyleClass().add("chat-entry-date");
 
 		metaInfoContainer.getChildren().addAll(title, date);
 		leftContainer.getChildren().addAll(metaInfoContainer, read);

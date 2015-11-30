@@ -10,9 +10,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import model.ChatsPreviewModel;
 import model.Updated;
@@ -29,7 +32,6 @@ public class ChatsPreview implements Updated, View {
 	}
 
 	private void initRoot() {
-
 		this.header.getStyleClass().add("chats-preview-header");
 		this.title.getStyleClass().add("chats-preview-title");
 		this.statusMessage.setId("chats-status-message");
@@ -37,15 +39,19 @@ public class ChatsPreview implements Updated, View {
 		this.chatsContainer.getStyleClass().add("chats-container");
 		this.root.getStyleClass().add("chats-root");
 		this.lastSeenOnline.getStyleClass().add("chats-preview-last-seen");
-		this.unreadMessagesCounter.getStyleClass().add("chats-preview-last-seen");
+		this.unreadMessagesCounter.getStyleClass().add("chats-preview-counter");
+		this.countersContainer.getStyleClass().add("chats-counters-container");
 
+		this.countersContainer.getChildren().addAll(unreadMessagesCounter,
+				new ImageView(new Image(ClassLoader.class.getResourceAsStream("/resources/assets/unread.png"))));
 		this.accessExpirationInfo.setText("Token valid until " + DataOperator.getLastTokenExpirationDate());
 		this.statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
-
-		header.getChildren().addAll(new VBox(title, lastSeenOnline), unreadMessagesCounter);
+		header.getChildren().addAll(new VBox(title, lastSeenOnline), countersContainer);
+		HBox.setHgrow(countersContainer, Priority.ALWAYS);
 		this.root.setCenter(chatsContainer);
 		this.root.setTop(header);
 		this.root.setBottom(statusBar);
+		
 	}
 
 	@Override
@@ -77,16 +83,16 @@ public class ChatsPreview implements Updated, View {
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
 	private Label unreadMessagesCounter = new Label();
+	private HBox countersContainer = new HBox();
 
-	
 	public Label getUnreadMessagesCounter() {
 		return unreadMessagesCounter;
 	}
-	
+
 	public Label getLastSeenOnline() {
 		return lastSeenOnline;
 	}
-	
+
 	public ArrayList<ChatPreview> getPreviews() {
 		return previews;
 	}

@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,6 +17,7 @@ public class ChatsModel implements Updated {
 	@Override
 	public void update(Object... params) {
 
+		ArrayList<Long> alreadyUpdatedChatIds = new ArrayList<>();
 		JSONObject updates = (JSONObject) params[0];
 		JSONArray updatesList = updates.getJSONArray("updates");
 
@@ -32,6 +34,8 @@ public class ChatsModel implements Updated {
 			} else {
 				continue;
 			}
+			if (alreadyUpdatedChatIds.contains(chatId))
+				continue;
 
 			ChatModel CM = chatModels.get(chatId);
 			if (CM != null) {
@@ -40,6 +44,7 @@ public class ChatsModel implements Updated {
 				System.out.println("Updated " + CM.toString());
 				CM.releaseLock("ChatModel.update");
 			}
+			alreadyUpdatedChatIds.add(chatId);
 		}
 	}
 

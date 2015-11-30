@@ -21,6 +21,9 @@
 	-fx-background-color: #36638E;
 	-fx-alignment: center-left;
 }
+.chats-counters-container {
+	-fx-alignment: center;
+}
 
 .chats-names-container {
 	-fx-orientation: horizontal;

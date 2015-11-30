@@ -121,7 +121,10 @@ public class ChatsViewController implements Controller {
 			if (e.getButton().equals(MouseButton.MIDDLE))
 				removeChat(label.getChatId());
 			else if (e.getButton().equals(MouseButton.PRIMARY))
-				switchChatTo(label.getChatId());
+				if (!label.getChatId().equals(activeChatController.getControlled().getModel().getChatId()))
+					switchChatTo(label.getChatId());
+				if (e.getClickCount()>1)
+					removeChat(label.getChatId());
 		});
 	}
 
@@ -136,6 +139,7 @@ public class ChatsViewController implements Controller {
 	}
 
 	private ChatsView controlled;
+	private Long clickTimer = (long) 0;
 	private HashMap<Long, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;

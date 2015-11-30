@@ -52,12 +52,12 @@ public class ReadStatesDatabase {
 			if (RS == ChatReadState.READ || RS == ChatReadState.VIEWED) {
 				if (previousReadState == ChatReadState.UNREAD) {
 					db.put("unreadCount", db.optInt("unreadCount") - 1);
-					System.out.println("&&&&&& Decrementing");
+					System.out.println("&&&&&& Decrementing: " + (db.optInt("unreadCount") - 1));
 				}
 			} else if (RS == ChatReadState.UNREAD)
 				if (previousReadState != RS) {
 					db.put("unreadCount", db.optInt("unreadCount") + 1);
-					System.out.println("&&&&&& Incrementing");
+					System.out.println("&&&&&& Incrementing: "+(db.optInt("unreadCount") + 1));
 				}
 
 		if (RS == ChatReadState.READ)

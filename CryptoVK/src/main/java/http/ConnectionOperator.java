@@ -2,6 +2,7 @@ package http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.logging.Level;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ public class ConnectionOperator extends HttpOperator {
 			throws UnsupportedEncodingException {
 
 		String realRequest = messages_sendTemplate.concat("&chat_id=" + chatId).concat("&user_id=" + userId)
-				.concat("&access_token=" + acess_token);
+				.concat("&guid="+new Date().getTime()).concat("&access_token=" + acess_token);
 
 		if (message != "")
 			realRequest = realRequest.concat("&message=" + URLEncoder.encode(message, "UTF-8"));

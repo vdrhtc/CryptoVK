@@ -1,3 +1,16 @@
+@font-face {
+    font-family: 'Quicksand-Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Quicksand-Bold'), url('../fonts/Quicksand-Bold.otf');
+ }
+ @font-face {
+    font-family: 'Quicksand-Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Quicksand-Regular'), url('../fonts/Quicksand-Regular.otf');
+ }
+
 .chat-entry-icon {
 	-fx-pref-width:50;
 	-fx-pref-height:50;
@@ -60,6 +73,11 @@
 	-fx-wrap-text: true;
 	-fx-min-width: 50;
 }
+.chat-entry-date {
+	-fx-font-family:Quicksand-Regular;
+	-fx-font-size:0.9em;
+}
+
 .chat-preview-button {
 	-fx-background-color: transparent;
 	-fx-boder-width: 2;
@@ -75,7 +93,6 @@
 	-fx-background-color:derive( #DAE1E8, 30%);
 	-fx-effect:innershadow(three-pass-box, black, 2, 0,0,0);
 	-fx-background-image:url(../assets/readOff.png);
-	
 }	
 
 .chat-preview-read-button:parent-hover {

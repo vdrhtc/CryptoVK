@@ -49,7 +49,8 @@ public class ChatsPreviewController implements Controller {
 		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
 					ChatReadStateWithId newValue) {
-				System.out.println("==== Preview read state changed, " + newValue.toString());
+				// System.out.println("==== Preview read state changed, " +
+				// newValue.toString());
 				readStateWithIdProperty.setValue(newValue);
 				controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
 			}
@@ -70,6 +71,7 @@ public class ChatsPreviewController implements Controller {
 
 	public void loadNextModels(int count) {
 		JSONArray chatsJSONs = CO.getDialogs(count, controlled.getModel().getChats().size());
+		count = chatsJSONs.length() < count ? chatsJSONs.length() : count;
 		int offset = controlled.getModel().getChats().size();
 		for (int i = offset; i < offset + count; i++) {
 			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
@@ -87,6 +89,9 @@ public class ChatsPreviewController implements Controller {
 	public void loadNextPreviews(int count) {
 		ArrayList<Node> toAppend = new ArrayList<>();
 		int oldChatEntriesCount = controlled.getChatsLayout().getChildren().size() / 2;
+		int totalLoadedModelsCount = controlled.getModel().getChats().size();
+		count = oldChatEntriesCount + count > totalLoadedModelsCount ? totalLoadedModelsCount - oldChatEntriesCount
+				: count;
 		for (int i = oldChatEntriesCount; i < oldChatEntriesCount + count; i++) {
 			ChatPreviewController newController = new ChatPreviewController(controlled.getModel().getChats().get(i));
 			addReadStateChangeListener(newController);

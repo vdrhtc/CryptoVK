@@ -1,10 +1,18 @@
+
 .chats-preview-title{
 	-fx-font-size: 3em;
+	-fx-font-family:Quicksand-Regular;
 	-fx-text-fill: white;
 	-fx-pref-height: 50;
 }
 .chats-preview-last-seen{
 	-fx-text-fill: white;
+	-fx-font-family:Quicksand-Regular;
+}
+.chats-preview-counter{
+	-fx-font-family:Quicksand-Regular;
+	-fx-text-fill: white;
+	-fx-font-size: 40px;
 }
 .chats-preview-header{
 	-fx-background-color:#36638E;

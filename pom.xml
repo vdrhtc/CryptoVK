@@ -46,7 +46,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>controller.Launcher</mainClass>
+							<mainClass>controller.Concrypt</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

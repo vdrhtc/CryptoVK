@@ -3,7 +3,6 @@ package http;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.logging.Level;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -135,9 +134,5 @@ public class ConnectionOperator extends HttpOperator {
 	private static String messages_sendTemplate = "https://api.vk.com/method/messages.send?&v=5.23";
 	private static String messages_readTemplate = "https://api.vk.com/method/messages.markAsRead?&v=5.23";
 	private static String messages_getByIdTemplate = "https://api.vk.com/method/messages.getById?&v=5.23";
-
-	static {
-		log.setLevel(Level.ALL);
-	}
 
 }

@@ -13,7 +13,6 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 public class DataOperator {
 
@@ -21,12 +20,12 @@ public class DataOperator {
 	private static final String TOKEN = "token";
 	private static final String OWNER_EMAIL = "owner_email";
 	private static final String ACCESS_TOKEN = "access_token";
-	private static final String EXPIRATION_DATE = "expiration_date";
 
 	static {
-		File appData = new File(System.getProperty("user.home")+"/.concrypt");
+		File appData = new File(System.getProperty("user.home") + "/.concrypt");
 		appData.mkdir();
 	}
+
 	private static final String GENERAL_DATAFILE = System.getProperty("user.home") + "/.concrypt/generalDataFile.json";
 
 	public static String formatDate(Date date) {
@@ -40,20 +39,9 @@ public class DataOperator {
 		return JO.optJSONObject(ACCESS_TOKEN).getString(TOKEN);
 	}
 
-	public static String getLastTokenExpirationDate() {
-		JSONObject JO = readJSONfromFile(GENERAL_DATAFILE);
-		return JO.optJSONObject(ACCESS_TOKEN).getString(EXPIRATION_DATE);
-	}
-
 	public static void setAccesToken(String value) {
 		JSONObject JO = readJSONfromFile(GENERAL_DATAFILE);
 		JO.getJSONObject(ACCESS_TOKEN).put(TOKEN, value);
-		writeJSONtoFile(GENERAL_DATAFILE, JO);
-	}
-
-	public static void setTokenExpirationDate(String date) {
-		JSONObject JO = readJSONfromFile(GENERAL_DATAFILE);
-		JO.getJSONObject(ACCESS_TOKEN).put(EXPIRATION_DATE, date);
 		writeJSONtoFile(GENERAL_DATAFILE, JO);
 	}
 
@@ -97,9 +85,8 @@ public class DataOperator {
 		try {
 			Files.createFile(path);
 			JSONObject JO = new JSONObject();
-			JO.put(OWNER_EMAIL, "");
-			JO.put(ACCESS_TOKEN, new JSONObject(new JSONStringer().object().key(TOKEN).value("").key(EXPIRATION_DATE)
-					.value(EMPTY).endObject().toString()));
+			JO.put(OWNER_EMAIL, EMPTY);
+			JO.put(ACCESS_TOKEN, new JSONObject().put(TOKEN, EMPTY));
 			Files.write(path, JO.toString().getBytes());
 		} catch (IOException e1) {
 			e1.printStackTrace();

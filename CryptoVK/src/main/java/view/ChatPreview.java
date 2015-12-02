@@ -1,7 +1,7 @@
 package view;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ImageOperator;
 import data.ReadStatesDatabase.ChatReadState;
@@ -105,12 +105,9 @@ public class ChatPreview implements View {
 	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
 	private HBox leftContainer = new HBox();
 
-	private static Logger log = Logger.getAnonymousLogger();
+	@SuppressWarnings("unused")
+	private static Logger log = LoggerFactory.getLogger(ChatPreview.class);
 
-	static {
-		log.setLevel(Level.WARNING);
-	}
-	
 	public ObjectProperty<ChatReadState> getReadStateProperty() {
 		return readStateProperty;
 	}

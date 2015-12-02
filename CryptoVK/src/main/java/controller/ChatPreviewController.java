@@ -1,6 +1,7 @@
 package controller;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ReadStatesDatabase.ChatReadState;
 import http.ConnectionOperator;
@@ -91,6 +92,6 @@ public class ChatPreviewController implements Controller {
 	}
 	
 	@SuppressWarnings("unused")
-	private Logger log = Logger.getAnonymousLogger();
+	private Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 }

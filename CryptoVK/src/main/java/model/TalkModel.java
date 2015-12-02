@@ -15,10 +15,6 @@ public class TalkModel extends ChatModel {
 		return ChatsModel.getConnectionOperator().getChatHistory(0, getChatId(), count, offset);
 	}
 
-	@Override
-	public TalkModel clone() {
-		return new TalkModel(super.clone());
-	}
 	
 	@Override
 	public Long getInterlocutorId() {

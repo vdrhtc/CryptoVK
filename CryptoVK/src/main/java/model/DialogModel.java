@@ -17,11 +17,6 @@ public class DialogModel extends ChatModel {
 
 	private VKPerson interlocutor;
 
-	@Override
-	public DialogModel clone() {
-		return new DialogModel(super.clone(), interlocutor);
-	}
-
 	public Long getInterlocutorId() {
 		return getChatId();
 	}

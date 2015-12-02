@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import http.ConnectionOperator;
 
@@ -56,26 +56,22 @@ public class ChatsModel implements Updated {
 
 	@Override
 	public void getLock(String takerName) {
-		log.info("Getting lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Getting lock: "+takerName);
 		lock.lock();
-		log.info("Got lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Got lock: "+takerName);
 	}
 	
 	@Override
 	public void releaseLock(String takerName) {
 		lock.unlock();
-		log.info("Releasing lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Releasing lock: "+takerName);
 
 	}
 
 	private Lock lock = new ReentrantLock();
 	private static ConnectionOperator CO = new ConnectionOperator(1000);
 
-	private static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.ALL);
-	}
+	private static Logger log = LoggerFactory.getLogger(ChatsModel.class);
 
 	public static ConnectionOperator getConnectionOperator() {
 		return CO;

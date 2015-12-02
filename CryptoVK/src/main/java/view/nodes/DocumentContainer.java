@@ -44,6 +44,7 @@ public class DocumentContainer {
 	private ArrayList<Attachment> documents = new ArrayList<>();
 
 	public void clear() {
+		documents.clear();
 		root.getChildren().clear();
 	}
 

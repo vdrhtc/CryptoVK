@@ -2,7 +2,6 @@ package view;
 
 import java.util.ArrayList;
 
-import data.DataOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
@@ -44,8 +43,7 @@ public class ChatsPreview implements Updated, View {
 
 		this.countersContainer.getChildren().addAll(unreadMessagesCounter,
 				new ImageView(new Image(ClassLoader.class.getResourceAsStream("/resources/assets/unread.png"))));
-		this.accessExpirationInfo.setText("Token valid until " + DataOperator.getLastTokenExpirationDate());
-		this.statusBar.getChildren().addAll(statusMessage, progressBar, accessExpirationInfo);
+		this.statusBar.getChildren().addAll(statusMessage, progressBar);
 		header.getChildren().addAll(new VBox(title, lastSeenOnline), countersContainer);
 		HBox.setHgrow(countersContainer, Priority.ALWAYS);
 		this.root.setCenter(chatsContainer);
@@ -105,7 +103,6 @@ public class ChatsPreview implements Updated, View {
 		return statusMessage;
 	}
 
-	private Label accessExpirationInfo = new Label();
 
 	@Override
 	public ViewName getName() {

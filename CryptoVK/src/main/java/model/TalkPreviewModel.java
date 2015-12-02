@@ -5,18 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import data.ReadStatesDatabase.ChatReadState;
-
 public class TalkPreviewModel extends ChatPreviewModel {
-
-	public TalkPreviewModel() {
-		
-	}
-
-	public TalkPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
-			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
-		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
-	}
 
 	private String deletedImageURL = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRdEp0TNPk3cGnvN0IBtMZsw9-td381BgxHGoqEuiy8Afgn9qtc";
 
@@ -57,12 +46,6 @@ public class TalkPreviewModel extends ChatPreviewModel {
 
 	private void extractTalkTitle(JSONObject content) {
 		this.title = content.getString("title");
-	}
-
-	@Override
-	public TalkPreviewModel clone() {
-		return new TalkPreviewModel(getChatId(),getReadState(), getTitle(),  getChatIconURL(),
-				getLastMessage(), getInterlocutors());
 	}
 
 	@Override

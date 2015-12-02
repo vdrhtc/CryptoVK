@@ -1,8 +1,9 @@
 package view;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ReadStatesDatabase.ChatReadState;
 import data.ReadStatesDatabase.MessageReadState;
@@ -118,11 +119,7 @@ public class ChatView implements View, Updated {
 	private ArrayList<MessageView> loadedMessageViews = new ArrayList<>();
 	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
 
-	private static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.WARNING);
-	}
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public ChatFooter getFooter() {
 		return footer;

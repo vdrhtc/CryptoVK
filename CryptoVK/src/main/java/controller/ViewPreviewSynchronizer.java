@@ -1,7 +1,9 @@
 package controller;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ReadStatesDatabase.ChatReadState;
 import javafx.beans.value.ChangeListener;
@@ -56,8 +58,5 @@ public class ViewPreviewSynchronizer {
 
 	private ChatsViewController CVC;
 	private ChatsPreviewController CPVC;
-	private static Logger log = Logger.getAnonymousLogger();
-	static {
-		log.setLevel(Level.ALL);
-	}
+	private static Logger log = LoggerFactory.getLogger(ViewPreviewSynchronizer.class);
 }

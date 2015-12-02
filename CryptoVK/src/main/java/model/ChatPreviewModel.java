@@ -3,10 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ReadStatesDatabase;
 import data.ReadStatesDatabase.ChatReadState;
@@ -83,11 +83,7 @@ public class ChatPreviewModel {
 	protected ArrayList<VKPerson> interlocutors = new ArrayList<>();
 	protected Boolean invalidated;
 
-	protected static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.ALL);
-	}
+	protected static Logger log = LoggerFactory.getLogger(ChatPreviewModel.class);
 
 	@Override
 	public ChatPreviewModel clone() {

@@ -8,11 +8,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -120,7 +121,7 @@ public class ImageOperator {
 		try {
 			BIs.add(ImageIO.read(new URL(url).openStream()));
 		} catch (IOException e) {
-			log.warning(Thread.currentThread().getName()+" is retrying to load image: "+url);
+			log.warn(Thread.currentThread().getName()+" is retrying to load image: "+url);
 			addImage(BIs, url);
 		}
 	}
@@ -130,8 +131,5 @@ public class ImageOperator {
 	private static Image wait = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString());
 	private static Image wait_33 = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString(), 33, 33, true, true);
 	
-	private static Logger log = Logger.getAnonymousLogger();
-	static {
-		log.setLevel(Level.ALL);
-	}
+	private static Logger log = LoggerFactory.getLogger(ImageOperator.class);
 }

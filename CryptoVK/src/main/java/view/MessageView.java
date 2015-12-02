@@ -1,7 +1,7 @@
 package view;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ImageOperator;
 import data.ReadStatesDatabase.MessageReadState;
@@ -117,20 +117,17 @@ public class MessageView implements View {
 	}
 
 	private MessageModel model;
+	private Pane plug = new Pane();
 	private HBox root = new HBox();
 	private Label date = new Label();
 	private Label message = new Label();
-	private VBox messageContainer = new VBox();
-	private Pane plug = new Pane();
 	private Label senderName = new Label();
+	private VBox messageContainer = new VBox();
 	private ImageView senderPhoto = new ImageView();
 	private AttachmentsContainer attachementsContainer;
 
-	private static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.WARNING);
-	}
+	@SuppressWarnings("unused")
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public Pane getRoot() {

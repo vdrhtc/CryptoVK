@@ -34,8 +34,8 @@ public class PhotoContainer {
 	}
 
 	public void clear() {
+		this.photos.clear();
 		this.root.getChildren().clear();
-		this.root.setPrefWidth(0);
 	}
 
 	private ArrayList<Attachment> photos = new ArrayList<>();

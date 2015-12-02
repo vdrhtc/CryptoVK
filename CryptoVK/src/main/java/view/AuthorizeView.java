@@ -1,10 +1,9 @@
 package view;
 
 import java.net.CookieHandler;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.DataOperator;
 import http.ConnectionOperator;
@@ -53,12 +52,6 @@ public class AuthorizeView implements View {
 				DataOperator.setOwnerEmail(email);
 		}
 
-		String expires_in = ResponseParser.parseAuthorizeResponse(newValue, "expires_in");
-		if (expires_in != null) {
-			String expirationDate = DateFormat.getInstance()
-					.format(new Date(System.currentTimeMillis() + 1000 * Integer.parseInt(expires_in)));
-			DataOperator.setTokenExpirationDate(expirationDate);
-		}
 		if (token != null) {
 			DataOperator.setAccesToken(token);
 			ConnectionOperator.setAccessToken(token);
@@ -66,7 +59,6 @@ public class AuthorizeView implements View {
 		}
 		return false;
 	}
-
 
 	private void buildBrowser() {
 		browser.getEngine().load(authURL + DataOperator.getOwnerEmail());
@@ -80,27 +72,21 @@ public class AuthorizeView implements View {
 	public TextField getAddressBar() {
 		return addressBar;
 	}
-	
 
 	private VBox root = new VBox();
 	private WebView browser = new WebView();;
 	private TextField addressBar = new TextField();
-	private String authURL = "http://api.vkontakte.ru/oauth/authorize?" + "client_id=4468911&scope=messages,photos,docs"
-			+ "&redirect_uri=blank.html&response_type=token" + "&display=popup&email=";
+	private String authURL = "http://api.vkontakte.ru/oauth/authorize?"
+			+ "client_id=4468911&scope=messages,photos,docs,offline" + "&redirect_uri=blank.html&response_type=token"
+			+ "&display=popup&email=";
 
 	private ConnectionOperator CO = new ConnectionOperator(1000);
-	private static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.ALL);
-	}
+	private static Logger log = LoggerFactory.getLogger(AuthorizeView.class);
 
 	@Override
 	public ViewName getName() {
 		return this.name;
 	}
-
-
 
 	@Override
 	public Pane getRoot() {

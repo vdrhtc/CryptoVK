@@ -3,11 +3,11 @@ package model;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.ReadStatesDatabase;
 import data.ReadStatesDatabase.ChatReadState;
@@ -63,15 +63,15 @@ public class ChatModel implements Updated {
 	
 	@Override
 	public void getLock(String takerName) {
-		log.info("Getting lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Getting lock: "+takerName);
 		lock.lock();
-		log.info("Got lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Got lock: "+takerName);
 	}
 	
 	@Override
 	public void releaseLock(String takerName) {
 		lock.unlock();
-		log.info("Releasing lock: "+Thread.currentThread().getName()+" "+takerName);
+		log.info("Releasing lock: "+takerName);
 
 	}
 
@@ -82,11 +82,7 @@ public class ChatModel implements Updated {
 	private ArrayList<MessageModel> loadedMessages = new ArrayList<>();
 	private ChatReadState RS;
 	
-	private static Logger log = Logger.getAnonymousLogger();
-	static {
-		log.setLevel(Level.ALL);
-	}
-
+	private static Logger log = LoggerFactory.getLogger(ChatModel.class);
 
 	public ArrayList<String> getChatIconURL() {
 		return chatIconURL;
@@ -126,56 +122,6 @@ public class ChatModel implements Updated {
 		return chatTitle;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + chatIconURL.hashCode();
-		result = prime * result + chatId.intValue();
-		result = prime * result + ((chatTitle == null) ? 0 : chatTitle.hashCode());
-		result = prime * result + ((loadedMessages == null) ? 0 : loadedMessages.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof ChatModel)) {
-			return false;
-		}
-		ChatModel other = (ChatModel) obj;
-		if (!chatIconURL.equals(other.chatIconURL)) {
-			return false;
-		}
-		if (chatId != other.chatId) {
-			return false;
-		}
-		if (chatTitle == null) {
-			if (other.chatTitle != null) {
-				return false;
-			}
-		} else if (!chatTitle.equals(other.chatTitle)) {
-			return false;
-		}
-		if (loadedMessages == null) {
-			if (other.loadedMessages != null) {
-				return false;
-			}
-		} else if (!loadedMessages.equals(other.loadedMessages)) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public ChatModel clone() {
-		return new ChatModel(chatId, chatTitle, chatIconURL, loadedMessages, serverMessageCount, RS);
-	}
 
 	public Long getInterlocutorId() {
 		return null;

@@ -1,8 +1,9 @@
 package view;
 
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,7 +15,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import model.ChatsModel;
 import model.Updated;
-import view.nodes.ChatNameLabel;
 
 public class ChatsView implements View, Updated {
 
@@ -59,11 +59,8 @@ public class ChatsView implements View, Updated {
 	private HashMap<Long, ChatView> viewedChats = new HashMap<>();
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty();
 
-	private static Logger log = Logger.getAnonymousLogger();
-
-	static {
-		log.setLevel(Level.ALL);
-	}
+	@SuppressWarnings("unused")
+	private static Logger log = LoggerFactory.getLogger(ChatsView.class);
 	
 	public Button getBackButton() {
 		return back;

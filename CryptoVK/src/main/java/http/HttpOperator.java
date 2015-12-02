@@ -5,7 +5,6 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.logging.Logger;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,6 +18,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpOperator {
 
@@ -67,7 +68,7 @@ public class HttpOperator {
 					Thread.sleep(1000);
 					responseBody = sendRequest(URL);
 				} else
-					log.warning(responseBody);
+					log.warn(responseBody);
 
 			}
 			System.out.println("----- " + Thread.currentThread().getName() + " got response: " + response.toString());
@@ -87,7 +88,7 @@ public class HttpOperator {
 		try {
 			responseBody = (String) httpclient.execute(httpget, responseHandler);
 		} catch (UnknownHostException | ClientProtocolException | SocketTimeoutException  e) {
-			log.warning(e.getMessage());
+			log.warn(e.getMessage());
 			Thread.sleep(1000 / 2);
 			responseBody = execute(responseHandler);
 		}
@@ -98,6 +99,6 @@ public class HttpOperator {
 	protected CloseableHttpClient httpclient = HttpClients.createDefault();
 	private HttpGet httpget = new HttpGet();
 
-	protected static Logger log = Logger.getAnonymousLogger();
+	protected static Logger log = LoggerFactory.getLogger(HttpOperator.class);
 
 }

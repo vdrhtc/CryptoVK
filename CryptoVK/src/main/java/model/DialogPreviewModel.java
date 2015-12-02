@@ -1,21 +1,9 @@
 package model;
 
-import java.util.ArrayList;
-
 import org.json.JSONObject;
-
-import data.ReadStatesDatabase.ChatReadState;
 
 public class DialogPreviewModel extends ChatPreviewModel {
 
-	public DialogPreviewModel() {
-		
-	}
-
-	public DialogPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
-			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
-		super(chatId, chatReadState, title, chatIconURL, lastMessage, interlocutors);
-	}
 
 	@Override
 	public void loadContent(JSONObject content) {
@@ -39,12 +27,6 @@ public class DialogPreviewModel extends ChatPreviewModel {
 		if (content.optInt("chat_id") == 0 && content.getInt("user_id") == getChatId())
 			return true;
 		return false;
-	}
-
-	@Override
-	public DialogPreviewModel clone() {
-		return new DialogPreviewModel(getChatId(), getReadState(), getTitle(), getChatIconURL(), getLastMessage(),
-				getInterlocutors());
 	}
 
 }

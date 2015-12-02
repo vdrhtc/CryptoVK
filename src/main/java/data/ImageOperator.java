@@ -128,8 +128,8 @@ public class ImageOperator {
 
 	private static HashMap<String, Image> imageDatabase = new HashMap<>();
 	private static HashMap<String, Image> lastSenderPhotosDatabase = new HashMap<>();
-	private static Image wait = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString());
-	private static Image wait_33 = new Image(ImageOperator.class.getResource("/resources/assets/wait.png").toString(), 33, 33, true, true);
+	private static Image wait = new Image(ImageOperator.class.getResource("/assets/wait.png").toString());
+	private static Image wait_33 = new Image(ImageOperator.class.getResource("/assets/wait.png").toString(), 33, 33, true, true);
 	
 	private static Logger log = LoggerFactory.getLogger(ImageOperator.class);
 }

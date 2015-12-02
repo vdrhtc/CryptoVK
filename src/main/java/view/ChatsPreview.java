@@ -42,7 +42,7 @@ public class ChatsPreview implements Updated, View {
 		this.countersContainer.getStyleClass().add("chats-counters-container");
 
 		this.countersContainer.getChildren().addAll(unreadMessagesCounter,
-				new ImageView(new Image(ClassLoader.class.getResourceAsStream("/resources/assets/unread.png"))));
+				new ImageView(new Image(ClassLoader.class.getResourceAsStream("/assets/unread.png"))));
 		this.statusBar.getChildren().addAll(statusMessage, progressBar);
 		header.getChildren().addAll(new VBox(title, lastSeenOnline), countersContainer);
 		HBox.setHgrow(countersContainer, Priority.ALWAYS);

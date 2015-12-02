@@ -22,17 +22,17 @@ public class ViewSwitcher {
 			this.controllers.put(v.getControlled().getName(), v);
 		
 		 scene.getStylesheets()
-		 .add(ClassLoader.class.getResource("/resources/stylesheets/chatPreviewStyle.css").toExternalForm());
+		 .add(ClassLoader.class.getResource("/stylesheets/chatPreviewStyle.css").toExternalForm());
 		 scene.getStylesheets()
-		 .add(ClassLoader.class.getResource("/resources/stylesheets/chatsPreviewStyle.css").toExternalForm());
+		 .add(ClassLoader.class.getResource("/stylesheets/chatsPreviewStyle.css").toExternalForm());
 		 scene.getStylesheets()
-		 .add(ClassLoader.class.getResource("/resources/stylesheets/messageViewStyle.css").toExternalForm());
+		 .add(ClassLoader.class.getResource("/stylesheets/messageViewStyle.css").toExternalForm());
 		 scene.getStylesheets()
-		 .add(ClassLoader.class.getResource("/resources/stylesheets/chatViewStyle.css").toExternalForm());
+		 .add(ClassLoader.class.getResource("/stylesheets/chatViewStyle.css").toExternalForm());
 		 scene.getStylesheets()
-		 .add(ClassLoader.class.getResource("/resources/stylesheets/chatsViewStyle.css").toExternalForm());
+		 .add(ClassLoader.class.getResource("/stylesheets/chatsViewStyle.css").toExternalForm());
 		 scene.getStylesheets().add(
-		 ClassLoader.class.getResource("/resources/stylesheets/attachmentsContainerStyle.css").toExternalForm());
+		 ClassLoader.class.getResource("/stylesheets/attachmentsContainerStyle.css").toExternalForm());
 	}
 
 	public void switchToView(ViewName name, Object... params) {

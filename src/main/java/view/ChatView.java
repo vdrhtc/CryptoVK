@@ -119,6 +119,7 @@ public class ChatView implements View, Updated {
 	private ArrayList<MessageView> loadedMessageViews = new ArrayList<>();
 	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
 
+	@SuppressWarnings("unused")
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public ChatFooter getFooter() {

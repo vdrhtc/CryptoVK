@@ -81,6 +81,7 @@ public class AuthorizeView implements View {
 			+ "&display=popup&email=";
 
 	private ConnectionOperator CO = new ConnectionOperator(1000);
+	@SuppressWarnings("unused")
 	private static Logger log = LoggerFactory.getLogger(AuthorizeView.class);
 
 	@Override

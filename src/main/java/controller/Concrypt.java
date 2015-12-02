@@ -1,9 +1,5 @@
 package controller;
 
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.View.ViewName;

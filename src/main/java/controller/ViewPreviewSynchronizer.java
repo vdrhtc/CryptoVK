@@ -1,7 +1,5 @@
 package controller;
 
-import java.util.logging.Level;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

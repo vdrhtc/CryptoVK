@@ -139,7 +139,6 @@ public class ChatsViewController implements Controller {
 	}
 
 	private ChatsView controlled;
-	private Long clickTimer = (long) 0;
 	private HashMap<Long, ChatViewController> controllers = new HashMap<>();
 	private ChatsViewLPU updater;
 	private ChatViewController activeChatController;

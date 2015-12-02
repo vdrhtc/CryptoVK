@@ -29,6 +29,8 @@ public class PhotoContainer {
 				}
 			}
 		});
+		
+		root.setPrefWidth(root.getPrefWidth()+photo.getWidth()+15);
 		photos.add(photo);
 		root.getChildren().add(photoView);
 	}

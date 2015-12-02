@@ -25,14 +25,21 @@ public class ReadStatesDatabase {
 		READ, UNREAD, POSTPONED, VIEWED;
 	}
 
+	public static final Integer DATABASE_VERSION = 1;
+	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
+			+ "/.concrypt/readStateDatabase.json";
+	private static ReadWriteLock rwlock = new ReentrantReadWriteLock();
 	static {
 		File appData = new File(System.getProperty("user.home") + "/.concrypt");
 		appData.mkdir();
+		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
+		if (db.optInt("version") < DATABASE_VERSION)
+			db = new JSONObject().put("version", DATABASE_VERSION);
+		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
-
-	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
-			+ "/.concrypt/readStateDatabase.json";
-
+	
+	
+	
 	public static void putChat(Long chatId, Long lastMessageId, boolean lastMessageOut, ChatReadState RS) {
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
@@ -144,11 +151,10 @@ public class ReadStatesDatabase {
 		try {
 			Files.createFile(path);
 			JSONObject JO = new JSONObject();
-			Files.write(path, JO.toString().getBytes());
+			JO.put("version", DATABASE_VERSION);
+			Files.write(path, JO.toString(4).getBytes());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-
-	private static ReadWriteLock rwlock = new ReentrantReadWriteLock();
 }

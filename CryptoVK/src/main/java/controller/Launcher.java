@@ -1,8 +1,9 @@
 package controller;
 
-import java.awt.Toolkit;
-import java.util.Properties;
+import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.View.ViewName;
@@ -13,9 +14,8 @@ public class Launcher extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
 		Thread.currentThread().setName("JFX");
-		Properties props = System.getProperties();
-		props.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s, %2$s [%1$tc]%n");
 		
 		AuthorizeViewController AVC = new AuthorizeViewController();
 		ChatsPreviewController CPVC = new ChatsPreviewController();

@@ -8,7 +8,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import view.View.ViewName;
 
-public class Launcher extends Application {
+public class Concrypt extends Application {
 
 	public static ViewSwitcher VS;
 	

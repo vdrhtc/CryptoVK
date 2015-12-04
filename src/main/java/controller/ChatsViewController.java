@@ -90,6 +90,8 @@ public class ChatsViewController implements Controller {
 	public void removeChat(Long chatId) {
 		controlled.getModel().getLock("ChatsViewController.removeChat");
 		ChatView removed = controlled.getViewedChats().remove(chatId);
+		if (removed == null)
+			return;
 		Integer index = controlled.getChatNamesContainer().getChildren().indexOf(removed.getChatNameLabel());
 		controlled.getChatNamesContainer().getChildren().remove(removed.getChatNameLabel());
 		Integer newSize = controlled.getChatNamesContainer().getChildren().size();

@@ -44,7 +44,7 @@ public class HttpOperator {
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}
-			System.out.println(Thread.currentThread().getName() + " is executing request " + httpget.getRequestLine());
+			log.info("Executing request " + httpget.getRequestLine());
 
 			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
@@ -71,7 +71,7 @@ public class HttpOperator {
 					log.warn(responseBody);
 
 			}
-			System.out.println("----- " + Thread.currentThread().getName() + " got response: " + response.toString());
+			log.info("got response: " + response.toString());
 			return responseBody;
 
 		} catch (IOException | InterruptedException e) {

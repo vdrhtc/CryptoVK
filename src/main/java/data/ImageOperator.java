@@ -1,8 +1,10 @@
 package data;
 
+import java.awt.Desktop;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,7 +12,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.IIOException;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,11 +131,36 @@ public class ImageOperator {
 			addImage(BIs, url);
 		}
 	}
+	
+	public static void saveImageFromUrl(String url, File fullImageFile, Boolean open) {
+		Thread thread = new Thread(() -> {
+			try {
+				BufferedImage fullImage;
+
+				fullImage = ImageIO.read(new URL(url));
+				Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
+				ImageWriter writer = (ImageWriter) iter.next();
+				ImageWriteParam iwp = writer.getDefaultWriteParam();
+				iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				iwp.setCompressionQuality((float) 0.9);
+				FileImageOutputStream output = new FileImageOutputStream(fullImageFile);
+				writer.setOutput(output);
+				IIOImage image = new IIOImage(fullImage, null, null);
+				writer.write(null, image, iwp);
+				if (open)
+					Desktop.getDesktop().open(fullImageFile);
+
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+		thread.start();
+	}
 
 	private static HashMap<String, Image> imageDatabase = new HashMap<>();
 	private static HashMap<String, Image> lastSenderPhotosDatabase = new HashMap<>();
 	private static Image wait = new Image(ImageOperator.class.getResource("/assets/wait.png").toString());
 	private static Image wait_33 = new Image(ImageOperator.class.getResource("/assets/wait.png").toString(), 33, 33, true, true);
-	
 	private static Logger log = LoggerFactory.getLogger(ImageOperator.class);
+	
 }

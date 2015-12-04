@@ -9,7 +9,7 @@ public class ChatsViewLPU extends LongPollUpdater {
 	}
 
 	public String getName() {
-		return "Chats updater";
+		return "CU";
 	}
 	
 }

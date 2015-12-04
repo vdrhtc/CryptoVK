@@ -1,7 +1,7 @@
 <configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %msg, %logger{36} %n
+			<pattern>%d{HH:mm:ss.SSS} %-5level [%3thread] %msg, %logger{36} %n
 			</pattern>
 		</encoder>
 	</appender>
@@ -11,7 +11,7 @@
 		<file>log/concrypt.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
-			<fileNamePattern>concrypt.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>log/concrypt.%d{yyyy-MM-dd}.log</fileNamePattern>
 
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>

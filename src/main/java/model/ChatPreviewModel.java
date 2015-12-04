@@ -36,13 +36,12 @@ public class ChatPreviewModel {
 	}
 
 	public void update(JSONObject content) {
+		invalidated = true;
+		lastMessage = new MessageModel(content);
+		chatId = lastMessage.getChatId();
 		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
 				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
-
-		if (lastMessage.getId() != content.getLong("id")) {
-			this.loadContent(content);
-			System.out.println("Updated " + toString());
-		}
+		log.info("Updated " + toString());
 	}
 
 	private void setOrRecallReadState(ChatReadState RS) {
@@ -57,8 +56,9 @@ public class ChatPreviewModel {
 			setReadState(ChatReadState.valueOf(state.getString("readState")));
 	}
 
-	public boolean isContentCorresponding(JSONObject content) {return false;}
-
+	public boolean isContentCorresponding(JSONObject content) {
+		return false;
+	}
 
 	private void extractChatIcon() {
 		if (chatIconURL.size() > 0)
@@ -90,7 +90,7 @@ public class ChatPreviewModel {
 		return new ChatPreviewModel(getChatId(), getReadState(), getTitle(), getChatIconURL(), getLastMessage(),
 				getInterlocutors());
 	}
-	
+
 	public void setInvalited(Boolean value) {
 		invalidated = value;
 	}
@@ -98,7 +98,7 @@ public class ChatPreviewModel {
 	public Boolean isInvalidated() {
 		return invalidated;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -141,5 +141,5 @@ public class ChatPreviewModel {
 		this.RS = RS;
 		ReadStatesDatabase.putChat(chatId, lastMessage.getId(), !lastMessage.isIncoming(), getReadState());
 	}
-	
+
 }

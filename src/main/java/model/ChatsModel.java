@@ -41,7 +41,7 @@ public class ChatsModel implements Updated {
 			if (CM != null) {
 				CM.getLock("ChatModel.update");
 				CM.update();
-				System.out.println("Updated " + CM.toString());
+				log.info("Updated " + CM.toString());
 				CM.releaseLock("ChatModel.update");
 			}
 			alreadyUpdatedChatIds.add(chatId);

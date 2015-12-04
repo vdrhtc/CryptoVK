@@ -32,6 +32,7 @@ public class ChatPreview implements View {
 			getIcon(model);
 			setReadState(model.getReadState());
 			lastMessage.setText(model.getLastMessage().getText());
+			lastSenderName.setText(model.getLastMessageSender().getFirstName());
 			getLastSenderPhoto(model);
 			model.setInvalited(true);
 		}
@@ -42,6 +43,7 @@ public class ChatPreview implements View {
 		lastMessageContainer.getStyleClass().add("chat-entry-last-message-container");
 		metaInfoContainer.getStyleClass().add("chat-entry-meta-info-container");
 		lastMessage.getStyleClass().add("chat-entry-message");
+		lastSenderName.getStyleClass().add("chat-entry-last-sender-name");
 		title.getStyleClass().add("chat-entry-title");
 		icon.getStyleClass().add("chat-entry-icon");
 		root.getStyleClass().add("chat-entry-hbox");
@@ -52,7 +54,7 @@ public class ChatPreview implements View {
 
 		metaInfoContainer.getChildren().addAll(title, date);
 		leftContainer.getChildren().addAll(metaInfoContainer, read);
-		lastMessageContainer.getChildren().addAll(lastSenderPhoto, lastMessage);
+		lastMessageContainer.getChildren().addAll(lastSenderPhoto, new VBox(lastSenderName, lastMessage));
 		root.getChildren().addAll(icon, leftContainer, lastMessageContainer);
 		HBox.setHgrow(lastMessageContainer, Priority.ALWAYS);
 	}
@@ -98,6 +100,7 @@ public class ChatPreview implements View {
 	private Button read = new Button();
 	private Label lastMessage = new Label();
 	private ImageView icon = new ImageView();
+	private Label lastSenderName = new Label();
 	private VBox metaInfoContainer = new VBox();
 	private ChatPreviewModel currentLoadedModel;
 	private HBox lastMessageContainer = new HBox();

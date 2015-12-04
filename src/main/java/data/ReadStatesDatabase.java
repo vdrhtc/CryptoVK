@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReadStatesDatabase {
 
@@ -25,10 +27,11 @@ public class ReadStatesDatabase {
 		READ, UNREAD, POSTPONED, VIEWED;
 	}
 
-	public static final Integer DATABASE_VERSION = 1;
+	public static final Integer DATABASE_VERSION = 2;
 	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
 			+ "/.concrypt/readStateDatabase.json";
 	private static ReadWriteLock rwlock = new ReentrantReadWriteLock();
+
 	static {
 		File appData = new File(System.getProperty("user.home") + "/.concrypt");
 		appData.mkdir();
@@ -37,10 +40,14 @@ public class ReadStatesDatabase {
 			db = new JSONObject().put("version", DATABASE_VERSION);
 		writeJSONtoFile(READ_STATE_DATABASE, db);
 	}
-	
-	
-	
+
+	private static Logger log = LoggerFactory.getLogger(ReadStatesDatabase.class);
+
 	public static void putChat(Long chatId, Long lastMessageId, boolean lastMessageOut, ChatReadState RS) {
+
+		log.debug("Putting chat: chatId=" + chatId + ", lastMessageId=" + lastMessageId + ", lastMessageOut="
+				+ lastMessageOut + ", RS=" + RS);
+
 		JSONObject db = readJSONfromFile(READ_STATE_DATABASE);
 		JSONObject state = db.optJSONObject(chatId.toString());
 		ChatReadState previousReadState = null;
@@ -52,19 +59,20 @@ public class ReadStatesDatabase {
 		} else {
 			previousReadState = ChatReadState.valueOf(state.getString("readState"));
 			previousLastMessageOut = state.getBoolean("lastMessageOut");
-			state.put("lastMessageId", lastMessageId).put("readState", RS);
+			state.put("lastMessageId", lastMessageId).put("readState", RS).put("lastMessageOut",
+					lastMessageOut);
 		}
 
 		if (lastMessageOut == false || previousLastMessageOut == false)
 			if (RS == ChatReadState.READ || RS == ChatReadState.VIEWED) {
 				if (previousReadState == ChatReadState.UNREAD) {
 					db.put("unreadCount", db.optInt("unreadCount") - 1);
-					System.out.println("&&&&&& Decrementing: " + (db.optInt("unreadCount")));
+					log.debug("Decrementing: " + (db.optInt("unreadCount")));
 				}
 			} else if (RS == ChatReadState.UNREAD)
 				if (previousReadState != RS) {
 					db.put("unreadCount", db.optInt("unreadCount") + 1);
-					System.out.println("&&&&&& Incrementing: "+(db.optInt("unreadCount")));
+					log.debug("Incrementing: " + (db.optInt("unreadCount")));
 				}
 
 		if (RS == ChatReadState.READ)

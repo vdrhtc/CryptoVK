@@ -19,6 +19,9 @@
 	-fx-pref-width:33;
 	-fx-pref-height:33;
 }
+.chat-entry-last-sender-name {
+	-fx-text-fill: #36638E;
+}
 .chat-entry-hbox{
 	-fx-border-width: 0 2 0 2;
 	-fx-border-color:transparent;
@@ -59,7 +62,7 @@
 	-fx-border-radius: 20;
 	-fx-border-width: 2;
 	-fx-border-color: transparent;
-	-fx-padding: 10;
+	-fx-padding: 10 10 10 10;
 	-fx-background-radius: 20;
 	-fx-spacing: 10;
 }

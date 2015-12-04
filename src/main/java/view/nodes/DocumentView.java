@@ -64,6 +64,7 @@ public class DocumentView extends Label {
 		this.setContextMenu(new ContextMenu(open));
 
 		this.setOnMouseClicked((MouseEvent e) -> {
+			e.consume();
 			if (e.getButton().equals(MouseButton.MIDDLE))
 				removalRequested.setValue(true);
 			else if (e.getButton().equals(MouseButton.PRIMARY))

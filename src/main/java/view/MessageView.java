@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -66,12 +67,15 @@ public class MessageView implements View {
 
 			root.getChildren().addAll(senderPhoto, buildVBorder(), messageContainer, plug);
 		}
-		
-		
+		root.setOnMousePressed((MouseEvent e) -> {
+			root.setStyle("-fx-background-color: derive( #DAE1E8, 30%)");
+		});
+		root.setOnMouseReleased((MouseEvent e) -> {
+			root.setStyle("-fx-background-color: transparent");
+		});
 	}
 
 	public boolean loadModel(MessageModel model) {
-
 		if (!model.equals(this.model)) {
 			this.model = model.clone();
 			date.setText(model.getDate());

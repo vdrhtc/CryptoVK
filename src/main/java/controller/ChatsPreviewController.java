@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import data.DataOperator;
 import data.ReadStatesDatabase;
@@ -137,11 +139,11 @@ public class ChatsPreviewController implements Controller {
 
 	public ChatPreview getPreviewById(Long chatId) {
 		for (ChatPreview CP : this.controlled.getPreviews()) {
-			System.out.println("Checking chat " + CP.getModel().getChatId());
+			log.debug("Checking chat " + CP.getModel().getChatId());
 			if (CP.getModel().getChatId().equals(chatId))
 				return CP;
 		}
-		System.out.println("Not found chat " + chatId);
+		log.debug("Not found chat " + chatId);
 		return null;
 	}
 
@@ -150,6 +152,7 @@ public class ChatsPreviewController implements Controller {
 	private ObjectProperty<ChatReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
 	private ConnectionOperator CO = ChatsPreviewModel.getConnectionOperator();
 	private LoaderService loader = new LoaderService();
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public ChatsPreview getControlled() {
 		return controlled;

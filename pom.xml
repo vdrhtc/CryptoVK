@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>Concrypt</groupId>
-	<name>CryptoVK</name>
-	<description>Cryptographer app for VK</description>
+	<name>Concrypt</name>
+	<description>Cryptographer app for social networks</description>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
@@ -100,5 +100,6 @@
 	</dependencies>
 
 	<artifactId>concrypt</artifactId>
-	<version>0.0.9 pre-alfa</version>
+	<version>0.0.0-9</version>
+	<url>https://github.com/vdrhtc/concrypt</url>
 </project>

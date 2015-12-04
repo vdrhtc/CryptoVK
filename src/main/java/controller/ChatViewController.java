@@ -99,7 +99,7 @@ public class ChatViewController implements Controller {
 					attachmentStrings[aTTs.indexOf(a)] = a.toString();
 
 				Thread t = new Thread(() -> {
-					Thread.currentThread().setName("Message sender");
+					Thread.currentThread().setName("MS");
 					try {
 						CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
 					} catch (UnsupportedEncodingException e) {
@@ -157,6 +157,7 @@ public class ChatViewController implements Controller {
 
 		controlled.getModel().getLock("ChatViewController.readButton");
 		Thread t = new Thread(() -> {
+			Thread.currentThread().setName("MR");
 			CO.readChat(controlled.getModel().getChatId(), controlled.getModel().getLoadedMessages().get(0).getId());
 		});
 		t.start();

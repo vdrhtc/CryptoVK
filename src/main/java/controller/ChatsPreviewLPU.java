@@ -10,7 +10,7 @@ public class ChatsPreviewLPU extends LongPollUpdater {
 	}
 	
 	public String getName() {
-		return "Preview updater";
+		return "PU";
 	}
 
 }

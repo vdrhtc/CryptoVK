@@ -28,16 +28,8 @@
 .message-hbox-incoming:hover {
 	-fx-border-color: #36638E;
 }
-}
-.message-hbox-incoming:pressed {
-	-fx-background-color: derive( #DAE1E8, 30%);
-}
-
 .message-hbox:hover {
 	-fx-border-color: #36638E;
-}
-.message-hbox:pressed {
-	-fx-background-color: derive( #DAE1E8, 30%);
 }
 .message-date{
 	-fx-font-family:Quicksand-Regular;

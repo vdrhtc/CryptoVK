@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import data.ReadStatesDatabase.ChatReadState;
 import http.ConnectionOperator;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
@@ -40,7 +41,6 @@ public class ChatViewController implements Controller {
 		controlled.getMessagesContainer().setOnScroll(scrollHandler);
 	}
 
-
 	@Override
 	public void prepareViewForSwitch(Object... params) {
 		if (!controlled.getActive()) {
@@ -60,8 +60,6 @@ public class ChatViewController implements Controller {
 	public ViewName redirectTo() {
 		return controlled.getName();
 	}
-
-	
 
 	private void addEnterListener() {
 
@@ -104,7 +102,8 @@ public class ChatViewController implements Controller {
 						CO.sendMessage(chatId, interlocutorId, message, attachmentStrings);
 					} catch (UnsupportedEncodingException e) {
 						Platform.runLater(() -> {
-							controlled.getFooter().getInputTray().setText("Failed to encode URL! Unsupported characters!");
+							controlled.getFooter().getInputTray()
+									.setText("Failed to encode URL! Unsupported characters!");
 						});
 					}
 				});
@@ -121,12 +120,15 @@ public class ChatViewController implements Controller {
 	}
 
 	public void addReadStateListener() {
-		controlled.getReadStateProperty().addListener(new ChangeListener<ChatReadState>() {
-			public void changed(ObservableValue<? extends ChatReadState> observable, ChatReadState oldValue,
-					ChatReadState newValue) {
+		controlled.getReadStateProperty().addListener(new InvalidationListener() {
+			public void invalidated(Observable observable) {
+				ChatReadState newValue = controlled.getReadStateProperty().getValue();
 				readStateWithIdProperty.setValue(new ChatReadStateWithId(controlled.getModel().getChatId(), newValue));
 				controlled.getChatNameLabel().setReadState(newValue);
-				controlled.getFooter().setReadState(newValue); // TODO: For the postponed state, maybe simplify
+				controlled.getFooter().setReadState(newValue); // TODO: For the
+																// postponed
+																// state, maybe
+																// simplify
 			}
 		});
 	}
@@ -152,17 +154,19 @@ public class ChatViewController implements Controller {
 	}
 
 	public void readMessages() {
-		if (!controlled.getModel().getLoadedMessages().get(0).isIncoming())
-			return;
-
 		controlled.getModel().getLock("ChatViewController.readButton");
-		Thread t = new Thread(() -> {
-			Thread.currentThread().setName("MR");
-			CO.readChat(controlled.getModel().getChatId(), controlled.getModel().getLoadedMessages().get(0).getId());
-		});
-		t.start();
-		controlled.getModel().setReadState(ChatReadState.READ);
-		controlled.getReadStateProperty().setValue(ChatReadState.READ);
+		if (controlled.getModel().getLoadedMessages().get(0).isIncoming()
+				&& !controlled.getModel().getReadState().equals(ChatReadState.READ)) {
+			
+			Thread t = new Thread(() -> {
+				Thread.currentThread().setName("MR");
+				CO.readChat(controlled.getModel().getChatId(),
+						controlled.getModel().getLoadedMessages().get(0).getId());
+			});
+			t.start();
+			controlled.getModel().setReadState(ChatReadState.READ);
+			controlled.getReadStateProperty().setValue(ChatReadState.READ);
+		}
 		controlled.getModel().releaseLock("ChatViewController.readButton");
 	}
 
@@ -202,14 +206,13 @@ public class ChatViewController implements Controller {
 				scrollLockOn = false;
 			else
 				scrollLockOn = true;
-
 		}
 	};
 
 	private ChatView controlled;
 	private boolean scrollLockOn = false;
 	private ConnectionOperator CO = new ConnectionOperator(1000);
-	private ObjectProperty<ChatReadStateWithId> readStateWithIdProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<ChatReadStateWithId> readStateWithIdProperty = new SpammingObjectProperty<>();
 
 	private boolean eventJustFiltered = false;
 	private LoaderService loader = new LoaderService();

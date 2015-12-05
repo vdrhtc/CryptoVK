@@ -1,13 +1,18 @@
 package controller;
 
 import java.util.HashMap;
+import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import model.ChatModel;
@@ -57,7 +62,8 @@ public class ChatsViewController implements Controller {
 			controlled.getModel().getChatModels().put(fullModel.getChatId(), fullModel);
 
 			ChatNameLabel newNameLabel = new ChatNameLabel(fullModel);
-			addChatLabelListener(newNameLabel);
+			addChatNameLabelMouseListener(newNameLabel);
+			addChatNameLabelContextMenu(newNameLabel);
 			controlled.getChatNamesContainer().getChildren().add(newNameLabel);
 			newChatController.getControlled().setChatNameLabel(newNameLabel);
 
@@ -71,9 +77,7 @@ public class ChatsViewController implements Controller {
 			activeChatController = controllers.get(chatId);
 
 			controlled.releaseLock("ChatsViewController.initView");
-		}
-
-		else {
+		} else {
 			switchChatTo(chatId);
 		}
 		controlled.canBeUpdated().setValue(true);
@@ -96,7 +100,7 @@ public class ChatsViewController implements Controller {
 		controlled.getChatNamesContainer().getChildren().remove(removed.getChatNameLabel());
 		Integer newSize = controlled.getChatNamesContainer().getChildren().size();
 		if (newSize > 0) {
-			index = index == newSize ? newSize-1 : index;
+			index = index == newSize ? newSize - 1 : index;
 			Long nextId = ((ChatNameLabel) controlled.getChatNamesContainer().getChildren().get(index)).getChatId();
 			switchChatTo(nextId);
 		} else
@@ -118,23 +122,52 @@ public class ChatsViewController implements Controller {
 		ViewSwitcher.getInstance().switchToView(ViewName.CHATS_PREVIEW, (Object[]) null);
 	}
 
-	private void addChatLabelListener(ChatNameLabel label) {
+	private void addChatNameLabelMouseListener(ChatNameLabel label) {
 		label.setOnMouseClicked((MouseEvent e) -> {
 			if (e.getButton().equals(MouseButton.MIDDLE))
 				removeChat(label.getChatId());
-			else if (e.getButton().equals(MouseButton.PRIMARY))
+			if (e.getButton().equals(MouseButton.PRIMARY))
 				if (!label.getChatId().equals(activeChatController.getControlled().getModel().getChatId()))
 					switchChatTo(label.getChatId());
-				if (e.getClickCount()>1)
-					removeChat(label.getChatId());
+			if (e.getClickCount() > 1)
+				removeChat(label.getChatId());
 		});
 	}
 
+	private void addChatNameLabelContextMenu(ChatNameLabel label) {
+		ContextMenu menu = new ContextMenu();
+		MenuItem close = new MenuItem("Close");
+		close.setOnAction((ActionEvent e) -> {
+			removeChat(label.getChatId());
+		});
+		close.getStyleClass().add("name-label-context-menu-item");
+
+		MenuItem closeOthers = new MenuItem("Close Others");
+		closeOthers.setOnAction((ActionEvent e) -> {
+			@SuppressWarnings("unchecked")
+			Set<Long> keys = ((HashMap<Long, ChatViewController>)controllers.clone()).keySet();
+			for (Long chatId : keys)
+				if (!chatId.equals(label.getChatId()))
+					removeChat(chatId);
+		});
+		closeOthers.getStyleClass().add("name-label-context-menu-item");
+
+		MenuItem closeAll = new MenuItem("Close All");
+		closeAll.setOnAction((ActionEvent e) -> {
+			@SuppressWarnings("unchecked")
+			Set<Long> keys = ((HashMap<Long, ChatViewController>)controllers.clone()).keySet();
+			for (Long chatId : keys)
+				removeChat(chatId);
+		});
+		closeAll.getStyleClass().add("name-label-context-menu-item");
+		menu.getItems().addAll(close, closeOthers, new SeparatorMenuItem(), closeAll);
+		label.setContextMenu(menu);
+	}
+
 	private void addReadStateChangeListener(ChatViewController CVC) {
-		CVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
-			@Override
-			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
-					ChatReadStateWithId newValue) {
+		CVC.getReadStateWithIdProperty().addListener(new InvalidationListener() {
+			public void invalidated(Observable observable) {
+				ChatReadStateWithId newValue = CVC.getReadStateWithIdProperty().getValue();
 				changedReadStatesWithIds.add(newValue);
 			}
 		});

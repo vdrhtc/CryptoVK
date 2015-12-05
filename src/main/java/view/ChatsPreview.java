@@ -41,15 +41,14 @@ public class ChatsPreview implements Updated, View {
 		this.unreadMessagesCounter.getStyleClass().add("chats-preview-counter");
 		this.countersContainer.getStyleClass().add("chats-counters-container");
 
-		this.countersContainer.getChildren().addAll(unreadMessagesCounter,
-				new ImageView(new Image(ClassLoader.class.getResourceAsStream("/assets/unread.png"))));
+		this.countersContainer.getChildren().addAll(unreadMessagesCounter, unreadImage);
 		this.statusBar.getChildren().addAll(statusMessage, progressBar);
 		header.getChildren().addAll(new VBox(title, lastSeenOnline), countersContainer);
 		HBox.setHgrow(countersContainer, Priority.ALWAYS);
 		this.root.setCenter(chatsContainer);
 		this.root.setTop(header);
 		this.root.setBottom(statusBar);
-		
+
 	}
 
 	@Override
@@ -75,14 +74,20 @@ public class ChatsPreview implements Updated, View {
 	private Label title = new Label("Chats");
 	private BorderPane root = new BorderPane();
 	private Label lastSeenOnline = new Label();
+	private HBox countersContainer = new HBox();
 	private Label statusMessage = new Label("Ready");
+	private Label unreadMessagesCounter = new Label();
 	private ProgressBar progressBar = new ProgressBar(0);
 	private ArrayList<ChatPreview> previews = new ArrayList<>();
 	private ScrollPane chatsContainer = new ScrollPane(chatsLayout);
 	private BooleanProperty canBeUpdated = new SimpleBooleanProperty(false);
-	private Label unreadMessagesCounter = new Label();
-	private HBox countersContainer = new HBox();
+	private ImageView unreadImage = new ImageView(
+			new Image(ClassLoader.class.getResourceAsStream("/assets/unread.png")));
 
+	public ImageView getUnreadImage() {
+		return unreadImage;
+	}
+	
 	public Label getUnreadMessagesCounter() {
 		return unreadMessagesCounter;
 	}
@@ -102,7 +107,6 @@ public class ChatsPreview implements Updated, View {
 	public Label getStatusMessage() {
 		return statusMessage;
 	}
-
 
 	@Override
 	public ViewName getName() {

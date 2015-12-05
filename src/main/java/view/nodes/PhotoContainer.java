@@ -8,7 +8,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -22,8 +25,16 @@ public class PhotoContainer {
 		this.root = new FlowPane(Orientation.HORIZONTAL);
 		this.root.getStyleClass().add(incomingMessage ? "photo-container-incoming" : "photo-container");
 		this.root.setPrefWidth(0);
+		this.contextMenu.getItems().add(buildSaveAllMenuItem());
+		this.root.setOnContextMenuRequested((ContextMenuEvent e) -> {
+			e.consume();
+			contextMenu.show(this.root, e.getScreenX(), e.getScreenY());
+		});
+		this.root.setOnMousePressed((MouseEvent e) -> {
+			e.consume();
+			contextMenu.hide();
+		});
 	}
-	
 
 	public void addImage(Photo photo) {
 		PhotoView photoView = new PhotoView(photo, buildSaveAllMenuItem());
@@ -35,9 +46,9 @@ public class PhotoContainer {
 				}
 			}
 		});
-		
-		double photoWidth = photo.getWidth() > photo.getHeight() ? 130 : photo.getWidth()/photo.getHeight()*130;
-		root.setPrefWidth(root.getPrefWidth()+photoWidth+15);
+
+		double photoWidth = photo.getWidth() > photo.getHeight() ? 130 : photo.getWidth() / photo.getHeight() * 130;
+		root.setPrefWidth(root.getPrefWidth() + photoWidth + 15);
 		photos.add(photo);
 		root.getChildren().add(photoView);
 	}
@@ -48,31 +59,34 @@ public class PhotoContainer {
 	}
 
 	private MenuItem buildSaveAllMenuItem() {
-		MenuItem saveAll = new MenuItem("Save all as...");
+		MenuItem saveAll = new MenuItem("Save All As...");
 		saveAll.setOnAction((ActionEvent a) -> {
 			DirectoryChooser chooser = new DirectoryChooser();
-			chooser.setTitle("Choose folder");
+			chooser.setTitle("Choose Folder");
 			File folder = chooser.showDialog(root.getScene().getWindow());
-			for (Attachment p : photos) {
-				Photo photo = (Photo) p;
-				File file = new File(folder, photo.toString());
-				ImageOperator.saveImageFromUrl(photo.getLargestResolutionUrl(), file, false);
-			}
+			if (folder != null)
+				for (Attachment p : photos) {
+					Photo photo = (Photo) p;
+					File file = new File(folder, photo.toString());
+					ImageOperator.saveImageFromUrl(photo.getLargestResolutionUrl(), file, false);
+				}
 		});
+		saveAll.getStyleClass().add("image-context-menu-item");
 		return saveAll;
-		
+
 	}
-	
+
 	private ArrayList<Attachment> photos = new ArrayList<>();
 	private FlowPane root;
 	private Boolean editable;
+	private ContextMenu contextMenu = new ContextMenu();
 
 	public ArrayList<Attachment> getPhotos() {
 		return photos;
 	}
-	
+
 	public Pane getRoot() {
 		return root;
 	}
-	
+
 }

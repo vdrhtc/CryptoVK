@@ -41,6 +41,7 @@ public class ChatsPreviewModel implements Updated {
 				ChatPreviewModel newModel = new ChatPreviewModel();
 				newModel.loadContent(chatsJSONs.getJSONObject(i).getJSONObject("message"));
 				chats.add(0, newModel);
+				chats.remove(chats.size()-1);
 			}
 		}
 	}

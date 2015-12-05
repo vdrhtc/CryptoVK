@@ -8,10 +8,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import model.Photo;
 
 public class PhotoView extends ImageView {
@@ -29,10 +31,22 @@ public class PhotoView extends ImageView {
 				e2.printStackTrace();
 			}
 		});
+		MenuItem saveAs = new MenuItem("Save As...");
+		saveAs.getStyleClass().add("image-context-menu-item");
+		saveAs.setOnAction((ActionEvent a) -> {
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle("Save As");
+			chooser.setInitialFileName(model.toString()+".jpg");
+			File file = chooser.showSaveDialog(this.getScene().getWindow());
+			if (file != null) {
+				ImageOperator.saveImageFromUrl(model.getLargestResolutionUrl(), file, false);
+			}
+		});
 
-		contextMenu.getItems().addAll(open, saveAll);
+		contextMenu.getItems().addAll(open, saveAs, new SeparatorMenuItem(), saveAll);
 
 		this.setOnContextMenuRequested((ContextMenuEvent e) -> {
+			e.consume();
 			contextMenu.show(this, e.getScreenX(), e.getScreenY());
 		});
 
@@ -45,7 +59,6 @@ public class PhotoView extends ImageView {
 					removalRequested.setValue(true);
 		});
 		this.setOnMousePressed((MouseEvent e) -> {
-			e.consume();
 			contextMenu.hide();
 		});
 

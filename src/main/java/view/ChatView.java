@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import controller.SpammingObjectProperty;
 import data.ReadStatesDatabase.ChatReadState;
 import data.ReadStatesDatabase.MessageReadState;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -69,14 +69,14 @@ public class ChatView implements View, Updated {
 
 			if (active) {
 				model.setReadState(ChatReadState.VIEWED);
-				readStateProperty.set(ChatReadState.VIEWED);
+				readStateProperty.setValue(ChatReadState.VIEWED);
 			} else {
 				model.setReadState(ChatReadState.UNREAD);
-				readStateProperty.set(ChatReadState.UNREAD);
+				readStateProperty.setValue(ChatReadState.UNREAD);
 			}
 		} else if (model.getLoadedMessages().get(0).getReadState() == MessageReadState.READ) {
 			model.setReadState(ChatReadState.READ);
-			readStateProperty.set(ChatReadState.READ);
+			readStateProperty.setValue(ChatReadState.READ);
 		}
 
 		for (int i = 0; i < model.getLoadedMessages().size(); i++) {
@@ -117,7 +117,7 @@ public class ChatView implements View, Updated {
 	private Label totalMessagesCounter = new Label();
 	private ScrollPane messagesContainer = new ScrollPane();
 	private ArrayList<MessageView> loadedMessageViews = new ArrayList<>();
-	private ObjectProperty<ChatReadState> readStateProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<ChatReadState> readStateProperty = new SpammingObjectProperty<>();
 
 	@SuppressWarnings("unused")
 	private Logger log = LoggerFactory.getLogger(this.getClass());

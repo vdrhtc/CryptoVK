@@ -51,10 +51,8 @@ public class ChatsPreviewController implements Controller {
 		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
 					ChatReadStateWithId newValue) {
-				// System.out.println("==== Preview read state changed, " +
-				// newValue.toString());
 				readStateWithIdProperty.setValue(newValue);
-				controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
+				updateUnreadCounter();
 			}
 		});
 	}
@@ -66,8 +64,21 @@ public class ChatsPreviewController implements Controller {
 					"You were last seen online on " + DataOperator.formatDate(VKPerson.getOwner().getLastSeenOnline()));
 			loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
 			loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
-			controlled.getUnreadMessagesCounter().setText(controlled.getModel().getUnreadMessagesCount().toString());
+
+			updateUnreadCounter();
 			controlled.canBeUpdated().setValue(true);
+		}
+	}
+
+	public void updateUnreadCounter() {
+		Integer unread = ReadStatesDatabase.getUnreadCounter();
+		controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
+		if (unread == 0) {
+			controlled.getUnreadMessagesCounter().setVisible(false);
+			controlled.getUnreadImage().setVisible(false);
+		} else {
+			controlled.getUnreadMessagesCounter().setVisible(true);
+			controlled.getUnreadImage().setVisible(true);
 		}
 	}
 

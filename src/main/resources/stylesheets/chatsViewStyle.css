@@ -61,3 +61,23 @@
 .chats-chat-name:postponed {
 	-fx-border-color: derive(red, 90%);
 }
+
+.name-label-context-menu-item{
+	-fx-background-color:transparent;
+}
+
+.name-label-context-menu-item:focused {
+	-fx-background-color: transparent;
+}
+
+.name-label-context-menu-item:focused > .label {
+    -fx-text-fill: black;
+}
+
+.name-label-context-menu-item:hover {
+	-fx-background-color: -fx-accent;
+}
+.name-label-context-menu-item:hover > .label {
+    -fx-text-fill: white;
+}
+

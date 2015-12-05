@@ -41,7 +41,7 @@ public class ChatPreviewModel {
 		chatId = lastMessage.getChatId();
 		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
 				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
-		log.info("Updated " + toString());
+		log.debug("Updated " + toString());
 	}
 
 	private void setOrRecallReadState(ChatReadState RS) {

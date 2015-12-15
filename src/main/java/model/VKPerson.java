@@ -13,7 +13,7 @@ public class VKPerson {
 		this.firstName = content.getString("first_name");
 		this.lastName = content.getString("last_name");
 		this.id = content.getInt("id");
-		this.photoURL = content.getString("photo_50");
+		this.photoURL = content.getString("photo_100");
 		this.lastSeenOnline = content.optJSONObject("last_seen") == null ? null
 				: new Date(content.getJSONObject("last_seen").getLong("time")*1000);
 		VKPerson.knownPersons.put(this.id, this);

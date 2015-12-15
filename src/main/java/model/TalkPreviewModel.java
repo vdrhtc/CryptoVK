@@ -23,11 +23,11 @@ public class TalkPreviewModel extends ChatPreviewModel {
 		if (chatInfo.optInt("left") == 1) {
 			getChatIconURL().add(deletedImageURL);
 			getTitle().concat(" [Потрачено] ");
-		} else if (!(chatInfo.optString("photo_50").equals(""))) {
+		} else if (!(chatInfo.optString("photo_100").equals(""))) {
 			if (getChatIconURL().size() > 0)
-				getChatIconURL().set(0, chatInfo.getString("photo_50"));
+				getChatIconURL().set(0, chatInfo.getString("photo_100"));
 			else
-				getChatIconURL().add(chatInfo.getString("photo_50"));
+				getChatIconURL().add(chatInfo.getString("photo_100"));
 		}
 		JSONArray interlocutors = chatInfo.getJSONArray("users");
 		for (int i = 0; i < interlocutors.length(); i++) {

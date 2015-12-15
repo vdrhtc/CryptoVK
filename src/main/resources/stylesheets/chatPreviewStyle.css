@@ -29,6 +29,7 @@
 	-fx-border-radius: 10;
 	-fx-spacing: 10;
 	-fx-alignment: center-left;
+	-fx-max-height: 100;
 	-fx-padding: 2 2 2 2;
 }
 .chat-entry-hbox:hover {

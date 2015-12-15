@@ -60,12 +60,12 @@ public class MessageView implements View {
 			root.getStyleClass().add("message-hbox-incoming");
 			messageContainer.getStyleClass().add("message-container-incoming");
 
-			root.getChildren().addAll(plug, messageContainer, buildVBorder(), senderPhoto);
+			root.getChildren().addAll(plug, messageContainer, buildVBorder(), senderIcon);
 		} else {
 			root.getStyleClass().add("message-hbox");
 			messageContainer.getStyleClass().add("message-container");
 
-			root.getChildren().addAll(senderPhoto, buildVBorder(), messageContainer, plug);
+			root.getChildren().addAll(senderIcon, buildVBorder(), messageContainer, plug);
 		}
 		root.setOnMousePressed((MouseEvent e) -> {
 			root.setStyle("-fx-background-color: derive( #DAE1E8, 30%)");
@@ -92,7 +92,7 @@ public class MessageView implements View {
 	}
 
 	private void getIcon(MessageModel model) {
-		ImageOperator.asyncLoadImage(senderPhoto, model.getSender().getPhotoURL());
+		ImageOperator.asyncLoadImage(senderIcon, model.getSender().getPhotoURL());
 	}
 
 	private Separator buildVBorder() {
@@ -127,7 +127,7 @@ public class MessageView implements View {
 	private Label message = new Label();
 	private Label senderName = new Label();
 	private VBox messageContainer = new VBox();
-	private ImageView senderPhoto = new ImageView();
+	private ImageView senderIcon = new ImageView();
 	private AttachmentsContainer attachementsContainer;
 
 	@SuppressWarnings("unused")

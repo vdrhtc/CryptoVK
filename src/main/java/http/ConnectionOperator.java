@@ -76,16 +76,15 @@ public class ConnectionOperator extends HttpOperator {
 	}
 
 	public JSONObject getUser(int id) {
-		String realRequest = users_getTemplate.concat("&user_ids=" + id).concat("&fields=photo_50,last_seen")
+		String realRequest = users_getTemplate.concat("&user_ids=" + id).concat("&fields=photo_100,last_seen")
 				.concat("&access_token=" + acess_token);
-		;
 
 		return new JSONObject(sendRequest(realRequest)).getJSONArray("response").getJSONObject(0);
 
 	}
 
 	public JSONObject getChat(int id) {
-		String realRequest = messages_getChatTemplate.concat("&chat_id=" + id).concat("&fields=photo_50,last_seen")
+		String realRequest = messages_getChatTemplate.concat("&chat_id=" + id).concat("&fields=photo_100,last_seen")
 				.concat("&access_token=" + acess_token);
 
 		return new JSONObject(sendRequest(realRequest)).optJSONObject("response");
@@ -109,7 +108,7 @@ public class ConnectionOperator extends HttpOperator {
 	}
 
 	public JSONObject getOwner() {
-		String realRequest = users_getTemplate.concat("&fields=photo_50,last_seen")
+		String realRequest = users_getTemplate.concat("&fields=photo_100,last_seen")
 				.concat("&access_token=" + acess_token);
 
 		JSONArray response = new JSONObject(sendRequest(realRequest)).optJSONArray("response");

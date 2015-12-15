@@ -41,6 +41,9 @@ public class ChatsPreview implements Updated, View {
 		this.unreadMessagesCounter.getStyleClass().add("chats-preview-counter");
 		this.countersContainer.getStyleClass().add("chats-counters-container");
 
+		this.unreadImage.setFitHeight(50);
+		this.unreadImage.setFitWidth(50);
+		
 		this.countersContainer.getChildren().addAll(unreadMessagesCounter, unreadImage);
 		this.statusBar.getChildren().addAll(statusMessage, progressBar);
 		header.getChildren().addAll(new VBox(title, lastSeenOnline), countersContainer);

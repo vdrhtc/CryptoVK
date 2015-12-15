@@ -36,6 +36,8 @@ public class ImageOperator {
 
 		if (imageDatabase.containsKey(hash)) {
 			imageView.setImage(imageDatabase.get(hash));
+			imageView.setFitHeight(50);
+			imageView.setFitWidth(50);
 			clipImageView(imageView);
 			return;
 		}
@@ -50,6 +52,8 @@ public class ImageOperator {
 			protected void succeeded() {
 				if(!getValue().isError()) {
 					imageView.setImage(getValue());
+					imageView.setFitHeight(50);
+					imageView.setFitWidth(50);
 					clipImageView(imageView);
 				}
 			}
@@ -62,6 +66,8 @@ public class ImageOperator {
 
 		if(lastSenderPhotosDatabase.containsKey(url)) {
 			imageView.setImage(lastSenderPhotosDatabase.get(url));
+			imageView.setFitHeight(0.66*50);
+			imageView.setFitWidth(0.66*50);
 			clipImageView(imageView);
 			return;
 		}
@@ -73,6 +79,8 @@ public class ImageOperator {
 			protected void succeeded() {
 				if(!getValue().isError()) {
 					imageView.setImage(getValue());
+					imageView.setFitHeight(0.66*50);
+					imageView.setFitWidth(0.66*50);
 					clipImageView(imageView);
 				}
 			}
@@ -89,10 +97,11 @@ public class ImageOperator {
 	}
 
 	public static void clipImageView(ImageView image) {
-		Rectangle rR = new Rectangle(0, 0, image.getImage().getWidth(), image.getImage().getHeight());
+		Rectangle rR = new Rectangle(0, 0, image.getFitWidth(), image.getFitHeight());
 		rR.setArcHeight(10);
 		rR.setArcWidth(10);
-		image.setClip(rR);	}
+		image.setClip(rR);	
+	}
 
 	public static synchronized Image getImageFrom(String... urls) throws IIOException {
 		
@@ -108,14 +117,14 @@ public class ImageOperator {
 			addImage(BIs, url);
 		}
 
-		BufferedImage icon = new BufferedImage(110, 110, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage icon = new BufferedImage(210, 210, BufferedImage.TYPE_INT_ARGB);
 		Iterator<BufferedImage> iter = BIs.iterator();
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 2; j++)
 				if (iter.hasNext())
-					icon.getGraphics().drawImage(iter.next(), 60 * i, 60 * j, null);
+					icon.getGraphics().drawImage(iter.next(), 110 * i, 110 * j, null);
 		AffineTransform at = new AffineTransform();
-		at.scale(50 / 110., 50 / 110.);
+		at.scale(50 / 210., 50 / 210.);
 		AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 		icon = ato.filter(icon, new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
 		imageDatabase.put(hash, SwingFXUtils.toFXImage(icon, null));

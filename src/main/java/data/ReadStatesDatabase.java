@@ -27,7 +27,7 @@ public class ReadStatesDatabase {
 		READ, UNREAD, POSTPONED, VIEWED;
 	}
 
-	public static final Integer DATABASE_VERSION = 2;
+	public static final Integer DATABASE_VERSION = 3;
 	public static final String READ_STATE_DATABASE = System.getProperty("user.home")
 			+ "/.concrypt/readStateDatabase.json";
 	private static ReadWriteLock rwlock = new ReentrantReadWriteLock();

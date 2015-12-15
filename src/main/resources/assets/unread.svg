@@ -16,9 +16,9 @@
    height="700"
    viewBox="0 0 700 700"
    sodipodi:docname="unread.svg"
-   inkscape:export-filename="/home/gleb/Projects/CryptoVK/CryptoVK/src/main/resources/resources/assets/unread.png"
-   inkscape:export-xdpi="5.1428571"
-   inkscape:export-ydpi="5.1428571">
+   inkscape:export-filename="/home/gleb/Projects/Concrypt/src/main/resources/assets/unread.png"
+   inkscape:export-xdpi="12.857142"
+   inkscape:export-ydpi="12.857142">
   <metadata
      id="metadata4183">
     <rdf:RDF>
@@ -51,9 +51,9 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:snap-intersection-paths="true"
-     inkscape:zoom="0.184375"
-     inkscape:cx="-47.275204"
-     inkscape:cy="123.17537"
+     inkscape:zoom="0.52149125"
+     inkscape:cx="204.47004"
+     inkscape:cy="511.76744"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"

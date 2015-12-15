@@ -1,6 +1,7 @@
 package http;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -92,7 +93,7 @@ public class HttpOperator {
 		String responseBody = "";
 		try {
 			responseBody = (String) httpclient.execute(httpget, responseHandler);
-		} catch (UnknownHostException | ClientProtocolException | SocketTimeoutException e) {
+		} catch (UnknownHostException | ClientProtocolException | SocketTimeoutException | SocketException e) {
 			log.warn(e.getMessage());
 			Thread.sleep(1000 / 2);
 			responseBody = execute(responseHandler);

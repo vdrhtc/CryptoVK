@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class HttpOperator {
 
 	public int REQUEST_COUNT = 0;
-	
+
 	public HttpOperator(int connectionTimeout) {
 		RequestConfig reqConf = RequestConfig.custom().setConnectionRequestTimeout(connectionTimeout)
 				.setConnectTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build();
@@ -32,7 +32,7 @@ public class HttpOperator {
 	}
 
 	public HttpOperator() {
-		
+
 	}
 
 	public synchronized String sendRequest(String URL) {
@@ -64,13 +64,18 @@ public class HttpOperator {
 			String responseBody = execute(responseHandler);
 			JSONObject response = new JSONObject(responseBody);
 			if (response.optJSONObject("error") != null) {
-				if (response.getJSONObject("error").getInt("error_code") == 6) {
+				if (response.getJSONObject("error").getInt("error_code") == 6
+						|| response.getJSONObject("error").getInt("error_code") == 10) {
 					Thread.sleep(1000);
 					responseBody = sendRequest(URL);
 				} else
 					log.warn(responseBody);
 
+			} else if (response.optInt("failed") == 1) {
+				Thread.sleep(1000);
+				responseBody = sendRequest(URL);
 			}
+				
 			log.info("got response: " + response.toString());
 			return responseBody;
 
@@ -87,7 +92,7 @@ public class HttpOperator {
 		String responseBody = "";
 		try {
 			responseBody = (String) httpclient.execute(httpget, responseHandler);
-		} catch (UnknownHostException | ClientProtocolException | SocketTimeoutException  e) {
+		} catch (UnknownHostException | ClientProtocolException | SocketTimeoutException e) {
 			log.warn(e.getMessage());
 			Thread.sleep(1000 / 2);
 			responseBody = execute(responseHandler);

@@ -48,7 +48,7 @@ public class PhotoContainer {
 		});
 
 		double photoWidth = photo.getWidth() > photo.getHeight() ? 130 : photo.getWidth() / photo.getHeight() * 130;
-		root.setPrefWidth(root.getPrefWidth() + photoWidth + 15);
+		root.setPrefWidth(root.getPrefWidth() + photoWidth+15);
 		photos.add(photo);
 		root.getChildren().add(photoView);
 	}
@@ -67,7 +67,7 @@ public class PhotoContainer {
 			if (folder != null)
 				for (Attachment p : photos) {
 					Photo photo = (Photo) p;
-					File file = new File(folder, photo.toString());
+					File file = new File(folder, photo.toString()+".jpg");
 					ImageOperator.saveImageFromUrl(photo.getLargestResolutionUrl(), file, false);
 				}
 		});

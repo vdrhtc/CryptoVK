@@ -10,8 +10,8 @@ public class Photo extends Attachment {
 		this.ownerId = content.getInt("owner_id");
 		this.photoId = content.getInt("id");
 		this.previewUrl = content.getString("photo_130");
-		this.width = content.optInt("width") == 0 ? 130 : content.getInt("width");
-		this.height = content.optInt("height") == 0 ? 130 : content.getInt("height");
+		this.width = content.optDouble("width") == 0 ? 130 : content.getDouble("width");
+		this.height = content.optDouble("height") == 0 ? 130 : content.getDouble("height");
 
 		largestResolutionUrl = "";
 		for (String size : vKPhotoSizes) {
@@ -26,8 +26,8 @@ public class Photo extends Attachment {
 	private Integer ownerId;
 	private int photoId;
 	private String previewUrl;
-	private int width;
-	private int height;
+	private Double width;
+	private Double height;
 	private String largestResolutionUrl;
 	
 	public String getPreviewURL() {
@@ -43,11 +43,11 @@ public class Photo extends Attachment {
 		return largestResolutionUrl;
 	}
 	
-	public int getWidth() {
+	public Double getWidth() {
 		return width;
 	}
 	
-	public int getHeight() {
+	public Double getHeight() {
 		return height;
 	}
 	

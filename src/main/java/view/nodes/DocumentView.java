@@ -17,13 +17,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import model.Document;
 
 public class DocumentView extends Label {
 
 	public static final double MAX_DOCUMENT_WIDTH = 400;
 
-	public DocumentView(Document document) {
+	public DocumentView(Document document, Boolean editable) {
 		super(document.getDisplayedName());
 
 		this.getStyleClass().add("document-label");
@@ -31,7 +32,36 @@ public class DocumentView extends Label {
 				.computeStringWidth(document.getDisplayedName(), this.getFont());
 		this.setPrefWidth(expectedWidth > MAX_DOCUMENT_WIDTH ? MAX_DOCUMENT_WIDTH : expectedWidth + 7 * 2); // Padding
 																											// from
-																											// css
+		MenuItem saveAs = new MenuItem("Save As...");
+		saveAs.getStyleClass().add("image-context-menu-item");
+		saveAs.setOnAction((ActionEvent a) -> {
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle("Save As");
+			chooser.setInitialFileName(document.getName()+"."+document.getExtension());
+			File file = chooser.showSaveDialog(this.getScene().getWindow());
+			if (file != null) {
+				try {
+					FileOutputStream outputStream = new FileOutputStream(file);
+					InputStream inputStream = document.getUrl().openStream();
+					int read = 0;
+					byte[] bytes = new byte[1024];
+					while ((read = inputStream.read(bytes)) != -1)
+						outputStream.write(bytes, 0, read);
+					inputStream.close();
+					outputStream.close();
+
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		MenuItem remove = new MenuItem("Remove");
+		remove.getStyleClass().add("image-context-menu-item");
+		remove.setOnAction((ActionEvent a) -> {
+			removalRequested.setValue(true);;
+		});
+		
 		MenuItem open = new MenuItem("Open");
 		open.getStyleClass().add("image-context-menu-item");
 		open.setOnAction((ActionEvent e) -> {
@@ -61,7 +91,14 @@ public class DocumentView extends Label {
 			});
 			thread.start();
 		});
-		this.setContextMenu(new ContextMenu(open));
+		
+		
+		ContextMenu contextMenu = new ContextMenu(open);
+		if (editable)
+			contextMenu.getItems().add(remove);
+		else 
+			contextMenu.getItems().add(saveAs);
+		this.setContextMenu(contextMenu);
 
 		this.setOnMouseClicked((MouseEvent e) -> {
 			e.consume();

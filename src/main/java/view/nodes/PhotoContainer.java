@@ -37,7 +37,7 @@ public class PhotoContainer {
 	}
 
 	public void addImage(Photo photo) {
-		PhotoView photoView = new PhotoView(photo, buildSaveAllMenuItem());
+		PhotoView photoView = new PhotoView(photo, buildSaveAllMenuItem(), editable);
 		photoView.getRemovalRequested().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (newValue == true && editable) {

@@ -21,7 +21,7 @@ public class DocumentContainer {
 
 	public void addDocument(Document document) {
 		documents.add(document);
-		DocumentView documentView = new DocumentView(document);
+		DocumentView documentView = new DocumentView(document, editable);
 		documentView.getRemovalRequested().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (newValue == true && editable) {

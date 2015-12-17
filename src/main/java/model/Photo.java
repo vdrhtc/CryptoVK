@@ -35,7 +35,7 @@ public class Photo extends Attachment {
 	}
 	
 	@Override
-	public String toString() {
+	public String getStringRepresentation() {
 		return "photo"+ownerId+"_"+photoId;
 	}
 	

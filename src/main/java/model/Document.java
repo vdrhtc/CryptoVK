@@ -35,7 +35,7 @@ public class Document extends Attachment{
 	}
 	
 	@Override
-	public String toString() {
+	public String getStringRepresentation() {
 		return "doc"+ownerId+"_"+documentId;
 	}
 	

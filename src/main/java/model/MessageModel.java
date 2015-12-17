@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import data.DataOperator;
@@ -11,7 +12,7 @@ import data.ReadStatesDatabase;
 import data.ReadStatesDatabase.ChatReadState;
 import data.ReadStatesDatabase.MessageReadState;
 
-public class MessageModel {
+public class MessageModel extends Attachment {
 
 	public MessageModel(Long id, Date date, String text, VKPerson sender, MessageReadState RS, Long chatId) {
 		this.id = id;
@@ -24,21 +25,29 @@ public class MessageModel {
 
 	public MessageModel(JSONObject content) {
 		this.date = new Date(content.getLong("date") * 1000);
-		this.id = content.getLong("id");
-		if (content.getInt("out") != 1)
+		this.id = content.optLong("id");
+		if (content.optInt("out") != 1)
 			this.sender = VKPerson.getKnownPerson(content.getInt("user_id"));
 		else
 			this.sender = VKPerson.getOwner();
 		this.text = content.getString("body");
-		this.chatId = content.optLong("chat_id")==0 ? content.getLong("user_id") : content.getLong("chat_id");
-		
+		this.chatId = content.optLong("chat_id") == 0 ? content.getLong("user_id") : content.getLong("chat_id");
+
 		JSONArray attachments = content.optJSONArray("attachments");
 		if (attachments != null)
-			for (int i = 0; i<attachments.length(); i++) 
+			for (int i = 0; i < attachments.length(); i++)
 				this.attachments.add(attachments.getJSONObject(i));
-		
-		setOrRecallReadState(content.getInt("read_state") == 1 ? true : false);
-	}
+		JSONArray forwardedMessages = content.optJSONArray("fwd_messages");
+		if (forwardedMessages != null)
+			for (int i = 0; i < forwardedMessages.length(); i++)
+				this.attachments.add(forwardedMessages.getJSONObject(i));
+		try {
+			setOrRecallReadState(content.getInt("read_state") == 1 ? true : false);
+		} catch (JSONException e) {
+			// This is just a forwarded message
+			this.RS = MessageReadState.READ;
+		}
+ 	}
 
 	public ArrayList<JSONObject> getAttachments() {
 		return attachments;
@@ -54,12 +63,15 @@ public class MessageModel {
 	}
 
 	private void setOrRecallReadState(boolean read) {
-		
-		if (ReadStatesDatabase.optChatJSON(chatId) == null) { // Happens while loading preview last message
+
+		if (ReadStatesDatabase.optChatJSON(chatId) == null) { // Happens while
+																// loading
+																// preview last
+																// message
 			ReadStatesDatabase.putChat(chatId, id, !isIncoming(), read ? ChatReadState.READ : ChatReadState.UNREAD);
 			setReadState(read ? MessageReadState.READ : MessageReadState.UNREAD);
 		}
-		
+
 		JSONObject info = ReadStatesDatabase.optChatJSON(chatId).optJSONObject(id.toString());
 		MessageReadState RS = read ? MessageReadState.READ : MessageReadState.UNREAD;
 		if (info == null) {
@@ -82,7 +94,7 @@ public class MessageModel {
 	public MessageModel clone() {
 		return new MessageModel(id, date, text, sender, RS, chatId);
 	}
-	
+
 	public Long getChatId() {
 		return chatId;
 	}
@@ -162,9 +174,19 @@ public class MessageModel {
 	public MessageReadState getReadState() {
 		return RS;
 	}
+
 	public VKPerson getSender() {
 		return sender;
 	}
 
+	@Override
+	public AttachmentType getType() {
+		return AttachmentType.MESSAGE;
+	}
+
+	@Override
+	public String getStringRepresentation() {
+		return "" + id;
+	}
 
 }

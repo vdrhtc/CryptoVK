@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import model.Attachment;
 import model.Attachment.AttachmentType;
 import model.Document;
+import model.MessageModel;
 import model.Photo;
 
 public class AttachmentsContainer extends VBox {
@@ -15,15 +16,17 @@ public class AttachmentsContainer extends VBox {
 	public AttachmentsContainer(Boolean isMessageIncoming, Boolean editable) {
 		this.photoContainer = new PhotoContainer(isMessageIncoming, editable);
 		this.documentContainer = new DocumentContainer(isMessageIncoming, editable);
-		this.getChildren().addAll(photoContainer.getRoot(), documentContainer.getRoot());
+		this.forwardedMessagesContainer = new ForwardedMessagesContainer(editable);
+		getChildren().addAll(photoContainer.getRoot(), documentContainer.getRoot(), forwardedMessagesContainer.getRoot());
 	}
 
 	public AttachmentsContainer(ArrayList<JSONObject> attachments, Boolean isMessageIncoming, Boolean editable) {
 		this.photoContainer = new PhotoContainer(isMessageIncoming, editable);
 		this.documentContainer = new DocumentContainer(isMessageIncoming, editable);
+		this.forwardedMessagesContainer = new ForwardedMessagesContainer(editable);
 
 		for (JSONObject attachment : attachments) {
-			switch (attachment.getString("type")) {
+			switch (attachment.optString("type")) {
 			case "photo":
 				addImage(new Photo(attachment.getJSONObject("photo")));
 				break;
@@ -32,11 +35,12 @@ public class AttachmentsContainer extends VBox {
 				addDocument(new Document(attachment.getJSONObject("doc")));
 				break;	
 			
-			default:
+			case "":
+				addMessage(new MessageModel(attachment));
 				break;
 			}
 		}
-		getChildren().addAll(photoContainer.getRoot(), documentContainer.getRoot());
+		getChildren().addAll(photoContainer.getRoot(), documentContainer.getRoot(), forwardedMessagesContainer.getRoot());
 	}
 	
 	public void addAttachment(Attachment attachment) {
@@ -50,22 +54,29 @@ public class AttachmentsContainer extends VBox {
 		documentContainer.addDocument(document);
 	}
 
-	private void addImage(Photo photoAttachment) {
-		photoContainer.addImage(photoAttachment);
+	private void addImage(Photo photo) {
+		photoContainer.addImage(photo);
+	}
+	
+	private void addMessage(MessageModel message) {
+		forwardedMessagesContainer.addMessage(message);
 	}
 
 	public void clear() {
 		photoContainer.clear();
 		documentContainer.clear();
+		forwardedMessagesContainer.clear();
 	}
 
 	private PhotoContainer photoContainer;
 	private DocumentContainer documentContainer;
+	private ForwardedMessagesContainer forwardedMessagesContainer;
 	
 	public ArrayList<Attachment> getAttachments() {
 		ArrayList<Attachment> tmp = new ArrayList<>();
 		tmp.addAll(photoContainer.getPhotos());
 		tmp.addAll(documentContainer.getDocuments());
+		tmp.addAll(forwardedMessagesContainer.getAttachments());
 		return tmp;
 	}
 }

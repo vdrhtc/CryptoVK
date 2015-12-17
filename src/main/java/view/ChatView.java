@@ -126,6 +126,15 @@ public class ChatView implements View, Updated {
 		return footer;
 	}
 
+	public Double calculateHeight() {
+		if (this.root.getScene() != null) {
+			root.getParent().applyCss();
+			root.getParent().layout();
+			return root.getHeight();
+		} else
+			return 0.;
+	}
+
 	public void setChatNameLabel(ChatNameLabel label) {
 		this.chatNameLabel = label;
 	}

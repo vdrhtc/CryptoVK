@@ -4,7 +4,6 @@
 	-fx-wrap-text: true;
 }
 
-
 .message-hbox{
 	-fx-spacing: 7;
 	-fx-border-width: 0 2 0 2;
@@ -31,10 +30,21 @@
 .message-hbox:hover {
 	-fx-border-color: #36638E;
 }
+
 .message-date{
 	-fx-font-family:Quicksand-Regular;
 	-fx-font-size: 0.9em;
+	-fx-min-width: 80;
 }
+.message-date-incoming{
+	-fx-font-family:Quicksand-Regular;
+	-fx-font-size: 0.9em;
+	-fx-min-width: 80;
+	-fx-text-alignment: right;
+	-fx-alignment: center-right;
+	
+}
+
 .message-meta-info-container{
 	-fx-alignment: center-left;
 }
@@ -79,10 +89,11 @@
 	-fx-border-color: derive(#E8E1DA, 0%);
 }
 
-.message-message{
+.message-message {
 	-fx-wrap-text: true;
-	-fx-min-width: 50;
+	-fx-min-width: 20;
 }
+
 
 .message-border:vertical .line {
     -fx-background-color: #D8DFEA; /* if padding lets say >=3 line becomes rectangle and bg color can be seen */

@@ -60,11 +60,11 @@ public class ChatPreview implements View {
 	}
 
 	private void getLastSenderPhoto(ChatPreviewModel model) {
-		ImageOperator.asyncLoadSmallImage(lastSenderPhoto, model.getLastMessageSender().getPhotoURL());
+		ImageOperator.asyncLoadSmallIcon(lastSenderPhoto, model.getLastMessageSender().getPhotoURL());
 	}
 
 	private void getIcon(ChatPreviewModel model) {
-		ImageOperator.asyncLoadImage(icon, model.getChatIconURL().toArray(new String[0]));
+		ImageOperator.asyncLoadLargeIcon(icon, model.getChatIconURL().toArray(new String[0]));
 	}
 
 	public void setReadState(ChatReadState chatReadState) {

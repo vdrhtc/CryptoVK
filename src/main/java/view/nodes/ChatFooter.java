@@ -40,11 +40,11 @@ public class ChatFooter extends HBox {
 	}
 
 	private void getIcon(String... urls) {
-		ImageOperator.asyncLoadImage(icon, urls);
+		ImageOperator.asyncLoadLargeIcon(icon, urls);
 	}
 	
 	private void getOwnerIcon(String url) {
-		ImageOperator.asyncLoadImage(ownerIcon, url);
+		ImageOperator.asyncLoadLargeIcon(ownerIcon, url);
 	}
 	
 	public void setReadState(ChatReadState chatReadState) {

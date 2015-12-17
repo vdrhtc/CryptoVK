@@ -36,6 +36,37 @@ public class ImageOperator {
 
 		if (imageDatabase.containsKey(hash)) {
 			imageView.setImage(imageDatabase.get(hash));
+			imageView.setFitHeight(imageView.getImage().getHeight());
+			imageView.setFitWidth(imageView.getImage().getWidth());
+			clipImageView(imageView);
+			return;
+		}
+		
+		imageView.setImage(wait);
+		Task<Image> loadTask = new Task<Image>() {
+			protected Image call() throws Exception {
+				return getImageFrom(urls);
+			}
+			
+			@Override
+			protected void succeeded() {
+				if(!getValue().isError()) {
+					imageView.setImage(getValue());
+					imageView.setFitHeight(imageView.getImage().getHeight());
+					imageView.setFitWidth(imageView.getImage().getWidth());
+					clipImageView(imageView);
+				}
+			}
+		};
+		Thread t = new Thread(loadTask);
+		t.start();
+	}
+	
+	public static void asyncLoadLargeIcon(ImageView imageView, String... urls) {
+		String hash = String.join("", urls);
+
+		if (imageDatabase.containsKey(hash)) {
+			imageView.setImage(imageDatabase.get(hash));
 			imageView.setFitHeight(50);
 			imageView.setFitWidth(50);
 			clipImageView(imageView);
@@ -62,7 +93,7 @@ public class ImageOperator {
 		t.start();
 	}
 	
-	public static void asyncLoadSmallImage(ImageView imageView, String url) {
+	public static void asyncLoadSmallIcon(ImageView imageView, String url) {
 
 		if(lastSenderPhotosDatabase.containsKey(url)) {
 			imageView.setImage(lastSenderPhotosDatabase.get(url));

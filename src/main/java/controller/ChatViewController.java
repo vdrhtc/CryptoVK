@@ -94,7 +94,7 @@ public class ChatViewController implements Controller {
 
 				String[] attachmentStrings = new String[aTTs.size()];
 				for (Attachment a : controlled.getFooter().getAttachmentsContainer().getAttachments())
-					attachmentStrings[aTTs.indexOf(a)] = a.toString();
+					attachmentStrings[aTTs.indexOf(a)] = a.getStringRepresentation();
 
 				Thread t = new Thread(() -> {
 					Thread.currentThread().setName("MS");

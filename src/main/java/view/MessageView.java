@@ -38,7 +38,6 @@ public class MessageView implements View {
 	private void initRoot() {
 
 		message.getStyleClass().add("message-message");
-		date.getStyleClass().add("message-date");
 		senderName.getStyleClass().add("message-sender-name");
 		plug.setMinWidth(50);
 
@@ -53,15 +52,18 @@ public class MessageView implements View {
 		
 		HBox.setHgrow(message, Priority.ALWAYS);
 
-		if (attachementsContainer != null)
+		if (attachementsContainer != null) {
 			messageContainer.getChildren().add(2, attachementsContainer);
-
+			HBox.setHgrow(attachementsContainer, Priority.ALWAYS);
+		}
 		if (model.isIncoming()) {
+			date.getStyleClass().add("message-date-incoming");
 			root.getStyleClass().add("message-hbox-incoming");
 			messageContainer.getStyleClass().add("message-container-incoming");
 
 			root.getChildren().addAll(plug, messageContainer, buildVBorder(), senderIcon);
 		} else {
+			date.getStyleClass().add("message-date");
 			root.getStyleClass().add("message-hbox");
 			messageContainer.getStyleClass().add("message-container");
 
@@ -92,7 +94,7 @@ public class MessageView implements View {
 	}
 
 	private void getIcon(MessageModel model) {
-		ImageOperator.asyncLoadImage(senderIcon, model.getSender().getPhotoURL());
+		ImageOperator.asyncLoadLargeIcon(senderIcon, model.getSender().getPhotoURL());
 	}
 
 	private Separator buildVBorder() {

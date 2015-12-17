@@ -18,7 +18,7 @@ import model.Photo;
 
 public class PhotoView extends ImageView {
 
-	public PhotoView(Photo model, MenuItem saveAll) {
+	public PhotoView(Photo model, MenuItem saveAll, Boolean editable) {
 		super();
 
 		MenuItem open = new MenuItem("Open");
@@ -42,8 +42,18 @@ public class PhotoView extends ImageView {
 				ImageOperator.saveImageFromUrl(model.getLargestResolutionUrl(), file, false);
 			}
 		});
-
-		contextMenu.getItems().addAll(open, saveAs, new SeparatorMenuItem(), saveAll);
+		MenuItem remove = new MenuItem("Remove");
+		remove.getStyleClass().add("image-context-menu-item");
+		remove.setOnAction((ActionEvent a) -> {
+			removalRequested.setValue(true);
+		});
+		
+		
+		contextMenu.getItems().add(open);
+		if (editable)
+			contextMenu.getItems().add(remove);
+		else
+			contextMenu.getItems().addAll(saveAs, new SeparatorMenuItem(), saveAll);
 
 		this.setOnContextMenuRequested((ContextMenuEvent e) -> {
 			e.consume();

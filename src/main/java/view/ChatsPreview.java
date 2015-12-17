@@ -40,7 +40,8 @@ public class ChatsPreview implements Updated, View {
 		this.lastSeenOnline.getStyleClass().add("chats-preview-last-seen");
 		this.unreadMessagesCounter.getStyleClass().add("chats-preview-counter");
 		this.countersContainer.getStyleClass().add("chats-counters-container");
-
+		this.unreadImage.getStyleClass().add("chats-unread-icon");
+		
 		this.unreadImage.setFitHeight(50);
 		this.unreadImage.setFitWidth(50);
 		

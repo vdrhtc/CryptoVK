@@ -25,8 +25,12 @@ public class PhotoView extends ImageView {
 		open.getStyleClass().add("image-context-menu-item");
 		open.setOnAction((ActionEvent e) -> {
 			try {
+				File appDataTmp = new File(System.getProperty("java.io.tmpdir") + "/concrypt");
+				appDataTmp.mkdir();
 				ImageOperator.saveImageFromUrl(model.getLargestResolutionUrl(),
-						File.createTempFile("vk_photo", ".jpg"), true);
+						new File(System.getProperty("java.io.tmpdir") + "/concrypt/vk_"
+								+ model.getStringRepresentation() + ".jpg"),
+						true);
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
@@ -36,7 +40,7 @@ public class PhotoView extends ImageView {
 		saveAs.setOnAction((ActionEvent a) -> {
 			FileChooser chooser = new FileChooser();
 			chooser.setTitle("Save As");
-			chooser.setInitialFileName(model.toString()+".jpg");
+			chooser.setInitialFileName(model.toString() + ".jpg");
 			File file = chooser.showSaveDialog(this.getScene().getWindow());
 			if (file != null) {
 				ImageOperator.saveImageFromUrl(model.getLargestResolutionUrl(), file, false);
@@ -47,8 +51,7 @@ public class PhotoView extends ImageView {
 		remove.setOnAction((ActionEvent a) -> {
 			removalRequested.setValue(true);
 		});
-		
-		
+
 		contextMenu.getItems().add(open);
 		if (editable)
 			contextMenu.getItems().add(remove);

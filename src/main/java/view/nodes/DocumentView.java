@@ -71,8 +71,10 @@ public class DocumentView extends Label {
 					File documentFile = null;
 
 					URL documentUrl = document.getUrl();
-					documentFile = File.createTempFile("vk_document",
-							document.getName() + "." + document.getExtension());
+					File appDataTmp = new File(System.getProperty("java.io.tmpdir") + "/concrypt");
+					appDataTmp.mkdir();
+					documentFile = 	new File(System.getProperty("java.io.tmpdir") + "/concrypt/vk_"
+									+ document.getStringRepresentation() + "." + document.getExtension());
 					InputStream inputStream = documentUrl.openStream();
 					OutputStream outputStream = new FileOutputStream(documentFile);
 

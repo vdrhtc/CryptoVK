@@ -13,34 +13,19 @@ import data.ReadStatesDatabase.ChatReadState;
 
 public class ChatPreviewModel {
 
-	public ChatPreviewModel() {
-	}
-
-	public ChatPreviewModel(Long chatId, ChatReadState chatReadState, String title, ArrayList<String> chatIconURL,
-			MessageModel lastMessage, ArrayList<VKPerson> interlocutors) {
-		this.chatId = chatId;
-		this.lastMessage = lastMessage;
-		this.title = title;
-		this.chatIconURL = chatIconURL;
-		this.interlocutors = interlocutors;
-		this.setReadState(chatReadState);
-	}
-
 	public void loadContent(JSONObject content) {
+		serverUnreadCount = content.optInt("unread");
+		JSONObject messageContent = content.getJSONObject("message");
 		invalidated = true;
-		lastMessage = new MessageModel(content);
+		lastMessage = new MessageModel(messageContent);
 		chatId = lastMessage.getChatId();
-		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
-				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
+		setOrRecallReadState(messageContent.getInt("read_state") == 1 ? ChatReadState.READ
+				: messageContent.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
 		extractChatIcon();
 	}
 
 	public void update(JSONObject content) {
-		invalidated = true;
-		lastMessage = new MessageModel(content);
-		chatId = lastMessage.getChatId();
-		setOrRecallReadState(content.getInt("read_state") == 1 ? ChatReadState.READ
-				: content.getInt("out") == 1 ? ChatReadState.VIEWED : ChatReadState.UNREAD);
+		loadContent(content);
 		log.debug("Updated " + toString());
 	}
 
@@ -76,6 +61,7 @@ public class ChatPreviewModel {
 	}
 
 	protected Long chatId;
+	protected Integer serverUnreadCount;
 	protected ChatReadState RS;
 	protected String title;
 	protected MessageModel lastMessage;
@@ -85,13 +71,7 @@ public class ChatPreviewModel {
 
 	protected static Logger log = LoggerFactory.getLogger(ChatPreviewModel.class);
 
-	@Override
-	public ChatPreviewModel clone() {
-		return new ChatPreviewModel(getChatId(), getReadState(), getTitle(), getChatIconURL(), getLastMessage(),
-				getInterlocutors());
-	}
-
-	public void setInvalited(Boolean value) {
+	public void setInvalidated(Boolean value) {
 		invalidated = value;
 	}
 
@@ -119,6 +99,10 @@ public class ChatPreviewModel {
 		return lastMessage.getSender();
 	}
 
+	public Integer getUnreadMessagesCount() {
+		return ReadStatesDatabase.getChatUnreadCount(chatId);
+	}
+
 	public ArrayList<VKPerson> getInterlocutors() {
 		return interlocutors;
 	}
@@ -138,8 +122,12 @@ public class ChatPreviewModel {
 	}
 
 	public void setReadState(ChatReadState RS) {
+		if (RS != this.RS) {
+			ReadStatesDatabase.putChat(chatId, lastMessage.getId(), !lastMessage.isIncoming(), RS);
+		}
+		if (RS!=this.RS || RS == ChatReadState.UNREAD)
+			ReadStatesDatabase.updateChatUnreadCount(chatId, serverUnreadCount, RS);
 		this.RS = RS;
-		ReadStatesDatabase.putChat(chatId, lastMessage.getId(), !lastMessage.isIncoming(), getReadState());
 	}
 
 }

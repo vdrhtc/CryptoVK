@@ -71,8 +71,8 @@ public class ChatsPreviewController implements Controller {
 	}
 
 	public void updateUnreadCounter() {
-		Integer unread = ReadStatesDatabase.getUnreadCounter();
-		controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCounter().toString());
+		Integer unread = ReadStatesDatabase.getUnreadCount();
+		controlled.getUnreadMessagesCounter().setText(ReadStatesDatabase.getUnreadCount().toString());
 		if (unread == 0) {
 			controlled.getUnreadMessagesCounter().setVisible(false);
 			controlled.getUnreadImage().setVisible(false);
@@ -87,9 +87,9 @@ public class ChatsPreviewController implements Controller {
 		count = chatsJSONs.length() < count ? chatsJSONs.length() : count;
 		int offset = controlled.getModel().getChats().size();
 		for (int i = offset; i < offset + count; i++) {
-			JSONObject content = chatsJSONs.getJSONObject(i - offset).getJSONObject("message");
+			JSONObject content = chatsJSONs.getJSONObject(i - offset);
 			ChatPreviewModel entry;
-			if (content.optInt("chat_id") == 0)
+			if (content.getJSONObject("message").optInt("chat_id") == 0)
 				entry = new DialogPreviewModel();
 			else
 				entry = new TalkPreviewModel();

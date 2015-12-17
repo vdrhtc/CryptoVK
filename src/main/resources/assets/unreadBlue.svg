@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg4177"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="700"
+   height="700"
+   viewBox="0 0 700 700"
+   sodipodi:docname="unreadBlue.svg"
+   inkscape:export-filename="/home/gleb/Projects/Concrypt/src/main/resources/assets/unreadBlue.png"
+   inkscape:export-xdpi="6.4285712"
+   inkscape:export-ydpi="6.4285712">
+  <metadata
+     id="metadata4183">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs4181" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     id="namedview4179"
+     showgrid="false"
+     inkscape:snap-object-midpoints="true"
+     inkscape:object-nodes="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:zoom="0.52149125"
+     inkscape:cx="60.651711"
+     inkscape:cy="354.52607"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4177" />
+  <rect
+     style="fill:none;fill-rule:evenodd;stroke:#36638e;stroke-width:40;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect4764"
+     width="534.76147"
+     height="445.16098"
+     x="82.619263"
+     y="127.41951"
+     rx="63.835594" />
+  <path
+     style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#36638e;stroke-width:20;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 597.04176,146.40256 350.00002,396.40139 101.27523,146.18716"
+     id="path4770"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+</svg>

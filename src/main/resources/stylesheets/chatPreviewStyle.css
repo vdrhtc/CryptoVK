@@ -11,6 +11,15 @@
     src: local('Quicksand-Regular'), url('../fonts/Quicksand-Regular.otf');
  }
 
+.chat-entry-unread-icon {
+	-fx-image: url('../assets/unreadBlue.png');
+}
+
+.chat-entry-unread-counter {
+	-fx-text-fill: #36638E;
+	-fx-font-family:Quicksand-Regular;
+}
+
 .chat-entry-icon {
 	-fx-pref-width:50;
 	-fx-pref-height:50;

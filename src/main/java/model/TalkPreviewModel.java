@@ -11,18 +11,21 @@ public class TalkPreviewModel extends ChatPreviewModel {
 
 	@Override
 	public void loadContent(JSONObject content) {
-		extractTalkTitle(content);
-		extractTalkId(content);
-		extractTalkInterlocutorsAndIcon(content);
+		JSONObject messageContent = content.getJSONObject("message");
+		extractTalkTitle(messageContent);
+		extractTalkId(messageContent);
+		extractTalkInterlocutorsAndIcon(messageContent);
 		super.loadContent(content);
 	}
 
 	private void extractTalkInterlocutorsAndIcon(JSONObject content) {
+		if (interlocutors.size() > 0)
+			return;
 		this.interlocutors = new ArrayList<VKPerson>();
 		JSONObject chatInfo = ChatsPreviewModel.getConnectionOperator().getChat(content.getInt("chat_id"));
 		if (chatInfo.optInt("left") == 1) {
 			getChatIconURL().add(deletedImageURL);
-			getTitle().concat(" [Потрачено] ");
+			getTitle().concat(" [Wasted] ");
 		} else if (!(chatInfo.optString("photo_100").equals(""))) {
 			if (getChatIconURL().size() > 0)
 				getChatIconURL().set(0, chatInfo.getString("photo_100"));

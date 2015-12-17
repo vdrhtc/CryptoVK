@@ -24,7 +24,7 @@ public class AttachmentsContainer extends VBox {
 		this.photoContainer = new PhotoContainer(isMessageIncoming, editable);
 		this.documentContainer = new DocumentContainer(isMessageIncoming, editable);
 		this.forwardedMessagesContainer = new ForwardedMessagesContainer(editable);
-
+		
 		for (JSONObject attachment : attachments) {
 			switch (attachment.optString("type")) {
 			case "photo":

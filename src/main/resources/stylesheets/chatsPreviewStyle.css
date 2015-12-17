@@ -1,4 +1,3 @@
-
 .chats-preview-title{
 	-fx-font-size: 3em;
 	-fx-font-family:Quicksand-Regular;
@@ -17,6 +16,10 @@
 .chats-preview-header{
 	-fx-background-color:#36638E;
 	-fx-padding:5 5 5 5;
+}
+
+.chats-unread-icon {
+
 }
 
 .chats-status-bar {

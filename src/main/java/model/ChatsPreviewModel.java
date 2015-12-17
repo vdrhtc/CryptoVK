@@ -21,7 +21,7 @@ public class ChatsPreviewModel implements Updated {
 		int i = 0;
 		updateOrder(chatsJSONs);
 		for (ChatPreviewModel e : chats) {
-			e.update(chatsJSONs.getJSONObject(i).getJSONObject("message"));
+			e.update(chatsJSONs.getJSONObject(i));
 			i++;
 		}
 	}
@@ -39,7 +39,7 @@ public class ChatsPreviewModel implements Updated {
 				}
 			if (!matchFound) {
 				ChatPreviewModel newModel = new ChatPreviewModel();
-				newModel.loadContent(chatsJSONs.getJSONObject(i).getJSONObject("message"));
+				newModel.loadContent(chatsJSONs.getJSONObject(i));
 				chats.add(0, newModel);
 				chats.remove(chats.size()-1);
 			}
@@ -67,7 +67,7 @@ public class ChatsPreviewModel implements Updated {
 	private static ConnectionOperator CO = new ConnectionOperator(1000);
 
 	public Integer getUnreadMessagesCount() {
-		return ReadStatesDatabase.getUnreadCounter();
+		return ReadStatesDatabase.getUnreadCount();
 	}
 
 	private Logger log = LoggerFactory.getLogger(ChatsPreviewModel.class);

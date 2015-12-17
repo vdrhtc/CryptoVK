@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import model.MessageModel;
 import view.nodes.AttachmentsContainer;
@@ -41,6 +42,10 @@ public class MessageView implements View {
 		senderName.getStyleClass().add("message-sender-name");
 		plug.setMinWidth(50);
 
+		message.setMinHeight(Region.USE_PREF_SIZE);
+		if (message.getText().equals(""))
+			message.setPrefHeight(0);
+		
 		messageContainer.getChildren().addAll(senderName, message, date);
 		MenuItem copy = new MenuItem("Copy text");
 		copy.setOnAction((ActionEvent e) -> {
@@ -51,11 +56,12 @@ public class MessageView implements View {
 		message.setContextMenu(new ContextMenu(copy));
 		
 		HBox.setHgrow(message, Priority.ALWAYS);
-
+		
 		if (attachementsContainer != null) {
 			messageContainer.getChildren().add(2, attachementsContainer);
 			HBox.setHgrow(attachementsContainer, Priority.ALWAYS);
 		}
+		
 		if (model.isIncoming()) {
 			date.getStyleClass().add("message-date-incoming");
 			root.getStyleClass().add("message-hbox-incoming");

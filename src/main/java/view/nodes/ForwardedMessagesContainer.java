@@ -22,6 +22,7 @@ public class ForwardedMessagesContainer {
 		this.root.setContent(layout);
 		this.root.setPrefHeight(0);
 		this.root.setMinHeight(0);
+		this.root.setMaxHeight(500);
 		this.root.getStyleClass().add("forwarded-messages-container");
 		this.layout.setPrefHeight(0);
 		this.layout.setAlignment(Pos.CENTER);
@@ -34,7 +35,10 @@ public class ForwardedMessagesContainer {
 			this.layout.heightProperty().addListener(new ChangeListener<Number>() {
 				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 					Platform.runLater(() -> {
-						demandedHeightProperty.setValue((double) newValue + 5);
+						if ((Double) newValue < 500)
+							demandedHeightProperty.setValue((double) newValue + 5);
+						else
+							demandedHeightProperty.setValue(500);
 					});
 				}
 			});

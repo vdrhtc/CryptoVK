@@ -1,6 +1,6 @@
 .chats-back-button {
 	-fx-background-color: transparent;
-	-fx-vorder-color:transparent;
+	-fx-border-color:transparent;
 	-fx-background-image:url(../assets/back.png);
 	-fx-background-size:contain;
 	-fx-pref-width:50;

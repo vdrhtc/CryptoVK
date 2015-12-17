@@ -7,7 +7,7 @@ public class DialogPreviewModel extends ChatPreviewModel {
 
 	@Override
 	public void loadContent(JSONObject content) {
-		extractInterlocutor(content);
+		extractInterlocutor(content.getJSONObject("message"));
 		extractDialogTitle(this.getInterlocutors().get(0));
 		super.loadContent(content);
 

@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -23,8 +24,10 @@ public class PhotoContainer {
 	public PhotoContainer(Boolean incomingMessage, Boolean editable) {
 		this.editable = editable;
 		this.root = new FlowPane(Orientation.HORIZONTAL);
-		this.root.getStyleClass().add(incomingMessage ? "photo-container-incoming" : "photo-container");
+		this.root.getStyleClass().add("photo-container");
 		this.root.setPrefWidth(0);
+//		this.root.setStyle("-fx-border-color:black;");
+		this.root.setAlignment(Pos.TOP_CENTER);
 		this.contextMenu.getItems().add(buildSaveAllMenuItem());
 		this.root.setOnContextMenuRequested((ContextMenuEvent e) -> {
 			e.consume();
@@ -48,6 +51,8 @@ public class PhotoContainer {
 		});
 
 		double photoWidth = photo.getWidth() > photo.getHeight() ? 130 : photo.getWidth() / photo.getHeight() * 130;
+		if (photoWidth > root.getMinWidth())
+			root.setMinWidth(photoWidth);
 		root.setPrefWidth(root.getPrefWidth() + photoWidth+15);
 		photos.add(photo);
 		root.getChildren().add(photoView);

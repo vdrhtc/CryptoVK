@@ -43,6 +43,7 @@ public class MessageView implements View {
 		plug.setMinWidth(50);
 
 		message.setMinHeight(Region.USE_PREF_SIZE);
+		
 		if (message.getText().equals(""))
 			message.setPrefHeight(0);
 		
@@ -59,6 +60,7 @@ public class MessageView implements View {
 		
 		if (attachementsContainer != null) {
 			messageContainer.getChildren().add(2, attachementsContainer);
+//			attachementsContainer.setStyle("-fx-border-color:black");
 			HBox.setHgrow(attachementsContainer, Priority.ALWAYS);
 		}
 		
@@ -89,8 +91,14 @@ public class MessageView implements View {
 			date.setText(model.getDate());
 			message.setText(model.getText());
 			senderName.setText(model.getSender().getFirstName());
+			senderName.setOnMouseEntered((MouseEvent e) -> {
+				senderName.setText(model.getSender().getFirstName() + " " + model.getSender().getLastName());
+			});
+			senderName.setOnMouseExited((MouseEvent e) -> {
+				senderName.setText(model.getSender().getFirstName());
+			});
 			getIcon(model);
-			setReadState(model.getReadState());
+ 			setReadState(model.getReadState());
 
 			if (model.getAttachments().size() > 0)
 				attachementsContainer = new AttachmentsContainer(model.getAttachments(), model.isIncoming(), false);

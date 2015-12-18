@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -23,10 +24,10 @@ public class ChatPreview implements View {
 		this.loadModel(model);
 		this.initRoot();
 	}
-	
-	// TODO Think about the structure of references 
+
+	// TODO Think about the structure of references
 	public void loadModel(ChatPreviewModel model) {
-		if (model.isInvalidated()) { 
+		if (model.isInvalidated()) {
 			this.currentModel = model;
 			date.setText(model.getLastMessageDateString());
 			title.setText(model.getTitle());
@@ -34,6 +35,13 @@ public class ChatPreview implements View {
 			setReadState(model.getReadState());
 			lastMessage.setText(model.getLastMessage().getText());
 			lastSenderName.setText(model.getLastMessageSender().getFirstName());
+			lastSenderName.setOnMouseEntered((MouseEvent e) -> {
+				lastSenderName.setText(
+						model.getLastMessageSender().getFirstName() + " " + model.getLastMessageSender().getLastName());
+			});
+			lastSenderName.setOnMouseExited((MouseEvent e) -> {
+				lastSenderName.setText(model.getLastMessageSender().getFirstName());
+			});
 			getLastSenderPhoto(model);
 			unreadCounter.setText(model.getUnreadMessagesCount().toString());
 			model.setInvalidated(false);
@@ -55,7 +63,7 @@ public class ChatPreview implements View {
 		date.getStyleClass().add("chat-entry-date");
 		unreadImage.getStyleClass().add("chat-entry-unread-icon");
 		unreadCounter.getStyleClass().add("chat-entry-unread-counter");
-		
+
 		metaInfoContainer.getChildren().addAll(title, date);
 		leftContainer.getChildren().addAll(metaInfoContainer, readButton);
 		unreadImage.setFitHeight(20);
@@ -63,7 +71,8 @@ public class ChatPreview implements View {
 		unreadCounterContainer.getChildren().addAll(unreadCounter, unreadImage);
 		unreadCounterContainer.setAlignment(Pos.CENTER_RIGHT);
 		HBox.setHgrow(unreadCounterContainer, Priority.ALWAYS);
-		lastMessageContainer.getChildren().addAll(lastSenderPhoto, new VBox(lastSenderName, lastMessage), unreadCounterContainer);
+		lastMessageContainer.getChildren().addAll(lastSenderPhoto, new VBox(lastSenderName, lastMessage),
+				unreadCounterContainer);
 		root.getChildren().addAll(icon, leftContainer, lastMessageContainer);
 		HBox.setHgrow(lastMessageContainer, Priority.ALWAYS);
 	}
@@ -79,11 +88,11 @@ public class ChatPreview implements View {
 	public void setReadState(ChatReadState chatReadState) {
 		currentModel.setReadState(chatReadState);
 		unreadCounter.setText(currentModel.getUnreadMessagesCount().toString());
-		if (chatReadState == ChatReadState.UNREAD) 
+		if (chatReadState == ChatReadState.UNREAD && currentModel.getLastMessage().isIncoming())
 			unreadCounterContainer.setVisible(true);
 		else
 			unreadCounterContainer.setVisible(false);
-			
+
 		readStateProperty.set(chatReadState);
 		switch (chatReadState) {
 		case READ:
@@ -151,9 +160,9 @@ public class ChatPreview implements View {
 	public Button getRead() {
 		return readButton;
 	}
-	
+
 	public HBox getLeftContainer() {
-		return leftContainer ;
+		return leftContainer;
 	}
 
 }

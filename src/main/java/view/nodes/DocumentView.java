@@ -17,12 +17,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import model.Document;
 
 public class DocumentView extends Label {
 
-	public static final double MAX_DOCUMENT_WIDTH = 400;
+	public static final double MAX_DOCUMENT_WIDTH = 200;
 
 	public DocumentView(Document document, Boolean editable) {
 		super(document.getDisplayedName());
@@ -30,8 +31,8 @@ public class DocumentView extends Label {
 		this.getStyleClass().add("document-label");
 		Double expectedWidth = (double) Toolkit.getToolkit().getFontLoader()
 				.computeStringWidth(document.getDisplayedName(), this.getFont());
-		this.setPrefWidth(expectedWidth > MAX_DOCUMENT_WIDTH ? MAX_DOCUMENT_WIDTH : expectedWidth + 7 * 2); // Padding
-																											// from
+		this.setPrefWidth(expectedWidth > MAX_DOCUMENT_WIDTH ? MAX_DOCUMENT_WIDTH : expectedWidth + 7 * 2); 
+		this.setMinWidth(Region.USE_PREF_SIZE);
 		MenuItem saveAs = new MenuItem("Save As...");
 		saveAs.getStyleClass().add("image-context-menu-item");
 		saveAs.setOnAction((ActionEvent a) -> {

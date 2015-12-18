@@ -68,6 +68,7 @@ public class ChatsPreview implements Updated, View {
 
 	public void update(Object... params) {
 		for (int i = 0; i < previews.size(); i++)
+
 			previews.get(i).loadModel(model.getChats().get(i));
 	}
 

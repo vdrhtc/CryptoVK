@@ -30,22 +30,13 @@
 }
 
 .photo-container {
-	-fx-hgap: 15;
-	-fx-vgap: 15;
-}
-.photo-container-incoming {
-	-fx-alignment:top-right;
+	-fx-alignment: top-center;
 	-fx-hgap: 15;
 	-fx-vgap: 15;
 }
 
 .document-container {
-	-fx-hgap: 15;
-	-fx-vgap: 15;
-}
-
-.document-container-incoming {
-	-fx-alignment:top-right;
+	-fx-alignment: top-center;
 	-fx-hgap: 15;
 	-fx-vgap: 15;
 }

@@ -26,9 +26,9 @@ public class ForwardedMessagesContainer {
 		this.root.getStyleClass().add("forwarded-messages-container");
 		this.layout.setPrefHeight(0);
 		this.layout.setAlignment(Pos.CENTER);
+//		this.layout.setStyle("-fx-border-color:black;");
 		this.root.minHeightProperty().bind(demandedHeightProperty);
 		this.root.minWidthProperty().bind(demandedWidthProperty);
-
 	}
 
 	public void addMessage(MessageModel message) {
@@ -40,16 +40,6 @@ public class ForwardedMessagesContainer {
 							demandedHeightProperty.setValue((double) newValue + 5);
 						else
 							demandedHeightProperty.setValue(500);
-					});
-				}
-			});
-			this.layout.widthProperty().addListener(new ChangeListener<Number>() {
-				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-					Platform.runLater(() -> {
-						if ((Double) newValue < 300)
-							demandedWidthProperty.setValue((double) newValue + 10);
-						else
-							demandedWidthProperty.setValue(300);
 					});
 				}
 			});

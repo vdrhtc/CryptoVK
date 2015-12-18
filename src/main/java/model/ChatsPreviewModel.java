@@ -27,6 +27,7 @@ public class ChatsPreviewModel implements Updated {
 	}
 
 	private void updateOrder(JSONArray chatsJSONs) {
+
 		for (int i = 0; i < chatsJSONs.length(); i++) {
 			boolean matchFound = false;
 			for (int j = 0; j < chats.size(); j++)
@@ -38,10 +39,11 @@ public class ChatsPreviewModel implements Updated {
 					}
 				}
 			if (!matchFound) {
-				ChatPreviewModel newModel = new ChatPreviewModel();
+				ChatPreviewModel newModel = chatsJSONs.getJSONObject(i).getJSONObject("message").optLong("chat_id") == 0
+						? new DialogPreviewModel() : new TalkPreviewModel();
 				newModel.loadContent(chatsJSONs.getJSONObject(i));
 				chats.add(0, newModel);
-				chats.remove(chats.size()-1);
+				chats.remove(chats.size() - 1);
 			}
 		}
 	}
@@ -52,15 +54,15 @@ public class ChatsPreviewModel implements Updated {
 
 	@Override
 	public void getLock(String takerName) {
-		log.info("Getting lock: "+takerName);
+		log.info("Getting lock: " + takerName);
 		lock.lock();
-		log.info("Got lock: "+takerName);
+		log.info("Got lock: " + takerName);
 	}
-	
+
 	@Override
 	public void releaseLock(String takerName) {
 		lock.unlock();
-		log.info("Releasing lock: "+takerName);
+		log.info("Releasing lock: " + takerName);
 	}
 
 	private ArrayList<ChatPreviewModel> chats = new ArrayList<>();

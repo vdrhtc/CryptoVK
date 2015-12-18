@@ -27,6 +27,7 @@ public class ForwardedMessagesContainer {
 		this.layout.setPrefHeight(0);
 		this.layout.setAlignment(Pos.CENTER);
 		this.root.minHeightProperty().bind(demandedHeightProperty);
+		this.root.minWidthProperty().bind(demandedWidthProperty);
 
 	}
 
@@ -39,6 +40,16 @@ public class ForwardedMessagesContainer {
 							demandedHeightProperty.setValue((double) newValue + 5);
 						else
 							demandedHeightProperty.setValue(500);
+					});
+				}
+			});
+			this.layout.widthProperty().addListener(new ChangeListener<Number>() {
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					Platform.runLater(() -> {
+						if ((Double) newValue < 300)
+							demandedWidthProperty.setValue((double) newValue + 10);
+						else
+							demandedWidthProperty.setValue(300);
 					});
 				}
 			});
@@ -56,6 +67,7 @@ public class ForwardedMessagesContainer {
 	private ScrollPane root;
 	private Boolean editable;
 	private DoubleProperty demandedHeightProperty = new SimpleDoubleProperty();
+	private DoubleProperty demandedWidthProperty = new SimpleDoubleProperty();
 	private ArrayList<Attachment> messages = new ArrayList<>();
 	private VBox layout = new VBox();
 

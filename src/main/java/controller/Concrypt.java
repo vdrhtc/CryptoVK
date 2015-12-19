@@ -1,7 +1,9 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
 import view.View.ViewName;
 
 public class Concrypt extends Application {
@@ -21,7 +23,6 @@ public class Concrypt extends Application {
 		VS.setViews(primaryStage, AVC, CPVC, CVC);
 		VS.switchToView(ViewName.AUTHORIZE_VIEW, (Object[]) null);
 		
-		primaryStage.show();
 	}
 
 	public static void main(String[] args) {

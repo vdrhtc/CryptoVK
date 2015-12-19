@@ -121,7 +121,7 @@ public class ImageOperator {
 	}
 	
 	
-	public static synchronized Image getLastSenderPhotoFrom(String url) {
+	public static Image getLastSenderPhotoFrom(String url) {
 		Image image = new Image(url, 50 * 0.66, 50 * 0.66, true, true);
 		lastSenderPhotosDatabase.put(url, image);
 		return image;
@@ -134,7 +134,7 @@ public class ImageOperator {
 		image.setClip(rR);	
 	}
 
-	public static synchronized Image getImageFrom(String... urls) throws IIOException {
+	public static Image getImageFrom(String... urls) throws IIOException {
 		
 		String hash = String.join("", urls);
 

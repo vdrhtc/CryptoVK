@@ -45,6 +45,7 @@ public class ChatsPreviewController implements Controller {
 						updater.isWorkingProperty().setValue(true);
 					updater.start();
 				});
+		this.controlled.getUnreadImage().setVisible(false);
 	}
 
 	private void addReadStateChangeListener(ChatPreviewController CPVC) {
@@ -67,11 +68,11 @@ public class ChatsPreviewController implements Controller {
 				loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
 				Platform.runLater(() -> {
 					loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
+					updateUnreadCounter();
 					controlled.canBeUpdated().setValue(true);
 				});
 			});
 			loader.start();
-			updateUnreadCounter();
 		}
 	}
 

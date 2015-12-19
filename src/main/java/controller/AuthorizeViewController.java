@@ -1,6 +1,10 @@
 package controller;
 
+import java.net.CookieHandler;
+
 import javafx.beans.value.ObservableValue;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import view.AuthorizeView;
 import view.View.ViewName;
 
@@ -12,7 +16,7 @@ public class AuthorizeViewController implements Controller {
 	
 	@Override
 	public void prepareViewForSwitch(Object... params) {
-		return;
+		this.controlled.prepareForSwitch();
 	}
 	
 	@Override

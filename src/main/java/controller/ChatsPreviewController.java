@@ -62,11 +62,16 @@ public class ChatsPreviewController implements Controller {
 		if (controlled.getChatsLayout().getChildren().size() == 0) {
 			controlled.getLastSeenOnline().setText(
 					"You were last seen online on " + DataOperator.formatDate(VKPerson.getOwner().getLastSeenOnline()));
-			loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
-			loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
-
+			Thread loader = new Thread(() -> {
+				Thread.currentThread().setName("Loader");
+				loadNextModels(ChatsPreviewModel.PRE_LOADED_ENTRIES);
+				Platform.runLater(() -> {
+					loadNextPreviews(ChatsPreview.CHATS_PER_PAGE);
+					controlled.canBeUpdated().setValue(true);
+				});
+			});
+			loader.start();
 			updateUnreadCounter();
-			controlled.canBeUpdated().setValue(true);
 		}
 	}
 

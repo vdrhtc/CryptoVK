@@ -65,8 +65,7 @@ public class HttpOperator {
 			String responseBody = execute(responseHandler);
 			JSONObject response = new JSONObject(responseBody);
 			if (response.optJSONObject("error") != null) {
-				if (response.getJSONObject("error").getInt("error_code") == 6
-						|| response.getJSONObject("error").getInt("error_code") == 10) {
+				if (response.getJSONObject("error").getInt("error_code") == 6) {
 					Thread.sleep(1000);
 					responseBody = sendRequest(URL);
 				} else

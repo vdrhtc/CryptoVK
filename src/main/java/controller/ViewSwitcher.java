@@ -43,8 +43,6 @@ public class ViewSwitcher {
 
 		Pane root = controllers.get(redirectName).getControlled().getRoot();
 		scene.setRoot(root);
-		root.applyCss();
-		root.layout();
 		stage.setScene(scene);
 		stage.show();
 	}

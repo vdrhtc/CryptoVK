@@ -19,13 +19,6 @@ public class AuthorizeView implements View {
 
 	public final ViewName name = ViewName.AUTHORIZE_VIEW;
 
-	public AuthorizeView() {
-		CookieHandler.setDefault(new com.sun.webkit.network.CookieManager());
-		buildBrowser();
-
-		root.getChildren().addAll(browser, addressBar);
-		VBox.setVgrow(browser, Priority.ALWAYS);
-	}
 
 	public boolean tokenAvailableAndValid() {
 		String token = DataOperator.getLastAccessToken();
@@ -35,6 +28,14 @@ public class AuthorizeView implements View {
 				return true;
 		}
 		return false;
+	}
+	
+	public void prepareForSwitch() {
+		CookieHandler.setDefault(new com.sun.webkit.network.CookieManager());
+		buildBrowser();
+
+		root.getChildren().addAll(browser, addressBar);
+		VBox.setVgrow(browser, Priority.ALWAYS);		
 	}
 
 	public boolean getTokenFromURL(String newValue) {
@@ -93,4 +94,5 @@ public class AuthorizeView implements View {
 	public Pane getRoot() {
 		return root;
 	}
+
 }

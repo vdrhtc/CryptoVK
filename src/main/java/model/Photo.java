@@ -10,8 +10,8 @@ public class Photo extends Attachment {
 		this.ownerId = content.getInt("owner_id");
 		this.photoId = content.getInt("id");
 		this.previewUrl = content.getString("photo_130");
-		this.width = content.optDouble("width") == 0 ? 130 : content.getDouble("width");
-		this.height = content.optDouble("height") == 0 ? 130 : content.getDouble("height");
+		this.width = Double.isNaN(content.optDouble("width")) ? 130 : content.getDouble("width");
+		this.height = Double.isNaN(content.optDouble("height")) ? 130 : content.getDouble("height");
 
 		largestResolutionUrl = "";
 		for (String size : vKPhotoSizes) {

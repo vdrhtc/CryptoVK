@@ -42,11 +42,15 @@ public class ViewPreviewSynchronizer {
 				if (c.wasAdded())
 					for (ChatReadStateWithId RSId : c.getAddedSubList()) {
 						log.info("Synchronizing preview read state, "+RSId.toString());
-						CPVC.getControlled().getModel().getLock("ViewPreviewSynchronizer");
 						ChatPreview CP = CPVC.getPreviewById(RSId.getChatId());
-						CP.getModel().setReadState(RSId.getRS());
+						Thread t = new Thread(()-> {
+							Thread.currentThread().setName("PMS");;
+							CPVC.getControlled().getModel().getLock("ViewPreviewSynchronizer");
+							CP.getModel().setReadState(RSId.getRS());
+							CPVC.getControlled().getModel().releaseLock("ViewPreviewSynchronizer");
+						});
+						t.start();
 						CP.setReadState(RSId.getRS());
-						CPVC.getControlled().getModel().releaseLock("ViewPreviewSynchronizer");
 						c.getList().remove(RSId);
 					}
 			}

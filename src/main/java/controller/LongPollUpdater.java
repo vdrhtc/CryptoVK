@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -55,17 +57,20 @@ public class LongPollUpdater extends Service<Void> {
 						longPollServerData.put("ts", updates.getLong("ts"));
 						if (needsUpdating(updates)) {
 
-							updatedModel.getLock("");
-							updatedModel.update(updates);
-							updatedModel.releaseLock("");
-
 							isWorking.setValue(false);
+							updatedModel.getLock("");
+							
+							updatedModel.update(updates);
 							Platform.runLater(() -> {
-								updatedView.getLock("Updater");
 								updatedView.update();
-								updatedView.releaseLock("Updater");
+								viewUpdated.set(true);
 								isWorking.setValue(true);
 							});
+							
+							while(!viewUpdated.get()) 
+								Thread.sleep(100);
+							
+							updatedModel.releaseLock("");
 						}
 					}
 				}
@@ -88,7 +93,8 @@ public class LongPollUpdater extends Service<Void> {
 	private Updated updatedView;
 	private ConnectionOperator CO = new ConnectionOperator(30000);
 	private ConnectionOperator auxCO = new ConnectionOperator(1000);
+	private AtomicBoolean viewUpdated = new AtomicBoolean(false);
 
-	private BooleanProperty isWorking = new SimpleBooleanProperty();
+	private volatile BooleanProperty isWorking = new SimpleBooleanProperty();
 
 }

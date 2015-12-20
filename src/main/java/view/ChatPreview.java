@@ -86,7 +86,6 @@ public class ChatPreview implements View {
 	}
 
 	public void setReadState(ChatReadState chatReadState) {
-		currentModel.setReadState(chatReadState);
 		unreadCounter.setText(currentModel.getUnreadMessagesCount().toString());
 		if (chatReadState == ChatReadState.UNREAD && currentModel.getLastMessage().isIncoming())
 			unreadCounterContainer.setVisible(true);

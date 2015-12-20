@@ -71,7 +71,7 @@ public class HttpOperator {
 				} else
 					log.warn(responseBody);
 
-			} else if (response.optInt("failed") == 1) {
+			} else if (response.optInt("failed") == 1 || response.optInt("failed") == 2 ) {
 				Thread.sleep(1000);
 				responseBody = sendRequest(URL);
 			}

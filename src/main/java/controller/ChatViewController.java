@@ -154,20 +154,20 @@ public class ChatViewController implements Controller {
 	}
 
 	public void readMessages() {
-		controlled.getModel().getLock("ChatViewController.readButton");
-		if (controlled.getModel().getLoadedMessages().get(0).isIncoming()
-				&& !controlled.getModel().getReadState().equals(ChatReadState.READ)) {
-			
-			Thread t = new Thread(() -> {
-				Thread.currentThread().setName("MR");
+		Thread t = new Thread(() -> {
+			Thread.currentThread().setName("MR");
+			controlled.getModel().getLock("ChatViewController.readButton");
+			if (controlled.getModel().getLoadedMessages().get(0).isIncoming()
+					&& !controlled.getModel().getReadState().equals(ChatReadState.READ)) {
 				CO.readChat(controlled.getModel().getChatId(),
 						controlled.getModel().getLoadedMessages().get(0).getId());
-			});
-			t.start();
-			controlled.getModel().setReadState(ChatReadState.READ);
+				controlled.getModel().setReadState(ChatReadState.READ);
+			}
+			controlled.getModel().releaseLock("ChatViewController.readButton");
+		});
+		t.start();
+		if (controlled.getReadStateProperty().getValue() != ChatReadState.READ)
 			controlled.getReadStateProperty().setValue(ChatReadState.READ);
-		}
-		controlled.getModel().releaseLock("ChatViewController.readButton");
 	}
 
 	public void addScrollPaneListener() {

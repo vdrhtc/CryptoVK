@@ -33,7 +33,7 @@ public class LongPollUpdater extends Service<Void> {
 		for (int i = 0; i < updatesList.length(); i++) {
 			int updateType = updatesList.getJSONArray(i).getInt(0);
 			if (!(updateType == 9 || updateType == 8 || updateType == 1 || updateType == 2 || updateType == 3
-					|| updateType == 80))
+					|| updateType == 80 || updateType == 61 || updateType == 62))
 				return true;
 		}
 		return false;

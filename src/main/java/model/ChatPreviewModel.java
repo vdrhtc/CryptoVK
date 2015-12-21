@@ -33,7 +33,7 @@ public class ChatPreviewModel {
 		JSONObject state = ReadStatesDatabase.optChatJSON(chatId);
 		if (state == null)
 			setReadState(RS);
-		else if (state.getInt("lastMessageId") != lastMessage.getId())
+		else if (state.getInt("lastMessageId") < lastMessage.getId())
 			setReadState(RS);
 		else if (RS == ChatReadState.READ)
 			setReadState(ChatReadState.READ);

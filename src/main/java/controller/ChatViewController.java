@@ -47,10 +47,10 @@ public class ChatViewController implements Controller {
 			controlled.getModel().getLock("ChatViewController.prepareViewForSwitch");
 			controlled.setActive(true);
 			if (controlled.getReadStateProperty().getValue() == ChatReadState.UNREAD) {
-				controlled.getReadStateProperty().set(ChatReadState.VIEWED);
 				controlled.getModel().setReadState(ChatReadState.VIEWED);
+				controlled.getReadStateProperty().set(ChatReadState.VIEWED);
+				controlled.update();
 			}
-			controlled.update();
 			controlled.getModel().releaseLock("ChatViewController.prepareViewForSwitch");
 		} else
 			controlled.setActive(false);
@@ -162,12 +162,13 @@ public class ChatViewController implements Controller {
 				CO.readChat(controlled.getModel().getChatId(),
 						controlled.getModel().getLoadedMessages().get(0).getId());
 				controlled.getModel().setReadState(ChatReadState.READ);
+				Platform.runLater(() -> {
+					controlled.getReadStateProperty().setValue(ChatReadState.READ);
+				});
 			}
 			controlled.getModel().releaseLock("ChatViewController.readButton");
 		});
 		t.start();
-		if (controlled.getReadStateProperty().getValue() != ChatReadState.READ)
-			controlled.getReadStateProperty().setValue(ChatReadState.READ);
 	}
 
 	public void addScrollPaneListener() {

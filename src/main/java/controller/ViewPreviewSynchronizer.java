@@ -17,18 +17,19 @@ public class ViewPreviewSynchronizer {
 		addChatViewReadStateListener();
 		addChatPreviewReadStateListener();
 	}
-	
+
 	private void addChatPreviewReadStateListener() {
 		CPVC.getReadStateWithIdProperty().addListener(new ChangeListener<ChatReadStateWithId>() {
 
 			@Override
 			public void changed(ObservableValue<? extends ChatReadStateWithId> observable, ChatReadStateWithId oldValue,
 					ChatReadStateWithId RSId) {
-				log.info("Synchronizing view read state, "+RSId.toString());
 				ChatViewController chatController = CVC.getControllers().get(RSId.getChatId());
-				if (chatController != null && RSId.getRS()==ChatReadState.READ)
+				if (chatController != null && RSId.getRS() == ChatReadState.READ
+						&& chatController.getControlled().getReadStateProperty().get() != ChatReadState.READ) {
+					log.info("Synchronizing view read state, " + RSId.toString());
 					chatController.readMessages();
-				
+				}
 			}
 		});
 	}
@@ -41,20 +42,13 @@ public class ViewPreviewSynchronizer {
 				c.next();
 				if (c.wasAdded())
 					for (ChatReadStateWithId RSId : c.getAddedSubList()) {
-						log.info("Synchronizing preview read state, "+RSId.toString());
+						log.info("Synchronizing preview read state, " + RSId.toString());
 						ChatPreview CP = CPVC.getPreviewById(RSId.getChatId());
-						Thread t = new Thread(()-> {
-							Thread.currentThread().setName("PMS");;
-							CPVC.getControlled().getModel().getLock("ViewPreviewSynchronizer");
-							CP.getModel().setReadState(RSId.getRS());
-							CPVC.getControlled().getModel().releaseLock("ViewPreviewSynchronizer");
-						});
-						t.start();
 						CP.setReadState(RSId.getRS());
 						c.getList().remove(RSId);
 					}
 			}
-			
+
 		});
 	}
 
